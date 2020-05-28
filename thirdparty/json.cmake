@@ -1,7 +1,7 @@
-add_subdirectory(json)
+# add_subdirectory(json)
 
 include_directories(
-  json/include
+  json/single_include
 )
 # Module folder
-set_target_properties(json PROPERTIES FOLDER thirdparty/json)
+# set_target_properties(json PROPERTIES FOLDER thirdparty/json)
