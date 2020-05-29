@@ -4,18 +4,30 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 ## Global properties
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 if(NOT GLOBAL_LIBS_LIST)
-  define_property(GLOBAL PROPERTY MY_GLOBAL_LIST
-      BRIEF_DOCS "Global list of elements"
-      FULL_DOCS "Global list of elements")
+  define_property(GLOBAL PROPERTY GLOBAL_LIBS_LIST
+      BRIEF_DOCS "Global list of libs"
+      FULL_DOCS "Global list of libs")
   set_property(GLOBAL PROPERTY GLOBAL_LIBS_LIST "")
 endif()
 #在子模块中可通过以下语句加入其它库SUB_LIB
 # set_property(GLOBAL APPEND PROPERTY GLOBAL_LIBS_LIST SUB_LIB)
 
+if(NOT GLOBAL_INCLUDE_LIST)
+  define_property(GLOBAL PROPERTY GLOBAL_INCLUDE_LIST
+      BRIEF_DOCS "Global list of includes"
+      FULL_DOCS "Global list of includes")
+  set_property(GLOBAL PROPERTY GLOBAL_INCLUDE_LIST "")
+endif()
+# set_property(GLOBAL APPEND PROPERTY GLOBAL_INCLUDE_LIST include)
+
+
 ## Project name
 set (PROJECT_NAME S4)
 project(${PROJECT_NAME})
 message(STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
+
+## Thirdparty
+add_subdirectory("thirdparty")
 
 ## CMake module path
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -98,8 +110,6 @@ list(APPEND LINKLIBS   Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick)
 #   message(STATUS "iomp5_LIBRARY= ${iomp5_LIBRARY}")
 # endif()
 
-## Thirdparty
-add_subdirectory("thirdparty")
 
 
 ## Link libraries
@@ -128,6 +138,11 @@ set_source_files_properties(${LIB_SOURCE_FILES} PROPERTIES COMPILE_FLAGS "${PEDA
 
 add_library(${PROJECT_NAME} ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
+
+## collect GLOBAL_INCLUDE_LIST
+get_property(global_include GLOBAL PROPERTY GLOBAL_INCLUDE_LIST)
+message(STATUS "GLOBAL_INCLUDE_LIST = ${global_include}")
+target_include_directories(${PROJECT_NAME} PUBLIC "${global_include};")
 
 ## collect GLOBAL_LIBS_LIST
 get_property(global_libs GLOBAL PROPERTY GLOBAL_LIBS_LIST)

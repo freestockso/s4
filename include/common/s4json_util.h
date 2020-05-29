@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-// #include "logger/logger.h"
+ #include "common/s4logger.h"
 
 namespace S4{
 
@@ -35,8 +35,8 @@ inline std::shared_ptr<nlohmann::json> readJsonFile(const std::string& filename)
 		catch (nlohmann::json::parse_error& e)
 		{
 			// output exception information
-			// ERR("json parse fail:{:}\nerrorInfo:{:}\nexception id:{:}\nbyte position of error:{:}",
-			// 	tmp.str(), e.what(), e.id, e.byte);
+			 ERR("json parse fail:{:}\nerrorInfo:{:}\nexception id:{:}\nbyte position of error:{:}",
+			 	tmp.str(), e.what(), e.id, e.byte);
 		}
 	}
 

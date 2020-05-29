@@ -20,8 +20,8 @@ cpp_headers = \
 */
 #pragma once
 #include <assert.h>
-#include "json/json_util.h"
-#include "logger/logger.h"
+#include "common/s4json_util.h"
+#include "common/s4logger.h"
 
 #include <set>
 #include <list>
@@ -264,7 +264,7 @@ output = []
 cpp_headers = cpp_headers.format(src_json, type_name)
 output.append(cpp_headers)
 
-output.append("namespace YY {\n")
+output.append("namespace S4 {\n")
 
 print("/* type */")
 output.append("/* type */")
@@ -306,7 +306,7 @@ output.append(cpp_to)
 
 output.append("}};// struct {}".format(type_name))
 
-output.append("} // namespace YY")
+output.append("} // namespace S4")
 
 cpp_json_text = text.replace('"', '\\"').replace("\n","").replace("\r","")
 test_source = """
@@ -316,20 +316,20 @@ inline int {3}_tester() {{
 
     //std::ifstream i("{0}/{1}");
     std::string i("{5}");
-    YY::json {2};
+    S4::json {2};
     //i >> {2}; //from file
-    {2} = YY::json::parse(i);  //from string
+    {2} = S4::json::parse(i);  //from string
 
-    YY::{3} {4};
+    S4::{3} {4};
 
-    if(!YY::{3}::from_json({2}, {4})){{
-        INFO("YY::{3}::from_json fail!");
+    if(!S4::{3}::from_json({2}, {4})){{
+        INFO("S4::{3}::from_json fail!");
         return -1;
     }}
 
-    YY::json j_out;
-    if(!YY::{3}::to_json(j_out, {4})){{
-        INFO("YY::{3}::to_json fail!");
+    S4::json j_out;
+    if(!S4::{3}::to_json(j_out, {4})){{
+        INFO("S4::{3}::to_json fail!");
         return -1;
     }}
 

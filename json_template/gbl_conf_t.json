@@ -1,0 +1,4 @@
+{
+    "logger_root" : ".",
+    "db_root" : "./db"
+}
