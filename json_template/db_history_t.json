@@ -1,0 +1,43 @@
+{
+    "rowid":0,
+
+    "__comment__0":"strategy name",
+    "stgName": "tdx_xyzq",
+    "__comment__1":"id through open-close",
+    "id":0,
+
+    "tdxOrderId": 0,
+    "insCode":"sz000001",
+    "__comment__2":"no name, 平安银行 is not good for sqliteDB",
+    "time": 123,
+    "datetime": "2018_04_26__00_00_00",
+    "__comment__3":"current option of id: open / change_take / change_stop / close / change_close / abort",
+    "optType":"open",
+    "__comment__4":"long as stock only for now",
+    "position": "long",
+    "__comment__5":"current status of id: new / opened / closed / aborted",
+    "status":"new",
+
+    "open":-1,
+    "take":-1,
+    "stop":-1,
+    "close":-1,
+
+    "__comment__6":"not in use for now",
+    "open_deal":-1,
+    "openVol":-1,
+    "openVol_deal":-1,
+    "openAmt_deal":0,
+    "close_deal":-1,
+    "closeVol":-1,
+    "closeVol_deal":-1,
+    "closeAmt_deal":0,
+
+    "commission":0,
+    "stamp_duty":0,
+    "transfer_fee":0,
+    "other_fees":0,
+    "remarks":"起始配号:226168906"
+
+
+}

@@ -16,6 +16,7 @@ cpp_headers = \
     "optional_fields": [], # Not require to present to .json file, but always in cpp struct
     "assign_type_fields": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
     "assign_set_lists": [], # Take list in .json file as std::set<>, but not std::vector<> as default
+    "__comment__xxx":"", # Add comment line
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
 #pragma once
@@ -82,6 +83,11 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
             continue
 
         key_value = json_dict[key_name]
+
+        if key_name.find("__comment__")==0:
+            main_str.append("//"+key_value)
+            continue
+        
         # if key_value is None:
         #     key_type = 'bool'
         #     key_name = key_name + "_is_null"
