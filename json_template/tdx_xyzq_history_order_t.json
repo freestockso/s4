@@ -1,0 +1,15 @@
+{
+    "date" : 20200507,
+    "time_format": "19:55:30",
+    "time_utcSec": 123,
+    "stock_code": "002988",
+    "stock_name": "豪美新材",
+    "order_index":26,
+    "opt_type":"买入",
+    "status":"已报",
+    "order_price":3.94,
+    "order_vol":5600,
+    "deal_price":0.0,
+    "deal_vol":0,
+    "order_type":"买卖"
+}
