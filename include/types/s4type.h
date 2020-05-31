@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <sys/timeb.h>
 #include <vector>
+#include <string>
 #include <map>
 #include <list>
 

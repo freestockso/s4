@@ -13,5 +13,8 @@
     },
     "db":{
         "root" : "./db"
+    },
+    "tdx":{
+        "root" : "E:/work/o999_s/tdx/"
     }
 }
