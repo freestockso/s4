@@ -34,6 +34,17 @@ public:
         return _g_pConf;
     }
 
+	const gbl_conf_t& v() const {
+		return _v;
+	}
+
+	const gbl_conf_t::db_t& db() const {
+		return _v.db;
+	}
+
+	const gbl_conf_t::logger_t& logger() const {
+		return _v.logger;
+	}
 
 
 private:
