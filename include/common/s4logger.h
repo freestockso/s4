@@ -47,7 +47,7 @@ public:
 		return _g_pLogger;
 	}
 
-	void init(param_t* p = nullptr) {
+	void init(param_t* p = nullptr) noexcept {
 		if (p) {
 			_param = *p;
 		}
@@ -148,12 +148,18 @@ public:
 		exit(-1);
 	}
 
-	void flush() {
+	void flush() noexcept{
 		if (_file_all) {
 			_file_all->flush();
 		}
 		if (_file_err) {
 			_file_err->flush();
+		}
+		if (_file_all_pure) {
+			_file_all_pure->flush();
+		}
+		if (_file_err_pure) {
+			_file_err_pure->flush();
 		}
 	}
 
