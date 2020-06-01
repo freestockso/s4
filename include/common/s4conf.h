@@ -46,6 +46,10 @@ public:
 		return _v.logger;
 	}
 
+	const gbl_conf_t::tdx_t& tdx() const {
+		return _v.tdx;
+	}
+
 
 private:
     gbl_conf_t _v;
