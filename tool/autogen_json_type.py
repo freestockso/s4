@@ -12,10 +12,10 @@ cpp_headers = \
 * Tester:    int {1}_tester();
 *
 * Json keep-word: 
-    "default_value_fields": [], # Take value in .json file as the default value of cpp variable
-    "optional_fields": [], # Not require to present to .json file, but always in cpp struct
-    "assign_type_fields": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
-    "assign_set_lists": [], # Take list in .json file as std::set<>, but not std::vector<> as default
+    "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
+    "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
+    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
@@ -29,7 +29,7 @@ cpp_headers = \
 #include <vector>
 """
 
-keep_words = ['default_value_fields', 'optional_fields', 'assign_type_fields', 'assign_set_lists']
+keep_words = ['__default_value_fields__', '__optional_fields__', '__assign_type_fields__', '__assign_set_lists__']
 
 def determin_value_type(value):
     if isinstance(value, str):
@@ -55,27 +55,27 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
     main_str = ["struct {} {{".format(name)]
     from_str = []
     to_str = []
-    if 'optional_fields' in json_dict:
-        optional_fields = json_dict['optional_fields']
+    if '__optional_fields__' in json_dict:
+        __optional_fields__ = json_dict['__optional_fields__']
     else:
-        optional_fields = []
-    if 'default_value_fields' in json_dict:
-        default_value_fields = json_dict['default_value_fields']
+        __optional_fields__ = []
+    if '__default_value_fields__' in json_dict:
+        __default_value_fields__ = json_dict['__default_value_fields__']
     else:
-        default_value_fields = []
-    optional_fields.extend(default_value_fields)    # field with default value is always optional field
+        __default_value_fields__ = []
+    __optional_fields__.extend(__default_value_fields__)    # field with default value is always optional field
 
-    if 'assign_type_fields' in json_dict:
-        assign_type_fields = json_dict['assign_type_fields']
-        print("use assign_type_fields = {}".format(assign_type_fields))
+    if '__assign_type_fields__' in json_dict:
+        __assign_type_fields__ = json_dict['__assign_type_fields__']
+        print("use __assign_type_fields__ = {}".format(__assign_type_fields__))
     else:
-        assign_type_fields = {}
+        __assign_type_fields__ = {}
 
-    if 'assign_set_lists' in json_dict:
-        assign_set_lists = json_dict['assign_set_lists']
-        print("use assign_set_lists = {}".format(assign_set_lists))
+    if '__assign_set_lists__' in json_dict:
+        __assign_set_lists__ = json_dict['__assign_set_lists__']
+        print("use __assign_set_lists__ = {}".format(__assign_set_lists__))
     else:
-        assign_set_lists = []
+        __assign_set_lists__ = []
     
         
     for key_name in json_dict:
@@ -96,20 +96,20 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
         #     from_str.append('{0}.{2} = {1}{3}["{2}"].is_null();'.format(cpp_vari, json_vari, key_name, json_vari_suffix))
         # el
         if isinstance(key_value, (str, int, float, bool)):
-            if key_name in assign_type_fields:
-                key_type = assign_type_fields[key_name]
+            if key_name in __assign_type_fields__:
+                key_type = __assign_type_fields__[key_name]
                 print("use assigned type %s = %s" % (key_name, key_type) )
             else:
                 key_type = determin_value_type(key_value)
             
-            if key_name in default_value_fields:
+            if key_name in __default_value_fields__:
                 main_str.append("\t{} {} = {};".format(key_type, key_name, determin_default_value(key_value)))
             else:
                 main_str.append("\t{} {};\t//\t{}".format(key_type, key_name, key_value))
 
             from_str.append('try{')
             from_str.append('\t{0}.{2} = {1}{4}.at("{2}").get<{3}>();'.format(cpp_vari, json_vari, key_name, key_type, json_vari_suffix))
-            if key_name not in optional_fields:
+            if key_name not in __optional_fields__:
                 from_str.append("}catch(const std::exception& e){")
                 from_str.append('\tERR("{{:}} not found in json! e={{:}}", "{}", e.what());'.format(key_name))
                 from_str.append('\tthrow e;')
@@ -138,16 +138,16 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
                 print("unable to determin type of list({}:{})".format(key_name, key_value))
             else:
                 key_value = key_value[0]
-                if isinstance(key_value, (str, int, float, bool) or key_name in assign_type_fields):
+                if isinstance(key_value, (str, int, float, bool) or key_name in __assign_type_fields__):
                     sub_json_vari = json_vari+"_"+key_name
 
-                    if key_name in assign_type_fields:
-                        key_type = assign_type_fields[key_name]
+                    if key_name in __assign_type_fields__:
+                        key_type = __assign_type_fields__[key_name]
                         print("use assigned type %s = std::vector<%s>" % (key_name, key_type) )
                     else:
                         key_type = determin_value_type(key_value)
 
-                    if key_name in assign_set_lists:
+                    if key_name in __assign_set_lists__:
                         main_str.append("\tstd::set<{}> {};\t//\t{}".format(key_type, key_name, key_value))
                     else:
                         main_str.append("\tstd::vector<{}> {};\t//\t{}".format(key_type, key_name, key_value))
@@ -156,12 +156,12 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
                     sub_str.append('try{')
                     sub_str.append('\tconst json& {} = {}{}.at("{}");'.format(sub_json_vari, json_vari, json_vari_suffix, key_name))
                     sub_str.append('\tfor(auto& {0}_x: {0}.items()){{'.format(sub_json_vari))
-                    if key_name in assign_set_lists:
+                    if key_name in __assign_set_lists__:
                         sub_str.append('\t\t{}.{}.insert({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
                     else:
                         sub_str.append('\t\t{}.{}.push_back({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
                     sub_str.append('\t}')
-                    if key_name not in optional_fields:
+                    if key_name not in __optional_fields__:
                         sub_str.append("}catch(const std::exception& e){")
                         sub_str.append('\tERR("parse field {{:}} fail! e={{:}}", "{}", e.what());'.format(key_name))
                         sub_str.append('\tthrow e;')
@@ -193,7 +193,7 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
                     sub_str.extend(sub_from)
                     sub_str.append('\t\t{}.{}.emplace_back({});'.format(cpp_vari, key_name, sub_cpp_vari))
                     sub_str.append('\t}')
-                    if key_name not in optional_fields:
+                    if key_name not in __optional_fields__:
                         sub_str.append("}catch(const std::exception& e){")
                         sub_str.append('\tERR("parse field {{:}} fail! e={{:}}", "{}", e.what());'.format(key_name))
                         sub_str.append('\tthrow e;')
