@@ -3,7 +3,7 @@
 
 #include "types/s4type.h"
 #include "db_sqlite/db.h"
-#include "SQLiteCpp/SQLiteCpp.h"
+
 #include <vector>
 
 class dbTbl_dayK_t : public dbTble_t<size_t>{

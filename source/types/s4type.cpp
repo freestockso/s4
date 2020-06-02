@@ -1,8 +1,11 @@
-#include "s3type.h"
-#include "s3codeApp.h"
-#include "s3convertors.h"
-#include "s3app.h"
-#include "s3exceptions.h"
+//#include "s3type.h"
+//#include "s3codeApp.h"
+//#include "s3convertors.h"
+//#include "s3app.h"
+//#include "s3exceptions.h"
+#include "types/s4type.h"
+#include "time/s4time.h"
+#include <string>
 
 using namespace std;
 

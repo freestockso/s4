@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //整数价格，精度=厘
 typedef int price_t;

@@ -23,11 +23,12 @@ cd s4
 
 # Call VS Developer Command Prompt, VS2017 default:
 "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+#"G:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 
 # 
-mkdir build
 cd build
 cmake -A x64 -D_QT_PATH="E:\Qt\5.11.1\msvc2017_64" ..
+#cmake -A x64 -D_QT_PATH="G:\Qt\5.11.1\msvc2017_64" ..
 make
 make install
 ```

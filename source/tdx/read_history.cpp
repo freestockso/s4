@@ -1,4 +1,4 @@
-#include <fstream>
+﻿#include <fstream>
 #include "string/s4string.h"
 #include "tdx/read_history.h"
 #include "common/s4logger.h"
