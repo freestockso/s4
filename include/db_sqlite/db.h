@@ -2,10 +2,11 @@
 
 #include <iostream>
 
-#include "tableIO.h"
 #include <set>
 
 #include "common/s4logger.h"
+
+#include "tableIO.h"
 
 namespace S4{
 namespace sqlite{
@@ -20,11 +21,13 @@ public:
 
     //drop_if_exist: drop table if exist
 	template <typename T>
-	void to_table(tableIO_t<T> * tableIO, const std::string& tbl_name, std::vector<T>& data, bool drop_if_exist)
+	void to_table(tableIO_t<T> * tableIO, const std::string& tbl_name, const std::vector<T>& data, bool drop_if_exist)
 	{
 		const size_t nb_insert = data->size();
 		if (0 == nb_insert)
 			return;
+		
+		tableIO->set_name(tbl_name);
 
 		try
 		{
@@ -58,9 +61,9 @@ public:
 			//	}
 			//}
 			SQLite::Transaction transaction(mDb);
-			for (tableIO_t<T>::const_iter i = data->begin(); i != data->end(); ++i) {
+			for (size_t i = 0; i < data->size(); ++i) {
 				SQLite::Statement   query(mDb, query_str);
-				tableIO->bind_query(query, i);
+				tableIO->bind_query(query, data, i);
 				query.exec();
 			}
 			transaction.commit();
@@ -76,13 +79,15 @@ public:
 	}
 
 	template <typename T>
-    void read_table(typename tableIO_t<T> * tableIO, const std::string& tbl_name, std::vector<T>& data,
+    void read_table(tableIO_t<T> * tableIO, const std::string& tbl_name, std::vector<T>& data,
 			 const std::string & condition="")
 	{
 		if (!mDb.tableExists(tbl_name))
 			return;
-		
+
 		data.clear();
+
+		tableIO->set_name(tbl_name);
 
 		std::string queryStr;
 		if (condition.find("select") > condition.size())
@@ -114,7 +119,7 @@ private:
 
 class DB_group_t {
 public:
-	DB_group_t(const std::string & path, const int Mode = SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+	//DB_group_t(const std::string & path, const int Mode = SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE) ;
 
 	virtual ~DB_group_t() = 0;
 
@@ -129,7 +134,7 @@ public:
 	}
 
 	template <typename T>
-    void read_table(typename tableIO_t<T> * tableIO, const std::string& tbl_name, std::vector<T>& data,
+    void read_table(tableIO_t<T> * tableIO, const std::string& tbl_name, std::vector<T>& data,
 			 const std::string & condition="")
 	{
 		const std::string dbName = mapTable_to_db(tbl_name);
@@ -145,6 +150,19 @@ protected:
 	typedef std::map<const std::string, std::shared_ptr<DB_t>> dbLib_t;
 	dbLib_t _dbLib;
 };
+
+
+class history_data_DB_group_t : public DB_group_t
+{
+public:
+	history_data_DB_group_t(const std::string & path, const int Mode = SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE) ;
+
+	virtual ~history_data_DB_group_t() {};
+
+	virtual const std::string mapTable_to_db(const std::string&) const override;
+
+};
+
 
 }
 }

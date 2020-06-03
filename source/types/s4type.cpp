@@ -4,7 +4,10 @@
 //#include "s3app.h"
 //#include "s3exceptions.h"
 #include "types/s4type.h"
+#include "types/s4convertors.h"
+#include "string/s4string.h"
 #include "time/s4time.h"
+#include "market/s4codeApp.h"
 #include <string>
 
 using namespace std;

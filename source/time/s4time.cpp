@@ -49,7 +49,7 @@ time_utcSec_t date_to_utc(time_date_t date, time_minuSec_t minuSec)
 		return 0;
 	}
 	tm tmTime;
-	uint64_t t = minuSec / 100;
+	int t = minuSec / 100;
 
 	tmTime.tm_sec = minuSec % 100;
 	tmTime.tm_min = t % 100;
@@ -153,7 +153,7 @@ rptTime::~rptTime() {
 	ftime(&te);
 	uint64_t t0 = tb.time * 1000 + tb.millitm;
 	uint64_t t1 = te.time * 1000 + te.millitm;
-	float dlt = (float)(t1 - t0) / 1000.0;
+	double dlt = (double)(t1 - t0) / 1000.0;
     if(dlt>=_rptGate)
 	    INFO("{} used {:.3f} seconds.", m_target, dlt);
 }
@@ -166,8 +166,8 @@ void rptTime::estimate(size_t now, size_t size, size_t gap)
 	ftime(&te);
 	uint64_t t0 = tb.time * 1000 + tb.millitm;
 	uint64_t t1 = te.time * 1000 + te.millitm;
-	float dlt = (float)(t1 - t0) / 1000.0;
-	float tall = dlt * size / now;
-	float tres = tall - dlt;
+	double dlt = (double)(t1 - t0) / 1000.0;
+	double tall = dlt * size / now;
+	double tres = tall - dlt;
 	INFO("{} progress:  [ {:d}/{:d} ]  used={:0.2f}s  ET(all={:0.2f}s; res={:0.2f}s)", m_target, now, size, dlt, tall, tres);
 }

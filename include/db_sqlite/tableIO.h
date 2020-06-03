@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SQLiteCpp/SQLiteCpp.h"
+#include <SQLiteCpp/SQLiteCpp.h>
 #include <string>
 #include <vector>
 
@@ -11,21 +11,21 @@ namespace sqlite{
 template <typename T>
 class tableIO_t{
 public:
-    //db table name
+	//db table name
+	virtual void set_name(const std::string&) = 0;	//query_build / insert need table name
 	// virtual const std::string & get_name(void) const = 0;
-    virtual static const std::string & get_query_build(void) const = 0;
-    virtual static const std::string & get_query_insert(void) const = 0;
-	// virtual void set_name(const std::string&) = 0;
+    virtual const std::string & get_query_build(void) const = 0;
+    virtual const std::string & get_query_insert(void) const = 0;
     // virtual size_t get_size(void) const = 0;
 
-	typedef std::vector<T>::iterator iter;
-	typedef std::vector<T>::const_iterator const_iter;
+	//typedef std::vector<T>::iterator iter;
+	//typedef std::vector<T>::const_iterator const_iter;
 	
 	// virtual iter begin(void) = 0;
 	// virtual iter end(void) = 0;
 
-	virtual static void bind_query(SQLite::Statement & query, const_iter& nb) = 0;
-	virtual static void load_query(SQLite::Statement & query, std::vector<T>& data) = 0;
+	virtual void bind_query(SQLite::Statement & query, const std::vector<T>& data, size_t nb) = 0;
+	virtual void load_query(SQLite::Statement & query, std::vector<T>& data) = 0;
 	// virtual void load_query(const std::string json) = 0;
 };
 
