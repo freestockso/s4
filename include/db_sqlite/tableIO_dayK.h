@@ -13,7 +13,8 @@ class dbTbl_dayK_t : public tableIO_t<struct dayK_t>{
 public:
 	//code: sz000997 -> tbl_name=sz000997_day
 	dbTbl_dayK_t(const std::string code);
-
+    
+    //name: sz000997 -> tbl_name=sz000997_day
 	virtual void set_name(const std::string& name) override;
 
     virtual const std::string & get_query_build(void) const override { return m_qurey_build;};
