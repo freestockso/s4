@@ -1,11 +1,19 @@
 #pragma once
+
+#if defined _MSC_VER
 #pragma warning( push )
 #pragma warning( disable : 4566 )
+#endif
+
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+
+#if defined _MSC_VER
 #pragma warning( pop )
+#endif
+
 
 #include "common/s4thread.h"
 
