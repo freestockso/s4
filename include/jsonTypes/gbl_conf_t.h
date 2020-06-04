@@ -7,10 +7,10 @@
 * Tester:    int gbl_conf_t_tester();
 *
 * Json keep-word: 
-    "default_value_fields": [], # Take value in .json file as the default value of cpp variable
-    "optional_fields": [], # Not require to present to .json file, but always in cpp struct
-    "assign_type_fields": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
-    "assign_set_lists": [], # Take list in .json file as std::set<>, but not std::vector<> as default
+    "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
+    "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
@@ -18,6 +18,7 @@
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
+#include "types/s4type.h"
 
 #include <set>
 #include <list>
@@ -167,7 +168,7 @@ struct gbl_conf_t {
     /* Tester */
     inline int gbl_conf_t_tester() {
 
-        //std::ifstream i("E:/work/s4/./json_template/gbl_conf_t.json");
+        //std::ifstream i("G:/E/work/999_s/s4/./json_template/gbl_conf_t.json");
         std::string i("{    \"logger\":{        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 4,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"./db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
         S4::json json_var;
         //i >> json_var; //from file

@@ -2,6 +2,7 @@
 
 //整数价格，精度=厘
 typedef int price_t;
+typedef double fprice_t;
 #define iPrice_precision 1000
 
 #if iPrice_precision==1000  //A股 通达信存储精度 元*1000

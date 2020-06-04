@@ -7,10 +7,10 @@
 * Tester:    int db_history_t_tester();
 *
 * Json keep-word: 
-    "default_value_fields": [], # Take value in .json file as the default value of cpp variable
-    "optional_fields": [], # Not require to present to .json file, but always in cpp struct
-    "assign_type_fields": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
-    "assign_set_lists": [], # Take list in .json file as std::set<>, but not std::vector<> as default
+    "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
+    "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
@@ -18,6 +18,7 @@
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
+#include "types/s4type.h"
 
 #include <set>
 #include <list>
@@ -276,7 +277,7 @@ struct db_history_t {
     /* Tester */
     inline int db_history_t_tester() {
 
-        //std::ifstream i("E:/work/s4/./json_template/db_history_t.json");
+        //std::ifstream i("G:/E/work/999_s/s4/./json_template/db_history_t.json");
         std::string i("{    \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open\":-1,    \"take\":-1,    \"stop\":-1,    \"close\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
         S4::json json_var;
         //i >> json_var; //from file

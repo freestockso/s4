@@ -7,10 +7,10 @@
 * Tester:    int tdx_xyzq_history_order_t_tester();
 *
 * Json keep-word: 
-    "default_value_fields": [], # Take value in .json file as the default value of cpp variable
-    "optional_fields": [], # Not require to present to .json file, but always in cpp struct
-    "assign_type_fields": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
-    "assign_set_lists": [], # Take list in .json file as std::set<>, but not std::vector<> as default
+    "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
+    "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
@@ -18,6 +18,7 @@
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
+#include "types/s4type.h"
 
 #include <set>
 #include <list>
@@ -157,7 +158,7 @@ struct tdx_xyzq_history_order_t {
     /* Tester */
     inline int tdx_xyzq_history_order_t_tester() {
 
-        //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_order_t.json");
+        //std::ifstream i("G:/E/work/999_s/s4/./json_template/tdx_xyzq_history_order_t.json");
         std::string i("{    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"status\":\"已报\",    \"order_price\":3.94,    \"order_vol\":5600,    \"deal_price\":0.0,    \"deal_vol\":0,    \"order_type\":\"买卖\"}");
         S4::json json_var;
         //i >> json_var; //from file

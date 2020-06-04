@@ -23,6 +23,7 @@ cpp_headers = \
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
+#include "types/s4type.h"
 
 #include <set>
 #include <list>

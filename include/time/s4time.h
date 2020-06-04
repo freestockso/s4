@@ -1,5 +1,6 @@
 #pragma once
 
+#include "market/s4codeApp.h"
 #include "types/s4type_time.h"
 #include <string>
 
@@ -41,3 +42,4 @@ private:
     double _rptGate;
 };
 
+bool isDealTime_stock(time_minuSec_t minuSec, mktCode_t mktCode);

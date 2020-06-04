@@ -7,10 +7,10 @@
 * Tester:    int tdx_xyzq_history_deal_t_tester();
 *
 * Json keep-word: 
-    "default_value_fields": [], # Take value in .json file as the default value of cpp variable
-    "optional_fields": [], # Not require to present to .json file, but always in cpp struct
-    "assign_type_fields": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
-    "assign_set_lists": [], # Take list in .json file as std::set<>, but not std::vector<> as default
+    "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
+    "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
@@ -18,6 +18,7 @@
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
+#include "types/s4type.h"
 
 #include <set>
 #include <list>
@@ -27,14 +28,14 @@ namespace S4 {
 
 /* type */
 struct tdx_xyzq_history_deal_t {
-	int date;	//	20200507
+	time_date_t date;	//	20200507
 	std::string time_format;	//	19:55:30
-	int time_utcSec;	//	123
+	time_utcSec_t time_utcSec;	//	123
 	std::string stock_code;	//	002988
 	std::string stock_name;	//	豪美新材
 	int order_index;	//	26
 	std::string opt_type;	//	买入
-	double deal_price;	//	0.0
+	fprice_t deal_price;	//	0.0
 	int deal_vol;	//	27
 	int deal_amount;	//	0
 	int commission;	//	0
@@ -47,7 +48,7 @@ struct tdx_xyzq_history_deal_t {
 	static bool from_json(const json& json_var, tdx_xyzq_history_deal_t& tdx_xyzq_history_deal_t_var){
 		try{
 			try{
-				tdx_xyzq_history_deal_t_var.date = json_var.at("date").get<int>();
+				tdx_xyzq_history_deal_t_var.date = json_var.at("date").get<time_date_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "date", e.what());
 				throw e;
@@ -59,7 +60,7 @@ struct tdx_xyzq_history_deal_t {
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.time_utcSec = json_var.at("time_utcSec").get<int>();
+				tdx_xyzq_history_deal_t_var.time_utcSec = json_var.at("time_utcSec").get<time_utcSec_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "time_utcSec", e.what());
 				throw e;
@@ -89,7 +90,7 @@ struct tdx_xyzq_history_deal_t {
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.deal_price = json_var.at("deal_price").get<double>();
+				tdx_xyzq_history_deal_t_var.deal_price = json_var.at("deal_price").get<fprice_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "deal_price", e.what());
 				throw e;
@@ -173,8 +174,8 @@ struct tdx_xyzq_history_deal_t {
     /* Tester */
     inline int tdx_xyzq_history_deal_t_tester() {
 
-        //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_deal_t.json");
-        std::string i("{    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"deal_price\" : 0.0,    \"deal_vol\" : 27,    \"deal_amount\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
+        //std::ifstream i("G:/E/work/999_s/s4/./json_template/tdx_xyzq_history_deal_t.json");
+        std::string i("{    \"__assign_type_fields__\": {\"date\":\"time_date_t\", \"time_utcSec\":\"time_utcSec_t\", \"deal_price\":\"fprice_t\"},    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"deal_price\" : 0.0,    \"deal_vol\" : 27,    \"deal_amount\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
         S4::json json_var;
         //i >> json_var; //from file
         json_var = S4::json::parse(i);  //from string

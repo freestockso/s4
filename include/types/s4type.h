@@ -9,6 +9,7 @@
 #include <list>
 
 #include "s4type_precision.h"
+#include "s4type_time.h"
 // #include "s3type_future.h"
 
 /************************************************************************/

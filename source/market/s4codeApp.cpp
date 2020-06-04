@@ -19,7 +19,7 @@ std::string pureCodeStr_to_mktCodeStr(const std::string& pureCode)
 	}
 }
 //"600997" : 170600997, "000001": 330000001
-int pureCodeStr_to_mktCodeInt(const std::string& pureCode)
+mktCode_t pureCodeStr_to_mktCode(const std::string& pureCode)
 {
 	int c = 0;
 	for (int i = 0; i < pureCode.size(); ++i) {
@@ -247,26 +247,26 @@ bool isStk(const std::string & MktCodeStr)
 	return false;
 }
 
-bool isSZmkt(int MktCodeInt)
+bool isSZmkt(mktCode_t MktCodeInt)
 {
 	if (MktCodeInt > SZ_PRB && MktCodeInt < SZ_PRB + PRB_MK)
 		return true;
 	return false;
 }
-bool isSHmkt(int MktCodeInt)
+bool isSHmkt(mktCode_t MktCodeInt)
 {
 	if (MktCodeInt > SH_PRB && MktCodeInt < SH_PRB + PRB_MK)
 		return true;
 	return false;
 }
-bool isCYmkt(int MktCodeInt)
+bool isCYmkt(mktCode_t MktCodeInt)
 {
 	if (MktCodeInt > CY_PRB && MktCodeInt < CY_PRB + CY_PRB_MK)
 		return true;
 	return false;
 }
 
-bool isStk(int MktCodeInt)
+bool isStk(mktCode_t MktCodeInt)
 {
 	if (isSHmkt(MktCodeInt)) {
 		if (MktCodeInt >= SH_PRB + 600000 && MktCodeInt <= SH_PRB + 609999)
@@ -285,7 +285,7 @@ bool isStk(int MktCodeInt)
 	return false;
 }
 //Ö¸Êý
-bool isIdx(int MktCodeInt)
+bool isIdx(mktCode_t MktCodeInt)
 {
 	if (isSHmkt(MktCodeInt)) {
 		if (MktCodeInt >= SH_PRB && MktCodeInt <= SH_PRB + 999)

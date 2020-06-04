@@ -1,4 +1,5 @@
 {
+    "__assign_type_fields__": {"date":"time_date_t", "time_utcSec":"time_utcSec_t", "deal_price":"fprice_t"},
     "date" : 20200507,
     "time_format": "19:55:30",
     "time_utcSec": 123,
