@@ -1,5 +1,15 @@
 {
-    "__assign_type_fields__": {"date":"time_date_t", "time_utcSec":"time_utcSec_t", "deal_price":"fprice_t"},
+    "__assign_type_fields__": {
+        "date":"time_date_t", 
+        "time_utcSec":"time_utcSec_t", 
+        "deal_price":"fprice_t", 
+        "deal_vol":"vol_share_t", 
+        "deal_amount":"amount_t", 
+        "commission":"amount_t", 
+        "stamp_duty":"amount_t", 
+        "transfer_fee":"amount_t", 
+        "other_fees":"amount_t"
+    },
     "date" : 20200507,
     "time_format": "19:55:30",
     "time_utcSec": 123,

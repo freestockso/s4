@@ -168,7 +168,7 @@ struct gbl_conf_t {
     /* Tester */
     inline int gbl_conf_t_tester() {
 
-        //std::ifstream i("G:/E/work/999_s/s4/./json_template/gbl_conf_t.json");
+        //std::ifstream i("E:/work/s4/./json_template/gbl_conf_t.json");
         std::string i("{    \"logger\":{        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 4,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"./db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
         S4::json json_var;
         //i >> json_var; //from file

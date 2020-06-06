@@ -265,6 +265,13 @@ bool isCYmkt(mktCode_t MktCodeInt)
 		return true;
 	return false;
 }
+bool isKCmkt(mktCode_t MktCodeInt)
+{
+	if (MktCodeInt > KC_PRB && MktCodeInt < KC_PRB + KC_PRB_MK)
+		return true;
+	return false;
+}
+
 
 bool isStk(mktCode_t MktCodeInt)
 {

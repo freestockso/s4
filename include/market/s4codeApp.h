@@ -1,6 +1,9 @@
 #pragma once
+
 #define PRB_MK 999999
 #define SH_PRB 170000000
+#define KC_PRB 330688000
+#define KC_PRB_MK 1000
 #define SZ_PRB 330000000
 #define CY_PRB 330300000
 #define CY_PRB_MK 10000
@@ -52,6 +55,7 @@ std::string mktCodeInt_to_mktCodeStr(int mktCode);
 bool isSZmkt(mktCode_t MktCodeInt);
 bool isSHmkt(mktCode_t MktCodeInt);
 bool isCYmkt(mktCode_t MktCodeInt);
+bool isKCmkt(mktCode_t MktCodeInt);
 
 bool isStk(mktCode_t MktCodeInt);
 bool isIdx(mktCode_t MktCodeInt);

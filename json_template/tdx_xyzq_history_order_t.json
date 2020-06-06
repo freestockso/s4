@@ -1,4 +1,12 @@
 {
+    "__assign_type_fields__": {
+        "date":"time_date_t", 
+        "time_utcSec":"time_utcSec_t", 
+        "deal_price":"fprice_t", 
+        "order_price":"fprice_t", 
+        "order_vol":"vol_share_t", 
+        "deal_vol":"vol_share_t"
+    },
     "date" : 20200507,
     "time_format": "19:55:30",
     "time_utcSec": 123,
@@ -6,10 +14,11 @@
     "stock_name": "豪美新材",
     "order_index":26,
     "opt_type":"买入",
+    "delegate_type":"信用交易/撤单",
     "status":"已报",
     "order_price":3.94,
     "order_vol":5600,
     "deal_price":0.0,
     "deal_vol":0,
-    "order_type":"买卖"
+    "quote_mode":"买卖"
 }

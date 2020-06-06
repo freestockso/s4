@@ -36,12 +36,12 @@ struct tdx_xyzq_history_deal_t {
 	int order_index;	//	26
 	std::string opt_type;	//	买入
 	fprice_t deal_price;	//	0.0
-	int deal_vol;	//	27
-	int deal_amount;	//	0
-	int commission;	//	0
-	int stamp_duty;	//	0
-	int transfer_fee;	//	0
-	int other_fees;	//	0
+	vol_share_t deal_vol;	//	27
+	amount_t deal_amount;	//	0
+	amount_t commission;	//	0
+	amount_t stamp_duty;	//	0
+	amount_t transfer_fee;	//	0
+	amount_t other_fees;	//	0
 	std::string remarks;	//	起始配号:226168906
 
 	/* from json */
@@ -96,37 +96,37 @@ struct tdx_xyzq_history_deal_t {
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.deal_vol = json_var.at("deal_vol").get<int>();
+				tdx_xyzq_history_deal_t_var.deal_vol = json_var.at("deal_vol").get<vol_share_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "deal_vol", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.deal_amount = json_var.at("deal_amount").get<int>();
+				tdx_xyzq_history_deal_t_var.deal_amount = json_var.at("deal_amount").get<amount_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "deal_amount", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.commission = json_var.at("commission").get<int>();
+				tdx_xyzq_history_deal_t_var.commission = json_var.at("commission").get<amount_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "commission", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.stamp_duty = json_var.at("stamp_duty").get<int>();
+				tdx_xyzq_history_deal_t_var.stamp_duty = json_var.at("stamp_duty").get<amount_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "stamp_duty", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.transfer_fee = json_var.at("transfer_fee").get<int>();
+				tdx_xyzq_history_deal_t_var.transfer_fee = json_var.at("transfer_fee").get<amount_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "transfer_fee", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_deal_t_var.other_fees = json_var.at("other_fees").get<int>();
+				tdx_xyzq_history_deal_t_var.other_fees = json_var.at("other_fees").get<amount_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "other_fees", e.what());
 				throw e;
@@ -174,8 +174,8 @@ struct tdx_xyzq_history_deal_t {
     /* Tester */
     inline int tdx_xyzq_history_deal_t_tester() {
 
-        //std::ifstream i("G:/E/work/999_s/s4/./json_template/tdx_xyzq_history_deal_t.json");
-        std::string i("{    \"__assign_type_fields__\": {\"date\":\"time_date_t\", \"time_utcSec\":\"time_utcSec_t\", \"deal_price\":\"fprice_t\"},    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"deal_price\" : 0.0,    \"deal_vol\" : 27,    \"deal_amount\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
+        //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_deal_t.json");
+        std::string i("{    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"deal_price\":\"fprice_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amount\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"deal_price\" : 0.0,    \"deal_vol\" : 27,    \"deal_amount\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
         S4::json json_var;
         //i >> json_var; //from file
         json_var = S4::json::parse(i);  //from string

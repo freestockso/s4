@@ -28,25 +28,26 @@ namespace S4 {
 
 /* type */
 struct tdx_xyzq_history_order_t {
-	int date;	//	20200507
+	time_date_t date;	//	20200507
 	std::string time_format;	//	19:55:30
-	int time_utcSec;	//	123
+	time_utcSec_t time_utcSec;	//	123
 	std::string stock_code;	//	002988
 	std::string stock_name;	//	豪美新材
 	int order_index;	//	26
 	std::string opt_type;	//	买入
+	std::string delegate_type;	//	信用交易/撤单
 	std::string status;	//	已报
-	double order_price;	//	3.94
-	int order_vol;	//	5600
-	double deal_price;	//	0.0
-	int deal_vol;	//	0
-	std::string order_type;	//	买卖
+	fprice_t order_price;	//	3.94
+	vol_share_t order_vol;	//	5600
+	fprice_t deal_price;	//	0.0
+	vol_share_t deal_vol;	//	0
+	std::string quote_mode;	//	买卖
 
 	/* from json */
 	static bool from_json(const json& json_var, tdx_xyzq_history_order_t& tdx_xyzq_history_order_t_var){
 		try{
 			try{
-				tdx_xyzq_history_order_t_var.date = json_var.at("date").get<int>();
+				tdx_xyzq_history_order_t_var.date = json_var.at("date").get<time_date_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "date", e.what());
 				throw e;
@@ -58,7 +59,7 @@ struct tdx_xyzq_history_order_t {
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.time_utcSec = json_var.at("time_utcSec").get<int>();
+				tdx_xyzq_history_order_t_var.time_utcSec = json_var.at("time_utcSec").get<time_utcSec_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "time_utcSec", e.what());
 				throw e;
@@ -88,39 +89,45 @@ struct tdx_xyzq_history_order_t {
 				throw e;
 			}
 			try{
+				tdx_xyzq_history_order_t_var.delegate_type = json_var.at("delegate_type").get<std::string>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "delegate_type", e.what());
+				throw e;
+			}
+			try{
 				tdx_xyzq_history_order_t_var.status = json_var.at("status").get<std::string>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "status", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.order_price = json_var.at("order_price").get<double>();
+				tdx_xyzq_history_order_t_var.order_price = json_var.at("order_price").get<fprice_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "order_price", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.order_vol = json_var.at("order_vol").get<int>();
+				tdx_xyzq_history_order_t_var.order_vol = json_var.at("order_vol").get<vol_share_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "order_vol", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.deal_price = json_var.at("deal_price").get<double>();
+				tdx_xyzq_history_order_t_var.deal_price = json_var.at("deal_price").get<fprice_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "deal_price", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.deal_vol = json_var.at("deal_vol").get<int>();
+				tdx_xyzq_history_order_t_var.deal_vol = json_var.at("deal_vol").get<vol_share_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "deal_vol", e.what());
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.order_type = json_var.at("order_type").get<std::string>();
+				tdx_xyzq_history_order_t_var.quote_mode = json_var.at("quote_mode").get<std::string>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "order_type", e.what());
+				ERR("{:} not found in json! e={:}", "quote_mode", e.what());
 				throw e;
 			}
 		}catch (const std::exception& e){
@@ -139,12 +146,13 @@ struct tdx_xyzq_history_order_t {
 			json_var["stock_name"] = tdx_xyzq_history_order_t_var.stock_name;
 			json_var["order_index"] = tdx_xyzq_history_order_t_var.order_index;
 			json_var["opt_type"] = tdx_xyzq_history_order_t_var.opt_type;
+			json_var["delegate_type"] = tdx_xyzq_history_order_t_var.delegate_type;
 			json_var["status"] = tdx_xyzq_history_order_t_var.status;
 			json_var["order_price"] = tdx_xyzq_history_order_t_var.order_price;
 			json_var["order_vol"] = tdx_xyzq_history_order_t_var.order_vol;
 			json_var["deal_price"] = tdx_xyzq_history_order_t_var.deal_price;
 			json_var["deal_vol"] = tdx_xyzq_history_order_t_var.deal_vol;
-			json_var["order_type"] = tdx_xyzq_history_order_t_var.order_type;
+			json_var["quote_mode"] = tdx_xyzq_history_order_t_var.quote_mode;
 		}catch (const std::exception& e){
 		ERR("to json {:} \nfail:{:}", json_var.dump(4), e.what());
 			return false;
@@ -158,8 +166,8 @@ struct tdx_xyzq_history_order_t {
     /* Tester */
     inline int tdx_xyzq_history_order_t_tester() {
 
-        //std::ifstream i("G:/E/work/999_s/s4/./json_template/tdx_xyzq_history_order_t.json");
-        std::string i("{    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"status\":\"已报\",    \"order_price\":3.94,    \"order_vol\":5600,    \"deal_price\":0.0,    \"deal_vol\":0,    \"order_type\":\"买卖\"}");
+        //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_order_t.json");
+        std::string i("{    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"deal_price\":\"fprice_t\",         \"order_price\":\"fprice_t\",         \"order_vol\":\"vol_share_t\",         \"deal_vol\":\"vol_share_t\"    },    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"delegate_type\":\"信用交易/撤单\",    \"status\":\"已报\",    \"order_price\":3.94,    \"order_vol\":5600,    \"deal_price\":0.0,    \"deal_vol\":0,    \"quote_mode\":\"买卖\"}");
         S4::json json_var;
         //i >> json_var; //from file
         json_var = S4::json::parse(i);  //from string

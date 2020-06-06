@@ -18,10 +18,10 @@
     "__comment__5":"current status of id: new / opened / closed / aborted",
     "status":"new",
 
-    "open":-1,
-    "take":-1,
-    "stop":-1,
-    "close":-1,
+    "open_order":-1,
+    "take_order":-1,
+    "stop_order":-1,
+    "close_order":-1,
 
     "__comment__6":"not in use for now",
     "open_deal":-1,

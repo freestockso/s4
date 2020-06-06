@@ -86,7 +86,7 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
         key_value = json_dict[key_name]
 
         if key_name.find("__comment__")==0:
-            main_str.append("//"+key_value)
+            main_str.append("\t//"+key_value)
             continue
 
         # if key_value is None:

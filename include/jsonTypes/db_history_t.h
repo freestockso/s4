@@ -29,26 +29,26 @@ namespace S4 {
 /* type */
 struct db_history_t {
 	int rowid;	//	0
-//strategy name
+	//strategy name
 	std::string stgName;	//	tdx_xyzq
-//id through open-close
+	//id through open-close
 	int id;	//	0
 	int tdxOrderId;	//	0
 	std::string insCode;	//	sz000001
-//no name, 平安银行 is not good for sqliteDB
+	//no name, 平安银行 is not good for sqliteDB
 	int time;	//	123
 	std::string datetime;	//	2018_04_26__00_00_00
-//current option of id: open / change_take / change_stop / close / change_close / abort
+	//current option of id: open / change_take / change_stop / close / change_close / abort
 	std::string optType;	//	open
-//long as stock only for now
+	//long as stock only for now
 	std::string position;	//	long
-//current status of id: new / opened / closed / aborted
+	//current status of id: new / opened / closed / aborted
 	std::string status;	//	new
-	int open;	//	-1
-	int take;	//	-1
-	int stop;	//	-1
-	int close;	//	-1
-//not in use for now
+	int open_order;	//	-1
+	int take_order;	//	-1
+	int stop_order;	//	-1
+	int close_order;	//	-1
+	//not in use for now
 	int open_deal;	//	-1
 	int openVol;	//	-1
 	int openVol_deal;	//	-1
@@ -127,27 +127,27 @@ struct db_history_t {
 				throw e;
 			}
 			try{
-				db_history_t_var.open = json_var.at("open").get<int>();
+				db_history_t_var.open_order = json_var.at("open_order").get<int>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "open", e.what());
+				ERR("{:} not found in json! e={:}", "open_order", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.take = json_var.at("take").get<int>();
+				db_history_t_var.take_order = json_var.at("take_order").get<int>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "take", e.what());
+				ERR("{:} not found in json! e={:}", "take_order", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.stop = json_var.at("stop").get<int>();
+				db_history_t_var.stop_order = json_var.at("stop_order").get<int>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "stop", e.what());
+				ERR("{:} not found in json! e={:}", "stop_order", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.close = json_var.at("close").get<int>();
+				db_history_t_var.close_order = json_var.at("close_order").get<int>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "close", e.what());
+				ERR("{:} not found in json! e={:}", "close_order", e.what());
 				throw e;
 			}
 			try{
@@ -247,10 +247,10 @@ struct db_history_t {
 			json_var["optType"] = db_history_t_var.optType;
 			json_var["position"] = db_history_t_var.position;
 			json_var["status"] = db_history_t_var.status;
-			json_var["open"] = db_history_t_var.open;
-			json_var["take"] = db_history_t_var.take;
-			json_var["stop"] = db_history_t_var.stop;
-			json_var["close"] = db_history_t_var.close;
+			json_var["open_order"] = db_history_t_var.open_order;
+			json_var["take_order"] = db_history_t_var.take_order;
+			json_var["stop_order"] = db_history_t_var.stop_order;
+			json_var["close_order"] = db_history_t_var.close_order;
 			json_var["open_deal"] = db_history_t_var.open_deal;
 			json_var["openVol"] = db_history_t_var.openVol;
 			json_var["openVol_deal"] = db_history_t_var.openVol_deal;
@@ -277,8 +277,8 @@ struct db_history_t {
     /* Tester */
     inline int db_history_t_tester() {
 
-        //std::ifstream i("G:/E/work/999_s/s4/./json_template/db_history_t.json");
-        std::string i("{    \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open\":-1,    \"take\":-1,    \"stop\":-1,    \"close\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
+        //std::ifstream i("E:/work/s4/./json_template/db_history_t.json");
+        std::string i("{    \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open_order\":-1,    \"take_order\":-1,    \"stop_order\":-1,    \"close_order\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
         S4::json json_var;
         //i >> json_var; //from file
         json_var = S4::json::parse(i);  //from string

@@ -43,8 +43,8 @@ typedef float amount_t;
 #define _KW ((amount_t)1E7)
 
 //成交量，DayK/minuK/GBBQ中精度=股(share)，snap中精度=手(board)=100股
-typedef uint32_t vol_share_t;
-typedef uint32_t vol_board_t;
+typedef int32_t vol_share_t;
+typedef int32_t vol_board_t;
 #define vBoard_unit (100)
 // #define vShare_to_vBoard(x)  ((x)/vBoard_unit)
 #define vBoard_to_vShare(x)  ((x)*vBoard_unit)

@@ -34,3 +34,4 @@ make install
 ```
 
 ## 数据库:sqlite
+简单，相应快。
