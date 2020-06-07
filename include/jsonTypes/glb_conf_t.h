@@ -32,16 +32,16 @@ namespace S4 {
 /* type */
 struct glb_conf_t {
 	struct logger_t {
-		bool enable_console;	//	True
-		bool enable_file_all;	//	False
-		bool enable_file_all_pure;	//	True
-		bool enable_file_err;	//	False
-		bool enable_file_err_pure;	//	True
-		spdlog::level::level_enum level;	//	4
-		size_t max_file_size_MB;	//	9999
-		size_t max_files;	//	10
-		std::string save_path;	//	./logs
-		std::string file_preamble;	//	S4
+		bool enable_console = (bool)true;
+		bool enable_file_all = (bool)false;
+		bool enable_file_all_pure = (bool)true;
+		bool enable_file_err = (bool)false;
+		bool enable_file_err_pure = (bool)true;
+		spdlog::level::level_enum level = (spdlog::level::level_enum)4;
+		size_t max_file_size_MB = (size_t)9999;
+		size_t max_files = (size_t)10;
+		std::string save_path = (std::string)"./logs";
+		std::string file_preamble = (std::string)"S4";
 	};
 	logger_t logger;
 	struct db_t {
@@ -60,63 +60,43 @@ struct glb_conf_t {
 			const nlohmann::json& json_var_logger = json_var["logger"];
 			try{
 				glb_conf_t_var.logger.enable_console = json_var_logger.at("enable_console").get<bool>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "enable_console", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.enable_file_all = json_var_logger.at("enable_file_all").get<bool>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "enable_file_all", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.enable_file_all_pure = json_var_logger.at("enable_file_all_pure").get<bool>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "enable_file_all_pure", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.enable_file_err = json_var_logger.at("enable_file_err").get<bool>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "enable_file_err", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.enable_file_err_pure = json_var_logger.at("enable_file_err_pure").get<bool>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "enable_file_err_pure", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.level = json_var_logger.at("level").get<spdlog::level::level_enum>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "level", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.max_file_size_MB = json_var_logger.at("max_file_size_MB").get<size_t>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "max_file_size_MB", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.max_files = json_var_logger.at("max_files").get<size_t>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "max_files", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.save_path = json_var_logger.at("save_path").get<std::string>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "save_path", e.what());
-				throw e;
+			}catch(...){
 			}
 			try{
 				glb_conf_t_var.logger.file_preamble = json_var_logger.at("file_preamble").get<std::string>();
-			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "file_preamble", e.what());
-				throw e;
+			}catch(...){
 			}
 			const nlohmann::json& json_var_db = json_var["db"];
 			try{
@@ -180,7 +160,7 @@ struct glb_conf_t {
         inline int glb_conf_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/glb_conf_t.json");
-            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 4,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
+            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 4,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

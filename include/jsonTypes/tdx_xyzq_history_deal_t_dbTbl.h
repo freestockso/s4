@@ -41,13 +41,9 @@ public:
         m_qurey_insert = "INSERT OR IGNORE INTO " + m_name + K_IN;
     }
 
-    virtual const std::string & get_query_build(void) const override { 
-        return m_qurey_build;
-    };
+    virtual const std::string & get_query_build(void) const override { return m_qurey_build;};
 
-    virtual const std::string & get_query_insert(void) const override { 
-        return m_qurey_insert;
-    };
+    virtual const std::string & get_query_insert(void) const override { return m_qurey_insert;};
     
     virtual void bind_query(SQLite::Statement& query, const std::vector<struct tdx_xyzq_history_deal_t>& data, size_t nb) override
     {

@@ -110,7 +110,7 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
                 key_type = determin_value_type(key_value)
             
             if key_name in __default_value_fields__:
-                main_str.append("\t{} {} = {};".format(key_type, key_name, determin_default_value(key_value)))
+                main_str.append("\t{} {} = ({}){};".format(key_type, key_name, key_type, determin_default_value(key_value)))
             else:
                 main_str.append("\t{} {};\t//\t{}".format(key_type, key_name, key_value))
 
