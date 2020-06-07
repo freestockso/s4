@@ -12,9 +12,12 @@
     "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
+    "__sqlite_capable__":"", # enable sqlite tableIO autogen
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
 #pragma once
+
+
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
@@ -45,7 +48,7 @@ struct tdx_xyzq_history_deal_t {
 	std::string remarks;	//	起始配号:226168906
 
 	/* from json */
-	static bool from_json(const json& json_var, tdx_xyzq_history_deal_t& tdx_xyzq_history_deal_t_var){
+	static bool from_json(const nlohmann::json& json_var, tdx_xyzq_history_deal_t& tdx_xyzq_history_deal_t_var){
 		try{
 			try{
 				tdx_xyzq_history_deal_t_var.date = json_var.at("date").get<time_date_t>();
@@ -144,7 +147,7 @@ struct tdx_xyzq_history_deal_t {
 		return true;
 	}
 	/* to json */
-	static bool to_json(json& json_var, const tdx_xyzq_history_deal_t& tdx_xyzq_history_deal_t_var){
+	static bool to_json(nlohmann::json& json_var, const tdx_xyzq_history_deal_t& tdx_xyzq_history_deal_t_var){
 		try{
 			json_var["date"] = tdx_xyzq_history_deal_t_var.date;
 			json_var["time_format"] = tdx_xyzq_history_deal_t_var.time_format;
@@ -171,31 +174,31 @@ struct tdx_xyzq_history_deal_t {
 } // namespace S4
 
 
-    /* Tester */
-    inline int tdx_xyzq_history_deal_t_tester() {
+        /* Tester */
+        inline int tdx_xyzq_history_deal_t_tester() {
 
-        //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_deal_t.json");
-        std::string i("{    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"deal_price\":\"fprice_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amount\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"deal_price\" : 0.0,    \"deal_vol\" : 27,    \"deal_amount\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
-        S4::json json_var;
-        //i >> json_var; //from file
-        json_var = S4::json::parse(i);  //from string
+            //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_deal_t.json");
+            std::string i("{    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"deal_price\":\"fprice_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amount\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"__sqlite_capable__\" : true,    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"deal_price\" : 0.0,    \"deal_vol\" : 27,    \"deal_amount\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
+            nlohmann::json json_var;
+            //i >> json_var; //from file
+            json_var = nlohmann::json::parse(i);  //from string
 
-        S4::tdx_xyzq_history_deal_t tdx_xyzq_history_deal_t_var;
+            S4::tdx_xyzq_history_deal_t tdx_xyzq_history_deal_t_var;
 
-        if(!S4::tdx_xyzq_history_deal_t::from_json(json_var, tdx_xyzq_history_deal_t_var)){
-            INFO("S4::tdx_xyzq_history_deal_t::from_json fail!");
-            return -1;
+            if(!S4::tdx_xyzq_history_deal_t::from_json(json_var, tdx_xyzq_history_deal_t_var)){
+                INFO("S4::tdx_xyzq_history_deal_t::from_json fail!");
+                return -1;
+            }
+
+            nlohmann::json j_out;
+            if(!S4::tdx_xyzq_history_deal_t::to_json(j_out, tdx_xyzq_history_deal_t_var)){
+                INFO("S4::tdx_xyzq_history_deal_t::to_json fail!");
+                return -1;
+            }
+
+            INFO("{:}", j_out.dump(4));
+
+            return 0;
         }
 
-        S4::json j_out;
-        if(!S4::tdx_xyzq_history_deal_t::to_json(j_out, tdx_xyzq_history_deal_t_var)){
-            INFO("S4::tdx_xyzq_history_deal_t::to_json fail!");
-            return -1;
-        }
-
-        INFO("{:}", j_out.dump(4));
-
-        return 0;
-    }
-
-    
+        

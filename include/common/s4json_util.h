@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
- #include "common/s4logger.h"
+#include "common/s4logger.h"
 
 namespace S4{
 

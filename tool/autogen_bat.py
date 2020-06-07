@@ -21,4 +21,13 @@ for api,out in api_list:
         print("------------------\n[ERROR] {} failed!\n------------------".format(api))
         exit(-1)
 
+CMD_LINE = "python ./tool/autogen_json_tableIO.py {} {}"
+for api,_ in api_list:
+    k = os.system(CMD_LINE.format(api,out_folder))
+    if k==0:
+        print("------------------\n{} succeed!\n------------------".format(api))
+    else:
+        print("------------------\n[ERROR] {} failed!\n------------------".format(api))
+        exit(-1)
+
 print("done!")

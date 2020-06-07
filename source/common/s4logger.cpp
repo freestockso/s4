@@ -3,8 +3,8 @@
 namespace S4 {
 
 
-std::string logger::_time_base = "null";
-std::filesystem::path logger::_file_folder = ".";
+std::string s4logger::_time_base = "null";
+std::filesystem::path s4logger::_file_folder = ".";
 
 
 }//namespace S4

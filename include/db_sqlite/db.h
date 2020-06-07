@@ -21,9 +21,9 @@ public:
 
     //drop_if_exist: drop table if exist
 	template <typename T>
-	void to_table(tableIO_t<T> * tableIO, const std::string& tbl_name, const std::vector<T>& data, bool drop_if_exist)
+	void to_table(tableIO_t<T> * tableIO, const std::string& tbl_name, const std::vector<T>& data, bool drop_if_exist = true)
 	{
-		const size_t nb_insert = data->size();
+		const size_t nb_insert = data.size();
 		if (0 == nb_insert)
 			return;
 		
@@ -61,7 +61,7 @@ public:
 			//	}
 			//}
 			SQLite::Transaction transaction(mDb);
-			for (size_t i = 0; i < data->size(); ++i) {
+			for (size_t i = 0; i < data.size(); ++i) {
 				SQLite::Statement   query(mDb, query_str);
 				tableIO->bind_query(query, data, i);
 				query.exec();
@@ -73,7 +73,7 @@ public:
 		}
 		catch (std::exception& e)
 		{
-			FATAL("SQLite {} to_table {} failed: exception: {}", m_name,data->get_name(), e.what());
+			FATAL("SQLite {} to_table {} failed: exception: {}", m_name, tbl_name, e.what());
 			// exit(EXIT_FAILURE);//return; // unexpected error : exit the example program
 		}
 	}
@@ -121,7 +121,8 @@ class DB_group_t {
 public:
 	//DB_group_t(const std::string & path, const int Mode = SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE) ;
 
-	virtual ~DB_group_t() = 0;
+	virtual ~DB_group_t() = 0
+	{}
 
 	template <typename T>
 	void to_table(tableIO_t<T> * tableIO, const std::string& tbl_name, std::vector<T>& data, bool drop_if_exist)

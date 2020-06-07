@@ -42,11 +42,10 @@ static const std::string K_IN(
     ") VALUES (?,?,?,?,?,?,?)"
 );
 
-dbTbl_dayK_t::dbTbl_dayK_t(const std::string name):
-		m_name(name+"_day"),
-        m_qurey_build("CREATE TABLE if not exists " + m_name + K_COL),
-        m_qurey_insert("INSERT OR IGNORE INTO " + m_name + K_IN)
-    {};
+dbTbl_dayK_t::dbTbl_dayK_t(const std::string name)
+{
+    set_name(name);
+};
 
 void  dbTbl_dayK_t::set_name(const std::string& name) {
 	m_name = name + "_day";

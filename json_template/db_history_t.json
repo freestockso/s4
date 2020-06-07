@@ -1,4 +1,6 @@
 {
+    "__sqlite_capable__" : true,
+    
     "rowid":0,
 
     "__comment__0":"strategy name",

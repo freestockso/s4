@@ -10,6 +10,7 @@
         "transfer_fee":"amount_t", 
         "other_fees":"amount_t"
     },
+    "__sqlite_capable__" : true,
     "date" : 20200507,
     "time_format": "19:55:30",
     "time_utcSec": 123,

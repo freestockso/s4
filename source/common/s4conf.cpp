@@ -1,4 +1,4 @@
-#include "common//s4conf.h"
+#include "common/s4conf.h"
 
 namespace S4 {
 

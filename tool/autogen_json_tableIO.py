@@ -4,11 +4,13 @@ import os
 
 from autogen_json_type import cpp_headers, keep_words
 
-json_cpp_headers = cpp_headers + \
+json_cpp_headers = \
 """
 #include "types/s4type.h"
 #include "db_sqlite/tableIO.h"
+#include <SQLiteCpp/ExecuteMany.h>
 
+#include "jsonTypes/{}.h"
 """
 
 namespace_head = \
@@ -55,7 +57,7 @@ def dict_to_cols(json_dict):
         __assign_type_fields__ = {}
         
     for key_name in json_dict:
-        if key_name in keep_words:
+        if key_name in keep_words or key_name.find("__comment__")==0:
             continue
 
         key_value = json_dict[key_name]
@@ -89,7 +91,7 @@ PRIMARY_KEY_in_order = [ 'date', 'mktCode', 'datetime', 'code']
 def get_K_COL(cols):
     K_COL = \
 """
-const std::string K_COL(
+const std::string K_COL =
     "( "
 """
     primary_key = None
@@ -107,7 +109,7 @@ const std::string K_COL(
     K_COL += \
 '''
         "PRIMARY KEY({})"
-    ")");
+    ")";
 '''.format(primary_key)
 
     return K_COL
@@ -116,7 +118,7 @@ def get_K_IN(cols):
     
     K_IN = \
 '''
-const std::string K_IN(
+const std::string K_IN =
     "("'''
     l = []
     for name in cols:
@@ -126,7 +128,7 @@ const std::string K_IN(
 """
     "{}"
     ") VALUES ({})"
-);
+;
 """.format(", ".join(l), ','.join(['?']*len(cols)))
 
     return K_IN
@@ -152,11 +154,11 @@ def get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fi
 """
 class {1} : public tableIO_t<struct {0}>{{
 public:
-	{1}(const std::string name):
-		m_name(name),
-        m_qurey_build("CREATE TABLE if not exists " + m_name + K_COL),
-        m_qurey_insert("INSERT OR IGNORE INTO " + m_name + K_IN)
-    {{}};
+    typedef struct {0} data_t;
+	//{1}(const std::string name)
+    //{{
+    //    set_name(name);
+    //}};
     
 	virtual void set_name(const std::string& name) override {{
         m_name = name;
@@ -171,7 +173,7 @@ public:
     virtual void bind_query(SQLite::Statement& query, const std::vector<struct {0}>& data, size_t nb) override
     {{
         const struct {0} & K_data = data[nb];
-        SQLite::bind(query{4});
+        SQLite::bind(query,\n\t\t\tK_data.{4});
     }}
 
     //warning: not clear data inside, but append DB.data to it
@@ -183,7 +185,7 @@ public:
     }}
 
 private:
-	std::string m_name;
+	//std::string m_name;
     std::string m_qurey_build;
     std::string m_qurey_insert;
 private:
@@ -212,7 +214,7 @@ if __name__ == "__main__":
 
     if len(sys.argv)>=3:
         tgt_cpp = sys.argv[2]
-        if tgt_cpp.find(".") <0:
+        if os.path.isdir(tgt_cpp):
             tgt_cpp = tgt_cpp + "/" + io_class_name + ".h"
     else:
         tgt_cpp = src_json.replace(".json", "_dbTbl.h")
@@ -231,14 +233,18 @@ if __name__ == "__main__":
         print("error:only support base type==dict for now!")
         exit(0)
 
+    if "__sqlite_capable__" not in json_instance:
+        print("not __sqlite_capable__")
+        exit(0)
+
+
     cols, __assign_type_fields__ = dict_to_cols(json_instance)
     K_IN = get_K_IN(cols)
     K_COL = get_K_COL(cols)
     class_t = get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fields__)
-    print(class_t)
+    # print(class_t)
 
-
-    output_text = json_cpp_headers + namespace_head + class_t + namespace_tail
+    output_text = cpp_headers + json_cpp_headers.format(data_type_name) + namespace_head + class_t + namespace_tail
     
     if tgt_cpp is not None:
         with open(tgt_cpp, 'w+') as fo:

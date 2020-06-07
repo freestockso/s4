@@ -12,9 +12,12 @@
     "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
+    "__sqlite_capable__":"", # enable sqlite tableIO autogen
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
 #pragma once
+
+
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
@@ -64,7 +67,7 @@ struct db_history_t {
 	std::string remarks;	//	起始配号:226168906
 
 	/* from json */
-	static bool from_json(const json& json_var, db_history_t& db_history_t_var){
+	static bool from_json(const nlohmann::json& json_var, db_history_t& db_history_t_var){
 		try{
 			try{
 				db_history_t_var.rowid = json_var.at("rowid").get<int>();
@@ -235,7 +238,7 @@ struct db_history_t {
 		return true;
 	}
 	/* to json */
-	static bool to_json(json& json_var, const db_history_t& db_history_t_var){
+	static bool to_json(nlohmann::json& json_var, const db_history_t& db_history_t_var){
 		try{
 			json_var["rowid"] = db_history_t_var.rowid;
 			json_var["stgName"] = db_history_t_var.stgName;
@@ -274,31 +277,31 @@ struct db_history_t {
 } // namespace S4
 
 
-    /* Tester */
-    inline int db_history_t_tester() {
+        /* Tester */
+        inline int db_history_t_tester() {
 
-        //std::ifstream i("E:/work/s4/./json_template/db_history_t.json");
-        std::string i("{    \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open_order\":-1,    \"take_order\":-1,    \"stop_order\":-1,    \"close_order\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
-        S4::json json_var;
-        //i >> json_var; //from file
-        json_var = S4::json::parse(i);  //from string
+            //std::ifstream i("E:/work/s4/./json_template/db_history_t.json");
+            std::string i("{    \"__sqlite_capable__\" : true,        \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open_order\":-1,    \"take_order\":-1,    \"stop_order\":-1,    \"close_order\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
+            nlohmann::json json_var;
+            //i >> json_var; //from file
+            json_var = nlohmann::json::parse(i);  //from string
 
-        S4::db_history_t db_history_t_var;
+            S4::db_history_t db_history_t_var;
 
-        if(!S4::db_history_t::from_json(json_var, db_history_t_var)){
-            INFO("S4::db_history_t::from_json fail!");
-            return -1;
+            if(!S4::db_history_t::from_json(json_var, db_history_t_var)){
+                INFO("S4::db_history_t::from_json fail!");
+                return -1;
+            }
+
+            nlohmann::json j_out;
+            if(!S4::db_history_t::to_json(j_out, db_history_t_var)){
+                INFO("S4::db_history_t::to_json fail!");
+                return -1;
+            }
+
+            INFO("{:}", j_out.dump(4));
+
+            return 0;
         }
 
-        S4::json j_out;
-        if(!S4::db_history_t::to_json(j_out, db_history_t_var)){
-            INFO("S4::db_history_t::to_json fail!");
-            return -1;
-        }
-
-        INFO("{:}", j_out.dump(4));
-
-        return 0;
-    }
-
-    
+        

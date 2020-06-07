@@ -23,41 +23,46 @@
 #include <string>
 #include <map>
 
+
 namespace S4{
+
 #define LOG_SIZE_MB (1024 * 1024)
-class logger : std::enable_shared_from_this<logger>
+class s4logger : std::enable_shared_from_this<s4logger>
 {
 public:
-    typedef std::shared_ptr<logger> Ptr;
+    typedef std::shared_ptr<s4logger> Ptr;
 	struct param_t
 	{
-		bool enable_console = true;
-		bool enable_file_all = false;
-		bool enable_file_all_pure = false;
-		bool enable_file_err = false;
-		bool enable_file_err_pure = false;
-		spdlog::level::level_enum level = spdlog::level::info;
-		std::string save_path = ".";
-		std::string file_preamble = "S4";
-		size_t max_file_size_MB = (size_t)-1;
-		size_t max_files = 10;
+		bool enable_console;	//	True
+		bool enable_file_all;	//	False
+		bool enable_file_all_pure;	//	True
+		bool enable_file_err;	//	False
+		bool enable_file_err_pure;	//	True
+		spdlog::level::level_enum level = spdlog::level::info;	//	4
+		size_t max_file_size_MB = (size_t)-1;	//	9999
+		size_t max_files = 10;	//	10
+		std::string save_path = ".";	//	./logs
+		std::string file_preamble;	//	S4
 	};
+	// typedef glb_conf_t::logger_t param_t;
 
 	static Ptr pInstance() {
 		static Ptr _g_pLogger;
 		if (!_g_pLogger) {
 			init_time_base();
 
-			_g_pLogger = std::make_shared<logger>();
+			_g_pLogger = std::make_shared<s4logger>();
 			_g_pLogger->init();
 		}
 
 		return _g_pLogger;
 	}
 
-	void init(param_t* p = nullptr) noexcept {
+	void init(void* p = nullptr) noexcept {
+		flush();
+
 		if (p) {
-			_param = *p;
+			_param = *(param_t*)p;
 		}
 		init_console();
 		
@@ -375,18 +380,18 @@ private:
 
 };
 
-#define	TRACE(...) {S4::logger::pInstance()->trace("[global]", __VA_ARGS__);}
-#define	INFO(...) {S4::logger::pInstance()->info("[global]", __VA_ARGS__);}
-#define	WARN(...) {S4::logger::pInstance()->warn("[global]", __VA_ARGS__);S4::logger::pInstance()->flush();}
-#define	ERR(...) {S4::logger::pInstance()->err("[global]", __VA_ARGS__);S4::logger::pInstance()->flush();}
-#define	FATAL(...) {S4::logger::pInstance()->fatal("[global]", __VA_ARGS__);}
+#define	TRACE(...) {S4::s4logger::pInstance()->trace("[global]", __VA_ARGS__);}
+#define	INFO(...) {S4::s4logger::pInstance()->info("[global]", __VA_ARGS__);}
+#define	WARN(...) {S4::s4logger::pInstance()->warn("[global]", __VA_ARGS__);S4::s4logger::pInstance()->flush();}
+#define	ERR(...) {S4::s4logger::pInstance()->err("[global]", __VA_ARGS__);S4::s4logger::pInstance()->flush();}
+#define	FATAL(...) {S4::s4logger::pInstance()->fatal("[global]", __VA_ARGS__);}
 
 #define CREATE_LOCAL_LOGGER(NAME) static const char * __LCL_NAME__ = "["#NAME"] ";
 
-#define LCL_TRAC(...) {S4::logger::pInstance()->trace(__LCL_NAME__, __VA_ARGS__);}
-#define	LCL_INFO(...) {S4::logger::pInstance()->info(__LCL_NAME__, __VA_ARGS__);}
-#define	LCL_WARN(...) {S4::logger::pInstance()->warn(__LCL_NAME__, __VA_ARGS__);S4::logger::pInstance()->flush();}
-#define	LCL_ERR(...) {S4::logger::pInstance()->err(__LCL_NAME__, __VA_ARGS__);S4::logger::pInstance()->flush();}
-#define	LCL_FATAL(...) {S4::logger::pInstance()->fatal(__LCL_NAME__, __VA_ARGS__);}
+#define LCL_TRAC(...) {S4::s4logger::pInstance()->trace(__LCL_NAME__, __VA_ARGS__);}
+#define	LCL_INFO(...) {S4::s4logger::pInstance()->info(__LCL_NAME__, __VA_ARGS__);}
+#define	LCL_WARN(...) {S4::s4logger::pInstance()->warn(__LCL_NAME__, __VA_ARGS__);S4::s4logger::pInstance()->flush();}
+#define	LCL_ERR(...) {S4::s4logger::pInstance()->err(__LCL_NAME__, __VA_ARGS__);S4::s4logger::pInstance()->flush();}
+#define	LCL_FATAL(...) {S4::s4logger::pInstance()->fatal(__LCL_NAME__, __VA_ARGS__);}
 
 }//namespace S4

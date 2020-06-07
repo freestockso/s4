@@ -24,7 +24,6 @@ public:
     virtual void bind_query(SQLite::Statement& query, const std::vector<struct dayK_t>& data, size_t nb) override;
     virtual void load_query(SQLite::Statement& query, std::vector<dayK_t>& data) override;
 private:
-	std::string m_name;
     std::string m_qurey_build;
     std::string m_qurey_insert;
 

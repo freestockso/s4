@@ -17,6 +17,7 @@ cpp_headers = \
     "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
+    "__sqlite_capable__":"", # enable sqlite tableIO autogen
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
 #pragma once
@@ -35,7 +36,7 @@ json_cpp_headers = cpp_headers + \
 #include <vector>
 """
 
-keep_words = ['__default_value_fields__', '__optional_fields__', '__assign_type_fields__', '__assign_set_lists__']
+keep_words = ['__default_value_fields__', '__optional_fields__', '__assign_type_fields__', '__assign_set_lists__', '__sqlite_capable__']
 
 def determin_value_type(value):
     if isinstance(value, str):
@@ -133,10 +134,10 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
             sub_str.append("\t{}_t {};".format(key_name, key_name))
             main_str.extend(sub_str)
 
-            from_str.append('const json& {} = {}{}["{}"];'.format(sub_json_vari, json_vari, json_vari_suffix, key_name))
+            from_str.append('const nlohmann::json& {} = {}{}["{}"];'.format(sub_json_vari, json_vari, json_vari_suffix, key_name))
             from_str.extend(sub_from)
 
-            to_str.append('json {};'.format(sub_json_vari))
+            to_str.append('nlohmann::json {};'.format(sub_json_vari))
             to_str.extend(sub_to)
             to_str.append('{}["{}"] = {};'.format(json_vari, key_name, sub_json_vari))
         elif isinstance(key_value, list):
@@ -160,7 +161,7 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
                     
                     sub_str = []
                     sub_str.append('try{')
-                    sub_str.append('\tconst json& {} = {}{}.at("{}");'.format(sub_json_vari, json_vari, json_vari_suffix, key_name))
+                    sub_str.append('\tconst nlohmann::json& {} = {}{}.at("{}");'.format(sub_json_vari, json_vari, json_vari_suffix, key_name))
                     sub_str.append('\tfor(auto& {0}_x: {0}.items()){{'.format(sub_json_vari))
                     if key_name in __assign_set_lists__:
                         sub_str.append('\t\t{}.{}.insert({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
@@ -191,7 +192,7 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
 
                     sub_str = []
                     sub_str.append('try{')
-                    sub_str.append('\tconst json& {0} = {1}{3}.at("{2}");'.format(sub_json_vari, json_vari, key_name, json_vari_suffix))
+                    sub_str.append('\tconst nlohmann::json& {0} = {1}{3}.at("{2}");'.format(sub_json_vari, json_vari, key_name, json_vari_suffix))
                     sub_str.append('\tfor(auto& {0}_x: {0}.items()){{'.format(sub_json_vari))
                     sub_str.append('\t\t{}::{} {};'.format("::".join(namespace_list), sub_type, sub_cpp_vari))
                     sub_from = ["\t\t"+x for x in sub_from]
@@ -210,7 +211,7 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
                     from_str.extend(sub_str)
 
                     sub_str = []
-                    sub_str.append('{}["{}"] = json();'.format(json_vari, key_name))
+                    sub_str.append('{}["{}"] = nlohmann::json();'.format(json_vari, key_name))
                     sub_str.append('for(const auto& {}_x: {}.{}){{'.format(sub_cpp_vari, cpp_vari, key_name))
                     sub_str.append('\tjson {};'.format(sub_json_vari))
                     sub_to = ["\t"+x for x in sub_to]
@@ -290,7 +291,7 @@ if __name__ == "__main__":
     if not struct_only:
         print("/* from json */")
         output.append("\t/* from json */")
-        cpp_from = ['\tstatic bool from_json(const json& {}, {}& {}){{'.format(json_v, type_name, cpp_v)]
+        cpp_from = ['\tstatic bool from_json(const nlohmann::json& {}, {}& {}){{'.format(json_v, type_name, cpp_v)]
         cpp_from.append("\t\ttry{")
         cpp_from_str = ['\t\t\t'+x for x in cpp_from_str]
         cpp_from.extend(cpp_from_str)
@@ -306,7 +307,7 @@ if __name__ == "__main__":
 
         print("/* to json */")
         output.append("\t/* to json */")
-        cpp_to = ['\tstatic bool to_json(json& {}, const {}& {}){{'.format(json_v, type_name, cpp_v)]
+        cpp_to = ['\tstatic bool to_json(nlohmann::json& {}, const {}& {}){{'.format(json_v, type_name, cpp_v)]
         cpp_to.append("\t\ttry{")
         cpp_to_str = ['\t\t\t'+x for x in cpp_to_str]
         cpp_to.extend(cpp_to_str)
@@ -334,9 +335,9 @@ if __name__ == "__main__":
 
             //std::ifstream i("{0}/{1}");
             std::string i("{5}");
-            S4::json {2};
+            nlohmann::json {2};
             //i >> {2}; //from file
-            {2} = S4::json::parse(i);  //from string
+            {2} = nlohmann::json::parse(i);  //from string
 
             S4::{3} {4};
 
@@ -345,7 +346,7 @@ if __name__ == "__main__":
                 return -1;
             }}
 
-            S4::json j_out;
+            nlohmann::json j_out;
             if(!S4::{3}::to_json(j_out, {4})){{
                 INFO("S4::{3}::to_json fail!");
                 return -1;

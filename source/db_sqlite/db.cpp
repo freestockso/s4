@@ -1,6 +1,8 @@
 #include "db_sqlite/db.h"
 #include "types/s4convertors.h"
+#include "common/s4logger.h"
 
+CREATE_LOCAL_LOGGER(sqlite::db)
 
 namespace S4 {
 namespace sqlite {
@@ -11,14 +13,19 @@ DB_t::DB_t(const std::string & name, const int Mode):
 {
 	//INFO( "SQLite database file '{}' opened successfully", mDb.getFilename().c_str());
 
-	//mDb.exec("PRAGMA auto_vacuum = 1");
-	mDb.exec("PRAGMA temp_store = MEMORY");
-	mDb.exec("PRAGMA page_size = 65536");
-	mDb.exec("PRAGMA cache_size = 8000");
-	//mDb.exec("PRAGMA synchronous = OFF");
-	// Test if the 'test' table exists
-	// const bool bExists = db.tableExists("test");
-	// std::cout << "SQLite table 'test' exists=" << bExists << "\n";
+	try {
+		//mDb.exec("PRAGMA auto_vacuum = 1");
+		mDb.exec("PRAGMA temp_store = MEMORY");
+		mDb.exec("PRAGMA page_size = 65536");
+		mDb.exec("PRAGMA cache_size = 8000");
+		//mDb.exec("PRAGMA synchronous = OFF");
+		// Test if the 'test' table exists
+		// const bool bExists = db.tableExists("test");
+		// std::cout << "SQLite table 'test' exists=" << bExists << "\n";
+	}
+	catch (std::exception & e) {
+		LCL_FATAL("sqlite::DB_t({:}) init fail: {:}", name, e.what());
+	}
 }
 
 //s3stk_sh0.db3  : sh000000 ~sh600999

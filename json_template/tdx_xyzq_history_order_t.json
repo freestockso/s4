@@ -7,6 +7,7 @@
         "order_vol":"vol_share_t", 
         "deal_vol":"vol_share_t"
     },
+    "__sqlite_capable__" : true,
     "date" : 20200507,
     "time_format": "19:55:30",
     "time_utcSec": 123,
