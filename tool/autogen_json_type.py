@@ -20,6 +20,11 @@ cpp_headers = \
 * Script author: ChenZaihui<chinsaiki@outlook.com>
 */
 #pragma once
+
+"""
+
+json_cpp_headers = cpp_headers + \
+"""
 #include <assert.h>
 #include "common/s4json_util.h"
 #include "common/s4logger.h"
@@ -52,8 +57,8 @@ def determin_default_value(value):
     elif isinstance(value, float):
         return "%.f" % value
 
-def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], json_vari_suffix=''):
-    main_str = ["struct {} {{".format(name)]
+def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [], json_vari_suffix=''):
+    main_str = ["struct {} {{".format(type_name)]
     from_str = []
     to_str = []
     if '__optional_fields__' in json_dict:
@@ -229,141 +234,140 @@ def dict_to_struct(cpp_vari, json_vari, name, json_dict, namespace_list = [], js
 
 
 
+if __name__ == "__main__":
+    print("Current working path={}".format(os.getcwd()))
+
+    if len(sys.argv)==1:
+        print("Need at least 1 arg:")
+        print("  {} <json file>  [<output file>]".format(sys.argv[0]))
+        exit(1)
+
+    src_json = sys.argv[1]
+    if len(sys.argv)>=3:
+        tgt_cpp = sys.argv[2]
+    else:
+        tgt_cpp = src_json.replace(".json", ".h")
+
+    if len(sys.argv)>=4:
+        struct_only = sys.argv[3]
+    else:
+        struct_only = False
+
+    print("reading json file:{}".format(src_json))
+    with open(src_json, 'r', encoding='UTF-8') as f:
+        text = f.readlines()
+    # print(text)
+    text = "".join(text)
+    json_instance = json.loads(text)
+
+    # print("read json OK:\n{}".format(json.dumps(json_instance, indent=4, separators=(',', ': '))))
+
+    print("read json base type={}".format(type(json_instance)))
+    if not isinstance(json_instance, dict):
+        print("error:only support base type==dict for now!")
+        exit(0)
+
+    type_name = os.path.basename(src_json)
+    type_name = type_name.split(".")[0]
+    print("Creating Cpp file for type={}".format(type_name))
+
+    cpp_v = type_name + "_var"
+    json_v = "json_var"
+    cpp_struct, cpp_from_str, cpp_to_str = dict_to_struct(cpp_v, json_v, type_name, json_instance, [type_name])
+    output = []
+
+    json_cpp_headers = json_cpp_headers.format(src_json, type_name)
+    output.append(json_cpp_headers)
+
+    output.append("namespace S4 {\n")
+
+    print("/* type */")
+    output.append("/* type */")
+    cpp_struct = "\n".join(cpp_struct)
+    # print(cpp_struct)
+    output.append(cpp_struct[:-2])
+
+    if not struct_only:
+        print("/* from json */")
+        output.append("\t/* from json */")
+        cpp_from = ['\tstatic bool from_json(const json& {}, {}& {}){{'.format(json_v, type_name, cpp_v)]
+        cpp_from.append("\t\ttry{")
+        cpp_from_str = ['\t\t\t'+x for x in cpp_from_str]
+        cpp_from.extend(cpp_from_str)
+        cpp_from.append("\t\t}catch (const std::exception& e){")
+        cpp_from.append('\t\t\tERR("parse json {{:}} \\nfail:{{:}}", {}.dump(4), e.what());'.format(json_v))
+        cpp_from.append("\t\t\treturn false;")
+        cpp_from.append("\t\t}")
+        cpp_from.append("\t\treturn true;")
+        cpp_from.append("\t}")
+        cpp_from = "\n".join(cpp_from)
+        # print(cpp_from)
+        output.append(cpp_from)
+
+        print("/* to json */")
+        output.append("\t/* to json */")
+        cpp_to = ['\tstatic bool to_json(json& {}, const {}& {}){{'.format(json_v, type_name, cpp_v)]
+        cpp_to.append("\t\ttry{")
+        cpp_to_str = ['\t\t\t'+x for x in cpp_to_str]
+        cpp_to.extend(cpp_to_str)
+        cpp_to.append("\t\t}catch (const std::exception& e){")
+        cpp_to.append('\t\tERR("to json {{:}} \\nfail:{{:}}", {}.dump(4), e.what());'.format(json_v))
+        cpp_to.append("\t\t\treturn false;")
+        cpp_to.append("\t\t}")
+        cpp_to.append("\t\treturn true;")
+        cpp_to.append("\t}")
+        cpp_to = "\n".join(cpp_to)
+        # print(cpp_to)
+        output.append(cpp_to)
+
+    output.append("}};// struct {}".format(type_name))
+
+    output.append("} // namespace S4")
 
 
-print("Current working path={}".format(os.getcwd()))
+    if not struct_only:
+        cpp_json_text = text.replace('"', '\\"').replace("\n","").replace("\r","")
+        test_source = """
 
-if len(sys.argv)==1:
-    print("Need at least 1 arg:")
-    print("  {} <json file>  [<output file>]".format(sys.argv[0]))
-    exit(1)
+        /* Tester */
+        inline int {3}_tester() {{
 
-src_json = sys.argv[1]
-if len(sys.argv)>=3:
-    tgt_cpp = sys.argv[2]
-else:
-    tgt_cpp = src_json.replace(".json", ".h")
+            //std::ifstream i("{0}/{1}");
+            std::string i("{5}");
+            S4::json {2};
+            //i >> {2}; //from file
+            {2} = S4::json::parse(i);  //from string
 
-if len(sys.argv)>=4:
-    struct_only = sys.argv[3]
-else:
-    struct_only = False
+            S4::{3} {4};
 
-print("reading json file:{}".format(src_json))
-with open(src_json, 'r', encoding='UTF-8') as f:
-    text = f.readlines()
-# print(text)
-text = "".join(text)
-json_instance = json.loads(text)
+            if(!S4::{3}::from_json({2}, {4})){{
+                INFO("S4::{3}::from_json fail!");
+                return -1;
+            }}
 
-# print("read json OK:\n{}".format(json.dumps(json_instance, indent=4, separators=(',', ': '))))
+            S4::json j_out;
+            if(!S4::{3}::to_json(j_out, {4})){{
+                INFO("S4::{3}::to_json fail!");
+                return -1;
+            }}
 
-print("read json base type={}".format(type(json_instance)))
-if not isinstance(json_instance, dict):
-    print("error:only support base type==dict for now!")
-    exit(0)
+            INFO("{{:}}", j_out.dump(4));
 
-type_name = os.path.basename(src_json)
-type_name = type_name.split(".")[0]
-print("Creating Cpp file for type={}".format(type_name))
-
-cpp_v = type_name + "_var"
-json_v = "json_var"
-cpp_struct, cpp_from_str, cpp_to_str = dict_to_struct(cpp_v, json_v, type_name, json_instance, [type_name])
-output = []
-
-cpp_headers = cpp_headers.format(src_json, type_name)
-output.append(cpp_headers)
-
-output.append("namespace S4 {\n")
-
-print("/* type */")
-output.append("/* type */")
-cpp_struct = "\n".join(cpp_struct)
-# print(cpp_struct)
-output.append(cpp_struct[:-2])
-
-if not struct_only:
-    print("/* from json */")
-    output.append("\t/* from json */")
-    cpp_from = ['\tstatic bool from_json(const json& {}, {}& {}){{'.format(json_v, type_name, cpp_v)]
-    cpp_from.append("\t\ttry{")
-    cpp_from_str = ['\t\t\t'+x for x in cpp_from_str]
-    cpp_from.extend(cpp_from_str)
-    cpp_from.append("\t\t}catch (const std::exception& e){")
-    cpp_from.append('\t\t\tERR("parse json {{:}} \\nfail:{{:}}", {}.dump(4), e.what());'.format(json_v))
-    cpp_from.append("\t\t\treturn false;")
-    cpp_from.append("\t\t}")
-    cpp_from.append("\t\treturn true;")
-    cpp_from.append("\t}")
-    cpp_from = "\n".join(cpp_from)
-    # print(cpp_from)
-    output.append(cpp_from)
-
-    print("/* to json */")
-    output.append("\t/* to json */")
-    cpp_to = ['\tstatic bool to_json(json& {}, const {}& {}){{'.format(json_v, type_name, cpp_v)]
-    cpp_to.append("\t\ttry{")
-    cpp_to_str = ['\t\t\t'+x for x in cpp_to_str]
-    cpp_to.extend(cpp_to_str)
-    cpp_to.append("\t\t}catch (const std::exception& e){")
-    cpp_to.append('\t\tERR("to json {{:}} \\nfail:{{:}}", {}.dump(4), e.what());'.format(json_v))
-    cpp_to.append("\t\t\treturn false;")
-    cpp_to.append("\t\t}")
-    cpp_to.append("\t\treturn true;")
-    cpp_to.append("\t}")
-    cpp_to = "\n".join(cpp_to)
-    # print(cpp_to)
-    output.append(cpp_to)
-
-output.append("}};// struct {}".format(type_name))
-
-output.append("} // namespace S4")
-
-
-if not struct_only:
-    cpp_json_text = text.replace('"', '\\"').replace("\n","").replace("\r","")
-    test_source = """
-
-    /* Tester */
-    inline int {3}_tester() {{
-
-        //std::ifstream i("{0}/{1}");
-        std::string i("{5}");
-        S4::json {2};
-        //i >> {2}; //from file
-        {2} = S4::json::parse(i);  //from string
-
-        S4::{3} {4};
-
-        if(!S4::{3}::from_json({2}, {4})){{
-            INFO("S4::{3}::from_json fail!");
-            return -1;
+            return 0;
         }}
 
-        S4::json j_out;
-        if(!S4::{3}::to_json(j_out, {4})){{
-            INFO("S4::{3}::to_json fail!");
-            return -1;
-        }}
+        """.format(os.getcwd().replace("\\", "/"), 
+        src_json.replace("\\", "/"), 
+        json_v,
+        type_name, cpp_v,
+        cpp_json_text
+        )
+        # print(test_source)
+        output.append(test_source)
 
-        INFO("{{:}}", j_out.dump(4));
+    output = '\n'.join(output)
+    if tgt_cpp is not None:
+        with open(tgt_cpp, 'w+') as fo:
+            fo.write(output)
 
-        return 0;
-    }}
-
-    """.format(os.getcwd().replace("\\", "/"), 
-    src_json.replace("\\", "/"), 
-    json_v,
-    type_name, cpp_v,
-    cpp_json_text
-    )
-    # print(test_source)
-    output.append(test_source)
-
-output = '\n'.join(output)
-if tgt_cpp is not None:
-    with open(tgt_cpp, 'w+') as fo:
-        fo.write(output)
-
-print("output cpp .h = {}".format(tgt_cpp))
+    print("output cpp .h = {}".format(tgt_cpp))
