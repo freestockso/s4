@@ -1,6 +1,6 @@
 {
     "__sqlite_capable__" : true,
-    
+
     "rowid":0,
 
     "__comment__0":"strategy name",
@@ -29,16 +29,16 @@
     "open_deal":-1,
     "openVol":-1,
     "openVol_deal":-1,
-    "openAmt_deal":0,
+    "openAmt_deal":0.0,
     "close_deal":-1,
     "closeVol":-1,
     "closeVol_deal":-1,
-    "closeAmt_deal":0,
+    "closeAmt_deal":0.0,
 
-    "commission":0,
-    "stamp_duty":0,
-    "transfer_fee":0,
-    "other_fees":0,
+    "commission":0.0,
+    "stamp_duty":0.0,
+    "transfer_fee":0.0,
+    "other_fees":0.0,
     "remarks":"起始配号:226168906"
 
 

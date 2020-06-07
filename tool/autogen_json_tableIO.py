@@ -40,9 +40,9 @@ def get_func(value):
     if value == "TEXT":
         return "getString"
     elif value == "BOOLEAN":
-        return "getInt"
+        return "getInt64"
     elif value == "INTEGER":
-        return "getInt"
+        return "getInt64"
     elif value == "DOUBLE":
         return "getDouble"
 
@@ -86,7 +86,7 @@ def dict_to_cols(json_dict):
     return cols, __assign_type_fields__
 
 
-PRIMARY_KEY_in_order = [ 'date', 'mktCode', 'datetime', 'code']
+PRIMARY_KEY_in_order = [ 'id', 'date', 'mktCode', 'datetime', 'code']
 
 def get_K_COL(cols):
     K_COL = \

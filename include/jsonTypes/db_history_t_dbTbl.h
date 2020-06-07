@@ -82,32 +82,32 @@ public:
     virtual void load_query(SQLite::Statement& query, std::vector<db_history_t>& data) override
     {
         struct db_history_t K_data;
-        K_data.rowid = query.getColumn(0).getInt();
+        K_data.rowid = query.getColumn(0).getInt64();
 		K_data.stgName = query.getColumn(1).getString();
-		K_data.id = query.getColumn(2).getInt();
-		K_data.tdxOrderId = query.getColumn(3).getInt();
+		K_data.id = query.getColumn(2).getInt64();
+		K_data.tdxOrderId = query.getColumn(3).getInt64();
 		K_data.insCode = query.getColumn(4).getString();
-		K_data.time = query.getColumn(5).getInt();
+		K_data.time = query.getColumn(5).getInt64();
 		K_data.datetime = query.getColumn(6).getString();
 		K_data.optType = query.getColumn(7).getString();
 		K_data.position = query.getColumn(8).getString();
 		K_data.status = query.getColumn(9).getString();
-		K_data.open_order = query.getColumn(10).getInt();
-		K_data.take_order = query.getColumn(11).getInt();
-		K_data.stop_order = query.getColumn(12).getInt();
-		K_data.close_order = query.getColumn(13).getInt();
-		K_data.open_deal = query.getColumn(14).getInt();
-		K_data.openVol = query.getColumn(15).getInt();
-		K_data.openVol_deal = query.getColumn(16).getInt();
-		K_data.openAmt_deal = query.getColumn(17).getInt();
-		K_data.close_deal = query.getColumn(18).getInt();
-		K_data.closeVol = query.getColumn(19).getInt();
-		K_data.closeVol_deal = query.getColumn(20).getInt();
-		K_data.closeAmt_deal = query.getColumn(21).getInt();
-		K_data.commission = query.getColumn(22).getInt();
-		K_data.stamp_duty = query.getColumn(23).getInt();
-		K_data.transfer_fee = query.getColumn(24).getInt();
-		K_data.other_fees = query.getColumn(25).getInt();
+		K_data.open_order = query.getColumn(10).getInt64();
+		K_data.take_order = query.getColumn(11).getInt64();
+		K_data.stop_order = query.getColumn(12).getInt64();
+		K_data.close_order = query.getColumn(13).getInt64();
+		K_data.open_deal = query.getColumn(14).getInt64();
+		K_data.openVol = query.getColumn(15).getInt64();
+		K_data.openVol_deal = query.getColumn(16).getInt64();
+		K_data.openAmt_deal = query.getColumn(17).getDouble();
+		K_data.close_deal = query.getColumn(18).getInt64();
+		K_data.closeVol = query.getColumn(19).getInt64();
+		K_data.closeVol_deal = query.getColumn(20).getInt64();
+		K_data.closeAmt_deal = query.getColumn(21).getDouble();
+		K_data.commission = query.getColumn(22).getDouble();
+		K_data.stamp_duty = query.getColumn(23).getDouble();
+		K_data.transfer_fee = query.getColumn(24).getDouble();
+		K_data.other_fees = query.getColumn(25).getDouble();
 		K_data.remarks = query.getColumn(26).getString();
         data.push_back(std::move(K_data));
     }
@@ -137,18 +137,18 @@ const std::string K_COL =
         "open_deal	INTEGER, "
         "openVol	INTEGER, "
         "openVol_deal	INTEGER, "
-        "openAmt_deal	INTEGER, "
+        "openAmt_deal	DOUBLE, "
         "close_deal	INTEGER, "
         "closeVol	INTEGER, "
         "closeVol_deal	INTEGER, "
-        "closeAmt_deal	INTEGER, "
-        "commission	INTEGER, "
-        "stamp_duty	INTEGER, "
-        "transfer_fee	INTEGER, "
-        "other_fees	INTEGER, "
+        "closeAmt_deal	DOUBLE, "
+        "commission	DOUBLE, "
+        "stamp_duty	DOUBLE, "
+        "transfer_fee	DOUBLE, "
+        "other_fees	DOUBLE, "
         "remarks	TEXT, "
 
-        "PRIMARY KEY(datetime)"
+        "PRIMARY KEY(id)"
     ")";
 
 

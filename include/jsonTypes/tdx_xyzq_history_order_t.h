@@ -36,7 +36,7 @@ struct tdx_xyzq_history_order_t {
 	time_utcSec_t time_utcSec;	//	123
 	std::string stock_code;	//	002988
 	std::string stock_name;	//	豪美新材
-	int order_index;	//	26
+	int64_t id;	//	26
 	std::string opt_type;	//	买入
 	std::string delegate_type;	//	信用交易/撤单
 	std::string status;	//	已报
@@ -80,9 +80,9 @@ struct tdx_xyzq_history_order_t {
 				throw e;
 			}
 			try{
-				tdx_xyzq_history_order_t_var.order_index = json_var.at("order_index").get<int>();
+				tdx_xyzq_history_order_t_var.id = json_var.at("id").get<int64_t>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "order_index", e.what());
+				ERR("{:} not found in json! e={:}", "id", e.what());
 				throw e;
 			}
 			try{
@@ -147,7 +147,7 @@ struct tdx_xyzq_history_order_t {
 			json_var["time_utcSec"] = tdx_xyzq_history_order_t_var.time_utcSec;
 			json_var["stock_code"] = tdx_xyzq_history_order_t_var.stock_code;
 			json_var["stock_name"] = tdx_xyzq_history_order_t_var.stock_name;
-			json_var["order_index"] = tdx_xyzq_history_order_t_var.order_index;
+			json_var["id"] = tdx_xyzq_history_order_t_var.id;
 			json_var["opt_type"] = tdx_xyzq_history_order_t_var.opt_type;
 			json_var["delegate_type"] = tdx_xyzq_history_order_t_var.delegate_type;
 			json_var["status"] = tdx_xyzq_history_order_t_var.status;
@@ -162,6 +162,34 @@ struct tdx_xyzq_history_order_t {
 		}
 		return true;
 	}
+
+	bool operator ==(const tdx_xyzq_history_order_t& d)
+	{
+		if (date == d.date &&
+			time_format == d.time_format &&
+			time_utcSec == d.time_utcSec &&
+			stock_code == d.stock_code &&
+			stock_name == d.stock_name &&
+			id == d.id &&
+			opt_type == d.opt_type &&
+			delegate_type == d.delegate_type &&
+			status == d.status &&
+			order_price == d.order_price &&
+			order_vol == d.order_vol &&
+			deal_price == d.deal_price &&
+			deal_vol == d.deal_vol &&
+			quote_mode == d.quote_mode)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool operator !=(const tdx_xyzq_history_order_t& d)
+	{
+		return !((*this)==d);
+	}
+
 };// struct tdx_xyzq_history_order_t
 } // namespace S4
 
@@ -170,7 +198,7 @@ struct tdx_xyzq_history_order_t {
         inline int tdx_xyzq_history_order_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/tdx_xyzq_history_order_t.json");
-            std::string i("{    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"deal_price\":\"fprice_t\",         \"order_price\":\"fprice_t\",         \"order_vol\":\"vol_share_t\",         \"deal_vol\":\"vol_share_t\"    },    \"__sqlite_capable__\" : true,    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"order_index\":26,    \"opt_type\":\"买入\",    \"delegate_type\":\"信用交易/撤单\",    \"status\":\"已报\",    \"order_price\":3.94,    \"order_vol\":5600,    \"deal_price\":0.0,    \"deal_vol\":0,    \"quote_mode\":\"买卖\"}");
+            std::string i("{    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"id\":\"int64_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"deal_price\":\"fprice_t\",         \"order_price\":\"fprice_t\",         \"order_vol\":\"vol_share_t\",         \"deal_vol\":\"vol_share_t\"    },    \"__sqlite_capable__\" : true,    \"date\" : 20200507,    \"time_format\": \"19:55:30\",    \"time_utcSec\": 123,    \"stock_code\": \"002988\",    \"stock_name\": \"豪美新材\",    \"id\":26,    \"opt_type\":\"买入\",    \"delegate_type\":\"信用交易/撤单\",    \"status\":\"已报\",    \"order_price\":3.94,    \"order_vol\":5600,    \"deal_price\":0.0,    \"deal_vol\":0,    \"quote_mode\":\"买卖\"}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

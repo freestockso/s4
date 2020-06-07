@@ -54,7 +54,7 @@ public:
 			K_data.time_utcSec,
 			K_data.stock_code,
 			K_data.stock_name,
-			K_data.order_index,
+			K_data.id,
 			K_data.opt_type,
 			K_data.deal_price,
 			K_data.deal_vol,
@@ -70,20 +70,20 @@ public:
     virtual void load_query(SQLite::Statement& query, std::vector<tdx_xyzq_history_deal_t>& data) override
     {
         struct tdx_xyzq_history_deal_t K_data;
-        K_data.date = (time_date_t)query.getColumn(0).getInt();
+        K_data.date = (time_date_t)query.getColumn(0).getInt64();
 		K_data.time_format = query.getColumn(1).getString();
-		K_data.time_utcSec = (time_utcSec_t)query.getColumn(2).getInt();
+		K_data.time_utcSec = (time_utcSec_t)query.getColumn(2).getInt64();
 		K_data.stock_code = query.getColumn(3).getString();
 		K_data.stock_name = query.getColumn(4).getString();
-		K_data.order_index = query.getColumn(5).getInt();
+		K_data.id = (int64_t)query.getColumn(5).getInt64();
 		K_data.opt_type = query.getColumn(6).getString();
 		K_data.deal_price = (fprice_t)query.getColumn(7).getDouble();
-		K_data.deal_vol = (vol_share_t)query.getColumn(8).getInt();
-		K_data.deal_amount = (amount_t)query.getColumn(9).getInt();
-		K_data.commission = (amount_t)query.getColumn(10).getInt();
-		K_data.stamp_duty = (amount_t)query.getColumn(11).getInt();
-		K_data.transfer_fee = (amount_t)query.getColumn(12).getInt();
-		K_data.other_fees = (amount_t)query.getColumn(13).getInt();
+		K_data.deal_vol = (vol_share_t)query.getColumn(8).getInt64();
+		K_data.deal_amount = (amount_t)query.getColumn(9).getDouble();
+		K_data.commission = (amount_t)query.getColumn(10).getDouble();
+		K_data.stamp_duty = (amount_t)query.getColumn(11).getDouble();
+		K_data.transfer_fee = (amount_t)query.getColumn(12).getDouble();
+		K_data.other_fees = (amount_t)query.getColumn(13).getDouble();
 		K_data.remarks = query.getColumn(14).getString();
         data.push_back(std::move(K_data));
     }
@@ -101,25 +101,25 @@ const std::string K_COL =
         "time_utcSec	INTEGER, "
         "stock_code	TEXT, "
         "stock_name	TEXT, "
-        "order_index	INTEGER, "
+        "id	INTEGER, "
         "opt_type	TEXT, "
         "deal_price	DOUBLE, "
         "deal_vol	INTEGER, "
-        "deal_amount	INTEGER, "
-        "commission	INTEGER, "
-        "stamp_duty	INTEGER, "
-        "transfer_fee	INTEGER, "
-        "other_fees	INTEGER, "
+        "deal_amount	DOUBLE, "
+        "commission	DOUBLE, "
+        "stamp_duty	DOUBLE, "
+        "transfer_fee	DOUBLE, "
+        "other_fees	DOUBLE, "
         "remarks	TEXT, "
 
-        "PRIMARY KEY(date)"
+        "PRIMARY KEY(id)"
     ")";
 
 
 
 const std::string K_IN =
     "("
-    "date, time_format, time_utcSec, stock_code, stock_name, order_index, opt_type, deal_price, deal_vol, deal_amount, commission, stamp_duty, transfer_fee, other_fees, remarks"
+    "date, time_format, time_utcSec, stock_code, stock_name, id, opt_type, deal_price, deal_vol, deal_amount, commission, stamp_duty, transfer_fee, other_fees, remarks"
     ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 ;
 

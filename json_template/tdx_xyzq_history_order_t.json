@@ -1,6 +1,7 @@
 {
     "__assign_type_fields__": {
         "date":"time_date_t", 
+        "id":"int64_t", 
         "time_utcSec":"time_utcSec_t", 
         "deal_price":"fprice_t", 
         "order_price":"fprice_t", 
@@ -13,7 +14,7 @@
     "time_utcSec": 123,
     "stock_code": "002988",
     "stock_name": "豪美新材",
-    "order_index":26,
+    "id":26,
     "opt_type":"买入",
     "delegate_type":"信用交易/撤单",
     "status":"已报",

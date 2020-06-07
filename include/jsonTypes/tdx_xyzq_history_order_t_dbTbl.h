@@ -54,7 +54,7 @@ public:
 			K_data.time_utcSec,
 			K_data.stock_code,
 			K_data.stock_name,
-			K_data.order_index,
+			K_data.id,
 			K_data.opt_type,
 			K_data.delegate_type,
 			K_data.status,
@@ -69,19 +69,19 @@ public:
     virtual void load_query(SQLite::Statement& query, std::vector<tdx_xyzq_history_order_t>& data) override
     {
         struct tdx_xyzq_history_order_t K_data;
-        K_data.date = (time_date_t)query.getColumn(0).getInt();
+        K_data.date = (time_date_t)query.getColumn(0).getInt64();
 		K_data.time_format = query.getColumn(1).getString();
-		K_data.time_utcSec = (time_utcSec_t)query.getColumn(2).getInt();
+		K_data.time_utcSec = (time_utcSec_t)query.getColumn(2).getInt64();
 		K_data.stock_code = query.getColumn(3).getString();
 		K_data.stock_name = query.getColumn(4).getString();
-		K_data.order_index = query.getColumn(5).getInt();
+		K_data.id = (int64_t)query.getColumn(5).getInt64();
 		K_data.opt_type = query.getColumn(6).getString();
 		K_data.delegate_type = query.getColumn(7).getString();
 		K_data.status = query.getColumn(8).getString();
 		K_data.order_price = (fprice_t)query.getColumn(9).getDouble();
-		K_data.order_vol = (vol_share_t)query.getColumn(10).getInt();
+		K_data.order_vol = (vol_share_t)query.getColumn(10).getInt64();
 		K_data.deal_price = (fprice_t)query.getColumn(11).getDouble();
-		K_data.deal_vol = (vol_share_t)query.getColumn(12).getInt();
+		K_data.deal_vol = (vol_share_t)query.getColumn(12).getInt64();
 		K_data.quote_mode = query.getColumn(13).getString();
         data.push_back(std::move(K_data));
     }
@@ -99,7 +99,7 @@ const std::string K_COL =
         "time_utcSec	INTEGER, "
         "stock_code	TEXT, "
         "stock_name	TEXT, "
-        "order_index	INTEGER, "
+        "id	INTEGER, "
         "opt_type	TEXT, "
         "delegate_type	TEXT, "
         "status	TEXT, "
@@ -109,14 +109,14 @@ const std::string K_COL =
         "deal_vol	INTEGER, "
         "quote_mode	TEXT, "
 
-        "PRIMARY KEY(date)"
+        "PRIMARY KEY(id)"
     ")";
 
 
 
 const std::string K_IN =
     "("
-    "date, time_format, time_utcSec, stock_code, stock_name, order_index, opt_type, delegate_type, status, order_price, order_vol, deal_price, deal_vol, quote_mode"
+    "date, time_format, time_utcSec, stock_code, stock_name, id, opt_type, delegate_type, status, order_price, order_vol, deal_price, deal_vol, quote_mode"
     ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 ;
 

@@ -11,7 +11,7 @@ CREATE_LOCAL_LOGGER(tdx_read_history)
 
 using namespace std;
 
-#define ORDER_INDEX_PLEACEHOLDER (10000)
+#define ORDER_INDEX_PLEACEHOLDER (10000ll)
 
 namespace S4{
 namespace TDX{
@@ -80,7 +80,7 @@ bool read_history_deal(const std::string& file_name, std::vector<tdx_xyzq_histor
 				}else if (t == "买卖标志") { deal.opt_type = v;
 				}else if (t == "成交价格") { deal.deal_price = (fprice_t)DoubleConvertor::convert(v);
 				}else if (t == "成交数量") { deal.deal_vol = (vol_share_t)abs(IntConvertor::convert(v));
-				}else if (t == "委托编号") { deal.order_index = (int)IntConvertor::convert(v);
+				}else if (t == "委托编号") { deal.id = (int)IntConvertor::convert(v);
 				}else if (t == "成交金额") { deal.deal_amount = (amount_t)DoubleConvertor::convert(v);
 				}else if (t == "佣金") {    deal.commission = (amount_t)DoubleConvertor::convert(v);
 				}else if (t == "印花税") {	deal.stamp_duty = (amount_t)DoubleConvertor::convert(v);
@@ -100,7 +100,7 @@ bool read_history_deal(const std::string& file_name, std::vector<tdx_xyzq_histor
 			}
 			deal.time_utcSec = date_to_utc(deal.date, deal_HMS);
 			deal.time_format = utc_to_str(deal.time_utcSec);
-			deal.order_index = deal.date + deal.order_index * ORDER_INDEX_PLEACEHOLDER;
+			deal.id = deal.date * ORDER_INDEX_PLEACEHOLDER + deal.id;
 			deals.emplace_back(move(deal));
 		}
 		catch (std::exception& e) {
@@ -158,7 +158,7 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
 				}else if (t == "委托数量") { order.order_vol = (vol_share_t)abs(IntConvertor::convert(v));
 				}else if (t == "成交价格") { order.deal_price = (fprice_t)DoubleConvertor::convert(v);
 				}else if (t == "成交数量") { order.deal_vol = (vol_share_t)abs(IntConvertor::convert(v));
-				}else if (t == "委托编号") { order.order_index = (int)IntConvertor::convert(v);
+				}else if (t == "委托编号") { order.id = (int)IntConvertor::convert(v);
 				}else if (t == "报价方式") { order.quote_mode = v;
 				}
 			}
@@ -172,7 +172,7 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
 			}
 			order.time_utcSec = date_to_utc(order.date, order_HMS);
 			order.time_format = utc_to_str(order.time_utcSec);
-			order.order_index = order.date + order.order_index * ORDER_INDEX_PLEACEHOLDER;
+			order.id = order.date * ORDER_INDEX_PLEACEHOLDER + order.id;
 			orders.emplace_back(move(order));
 		}
 		catch (std::exception& e) {

@@ -98,7 +98,7 @@ public:
 			SQLite::Statement   query(mDb, queryStr);
 
 			while (query.executeStep()) {
-				tableIO->load_query(query, cols, data);
+				tableIO->load_query(query, data);
 			}
 
 			return;

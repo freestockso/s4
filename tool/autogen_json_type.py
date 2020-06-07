@@ -231,8 +231,63 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
     main_str.append("};")
     return main_str, from_str, to_str
 
+def get_eq(type_name, json_dict):
+    cols_list = []
+    if '__assign_type_fields__' in json_dict:
+        __assign_type_fields__ = json_dict['__assign_type_fields__']
+        print("use __assign_type_fields__ = {}".format(__assign_type_fields__))
+    else:
+        __assign_type_fields__ = {}
+        
+    for key_name in json_dict:
+        if key_name in keep_words or key_name.find("__comment__")==0:
+            continue
+
+        key_value = json_dict[key_name]
+
+        if isinstance(key_value, (str, int, float, bool)):
+            cols_list.append(key_name)
+        elif isinstance(key_value, dict):
+            print("unsupported type for <dict> {}:{}".format(key_name, key_value))
+            return ''
+        elif isinstance(key_value, list):
+            print("unsupported type for <list> {}:{}".format(key_name, key_value))
+            return ''
+            # if len(key_value)==0:
+            # else:
+            #     key_value = key_value[0]
+            #     if isinstance(key_value, (str, int, float, bool) or key_name in __assign_type_fields__):
+            #     elif isinstance(key_value, dict):
+            #     else:
+            #         print("unsupported list type for {}:{}".format(key_name, key_value))
+            #         return ''
+        else:
+            print("unsupported type for {}:{}".format(key_name, key_value))
+            return ''
 
 
+    cpp_ueq = '''
+	bool operator !=(const {}& d)
+	{{
+		return !((*this)==d);
+	}}
+'''.format(type_name)
+    
+    eq_list = []
+    for col in cols_list:
+        eq_list.append('{0} == d.{0}'.format(col))
+
+    cpp_eq = '''
+	bool operator ==(const {0}& d)
+	{{
+		if ({1})
+		{{
+			return true;
+		}}
+		return false;
+	}}
+'''.format(type_name, ' &&\n\t\t\t'.join(eq_list))
+    return cpp_eq + cpp_ueq
 
 
 if __name__ == "__main__":
@@ -320,6 +375,9 @@ if __name__ == "__main__":
         cpp_to = "\n".join(cpp_to)
         # print(cpp_to)
         output.append(cpp_to)
+
+        cpp_eq = get_eq(type_name, json_instance)
+        output.append(cpp_eq)
 
     output.append("}};// struct {}".format(type_name))
 

@@ -55,15 +55,15 @@ struct db_history_t {
 	int open_deal;	//	-1
 	int openVol;	//	-1
 	int openVol_deal;	//	-1
-	int openAmt_deal;	//	0
+	double openAmt_deal;	//	0.0
 	int close_deal;	//	-1
 	int closeVol;	//	-1
 	int closeVol_deal;	//	-1
-	int closeAmt_deal;	//	0
-	int commission;	//	0
-	int stamp_duty;	//	0
-	int transfer_fee;	//	0
-	int other_fees;	//	0
+	double closeAmt_deal;	//	0.0
+	double commission;	//	0.0
+	double stamp_duty;	//	0.0
+	double transfer_fee;	//	0.0
+	double other_fees;	//	0.0
 	std::string remarks;	//	起始配号:226168906
 
 	/* from json */
@@ -172,7 +172,7 @@ struct db_history_t {
 				throw e;
 			}
 			try{
-				db_history_t_var.openAmt_deal = json_var.at("openAmt_deal").get<int>();
+				db_history_t_var.openAmt_deal = json_var.at("openAmt_deal").get<double>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "openAmt_deal", e.what());
 				throw e;
@@ -196,31 +196,31 @@ struct db_history_t {
 				throw e;
 			}
 			try{
-				db_history_t_var.closeAmt_deal = json_var.at("closeAmt_deal").get<int>();
+				db_history_t_var.closeAmt_deal = json_var.at("closeAmt_deal").get<double>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "closeAmt_deal", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.commission = json_var.at("commission").get<int>();
+				db_history_t_var.commission = json_var.at("commission").get<double>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "commission", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.stamp_duty = json_var.at("stamp_duty").get<int>();
+				db_history_t_var.stamp_duty = json_var.at("stamp_duty").get<double>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "stamp_duty", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.transfer_fee = json_var.at("transfer_fee").get<int>();
+				db_history_t_var.transfer_fee = json_var.at("transfer_fee").get<double>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "transfer_fee", e.what());
 				throw e;
 			}
 			try{
-				db_history_t_var.other_fees = json_var.at("other_fees").get<int>();
+				db_history_t_var.other_fees = json_var.at("other_fees").get<double>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "other_fees", e.what());
 				throw e;
@@ -273,6 +273,47 @@ struct db_history_t {
 		}
 		return true;
 	}
+
+	bool operator ==(const db_history_t& d)
+	{
+		if (rowid == d.rowid &&
+			stgName == d.stgName &&
+			id == d.id &&
+			tdxOrderId == d.tdxOrderId &&
+			insCode == d.insCode &&
+			time == d.time &&
+			datetime == d.datetime &&
+			optType == d.optType &&
+			position == d.position &&
+			status == d.status &&
+			open_order == d.open_order &&
+			take_order == d.take_order &&
+			stop_order == d.stop_order &&
+			close_order == d.close_order &&
+			open_deal == d.open_deal &&
+			openVol == d.openVol &&
+			openVol_deal == d.openVol_deal &&
+			openAmt_deal == d.openAmt_deal &&
+			close_deal == d.close_deal &&
+			closeVol == d.closeVol &&
+			closeVol_deal == d.closeVol_deal &&
+			closeAmt_deal == d.closeAmt_deal &&
+			commission == d.commission &&
+			stamp_duty == d.stamp_duty &&
+			transfer_fee == d.transfer_fee &&
+			other_fees == d.other_fees &&
+			remarks == d.remarks)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool operator !=(const db_history_t& d)
+	{
+		return !((*this)==d);
+	}
+
 };// struct db_history_t
 } // namespace S4
 
@@ -281,7 +322,7 @@ struct db_history_t {
         inline int db_history_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/db_history_t.json");
-            std::string i("{    \"__sqlite_capable__\" : true,        \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open_order\":-1,    \"take_order\":-1,    \"stop_order\":-1,    \"close_order\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0,    \"commission\":0,    \"stamp_duty\":0,    \"transfer_fee\":0,    \"other_fees\":0,    \"remarks\":\"起始配号:226168906\"}");
+            std::string i("{    \"__sqlite_capable__\" : true,    \"rowid\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"tdxOrderId\": 0,    \"insCode\":\"sz000001\",    \"__comment__2\":\"no name, 平安银行 is not good for sqliteDB\",    \"time\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"open_order\":-1,    \"take_order\":-1,    \"stop_order\":-1,    \"close_order\":-1,    \"__comment__6\":\"not in use for now\",    \"open_deal\":-1,    \"openVol\":-1,    \"openVol_deal\":-1,    \"openAmt_deal\":0.0,    \"close_deal\":-1,    \"closeVol\":-1,    \"closeVol_deal\":-1,    \"closeAmt_deal\":0.0,    \"commission\":0.0,    \"stamp_duty\":0.0,    \"transfer_fee\":0.0,    \"other_fees\":0.0,    \"remarks\":\"起始配号:226168906\"}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

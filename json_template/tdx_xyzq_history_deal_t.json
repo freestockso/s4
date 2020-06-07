@@ -1,6 +1,7 @@
 {
     "__assign_type_fields__": {
         "date":"time_date_t", 
+        "id":"int64_t", 
         "time_utcSec":"time_utcSec_t", 
         "deal_price":"fprice_t", 
         "deal_vol":"vol_share_t", 
@@ -16,14 +17,14 @@
     "time_utcSec": 123,
     "stock_code": "002988",
     "stock_name": "豪美新材",
-    "order_index":26,
+    "id":26,
     "opt_type":"买入",
     "deal_price" : 0.0,
     "deal_vol" : 27,
-    "deal_amount":0,
-    "commission":0,
-    "stamp_duty":0,
-    "transfer_fee":0,
-    "other_fees":0,
+    "deal_amount":0.0,
+    "commission":0.0,
+    "stamp_duty":0.0,
+    "transfer_fee":0.0,
+    "other_fees":0.0,
     "remarks":"起始配号:226168906"
 }
