@@ -19,7 +19,8 @@ bool history_deal_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_na
 bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_history_order_t>& orders);
 bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_name, const std::string& table_name);
 
-bool read_histroy_DB(const std::filesystem::path& history_db, std::vector<s4_history_t>& history_data);
+//if table_list is empty, it will read all tables from db.
+bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, const std::set<std::string>& table_list = {});
 
 } // namespace TDX
 } // namespace S4

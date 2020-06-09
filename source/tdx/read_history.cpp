@@ -244,8 +244,57 @@ bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_n
 
 }
 
-bool read_histroy_DB(const std::filesystem::path& history_db, std::vector<s4_history_t>& history_data)
+// static
+bool merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t> deals_rd, std::vector<s4_history_t>& history_data)
 {
+	return true;
+}
+
+
+bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, const std::set<std::string>& table_list)
+{
+	history_data.clear();
+	sqlite::DB_t db(db_file_path.string(), SQLite::OPEN_READONLY);
+
+	S4::sqlite::tdx_xyzq_history_deal_t_dbTbl deal_tbl;
+	std::vector<S4::tdx_xyzq_history_deal_t> deals_rd;
+	S4::sqlite::tdx_xyzq_history_order_t_dbTbl order_tbl;
+	std::vector<S4::tdx_xyzq_history_order_t> orders_rd;
+
+	std::vector<std::string> tables_in_db = db.get_table_list();
+
+	for(auto& table : tables_in_db){
+		if(table_list.size() && table_list.count(table) == 0){
+			continue;
+		}
+		
+		std::map<std::string, std::string> colums = db.get_colum_list(table);
+		//not deal nor order
+		if (colums.count("deal_price")==0){
+			LCL_WARN("tdx history DB {:} contains non-history table: {:}", db_file_path.string(), table);
+			continue;
+		}
+		//check is deal or order
+		int table_type;
+		if(colums.count("commission")!=0 && colums.count("stamp_duty")!=0){
+			table_type = 0;	//deal
+		}else if(colums.count("delegate_type")!=0 && colums.count("order_vol")!=0){
+			table_type = 1;	//order
+		}else{
+			LCL_WARN("tdx history DB {:} contains non-history table: {:}", db_file_path.string(), table);
+			continue;
+		}
+
+		//TODO
+		if(table_type == 0){
+			db.read_table<tdx_xyzq_history_deal_t>(&deal_tbl, table, deals_rd);
+		}else{
+			db.read_table<tdx_xyzq_history_order_t>(&order_tbl, table, orders_rd);
+		}
+
+	}
+
+
 	return true;
 }
 
