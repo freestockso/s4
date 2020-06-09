@@ -27,4 +27,13 @@ int main(int argc, char** argv)
 	if (!ret) {
 		LCL_ERR("history_order_to_DB fail!");
 	}
+
+	std::vector<std::string> tables = history_db.get_table_list();
+	for (auto& t : tables) {
+		std::map<std::string, std::string> colums = history_db.get_colum_list(t);
+		LCL_INFO("{:}", t);
+		for (auto& c : colums) {
+			LCL_INFO("\t{:}:{:}", c.first, c.second);
+		}
+	}
 }

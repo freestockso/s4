@@ -28,6 +28,46 @@ DB_t::DB_t(const std::string & name, const int Mode):
 	}
 }
 
+std::vector<std::string> DB_t::get_table_list(void)
+{
+	std::vector<std::string> ret;
+	try {
+		std::string queryStr("SELECT name FROM sqlite_master WHERE type ='table'");
+		
+		SQLite::Statement   query(mDb, queryStr);
+
+		while (query.executeStep()) {
+			ret.emplace_back(query.getColumn(0).getString());
+		}
+	}
+	catch (std::exception & e) {
+		LCL_FATAL("sqlite::DB_t({:}) get_table_list fail: {:}", m_name, e.what());
+	}
+	return std::move(ret);
+}
+
+std::map<std::string, std::string> DB_t::get_colum_list(const std::string& table_name)
+{
+	std::map<std::string, std::string> ret;
+	try {
+		std::string queryStr("PRAGMA  table_info(" + table_name + ")");
+
+		SQLite::Statement   query(mDb, queryStr);
+
+		while (query.executeStep()) {
+			std::string col = query.getColumn(1).getString();
+			std::string type = query.getColumn(2).getString();
+			ret[col] = type;
+		}
+	}
+	catch (std::exception & e) {
+		LCL_FATAL("sqlite::DB_t({:}) get_colum_list fail: {:}", m_name, e.what());
+	}
+	return std::move(ret);
+}
+
+
+
 //s3stk_sh0.db3  : sh000000 ~sh600999
 //s3stk_sh1.db3 : sh601000 ~
 //
