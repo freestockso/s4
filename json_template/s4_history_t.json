@@ -1,0 +1,64 @@
+{
+    "__sqlite_capable__" : true,
+    "__assign_type_fields__": {
+        "date":"time_date_t", 
+        "id":"int64_t", 
+        "time_utcSec":"time_utcSec_t", 
+
+        "order_open":"price_t", 
+        "order_take":"price_t", 
+        "order_stop":"price_t", 
+        "order_close":"price_t", 
+        "vol_share_t":-1,
+        
+        "deal_open":"price_t", 
+        "deal_close":"price_t", 
+        "deal_vol":"vol_share_t", 
+        "deal_amt":"amount_t", 
+
+        "commission":"amount_t", 
+        "stamp_duty":"amount_t", 
+        "transfer_fee":"amount_t", 
+        "other_fees":"amount_t"
+    },
+
+    "__comment__1":"id through open-close",
+    "id":0,
+
+    "date":0,
+
+    "__comment__0":"strategy name",
+    "stgName": "tdx_xyzq",
+
+    "insCode":"sz000001",
+    "__comment__2":"/// name, 平安银行 is not good for sqliteDB",
+    "time_utcSec": 123,
+    "datetime": "2018_04_26__00_00_00",
+    "__comment__3":"current option of id: open / change_take / change_stop / close / change_close / abort",
+    "optType":"open",
+    "__comment__4":"long as stock only for now",
+    "position": "long",
+    "__comment__5":"current status of id: new / opened / closed / aborted",
+    "status":"new",
+
+    "order_open":-1,
+    "order_take":-1,
+    "order_stop":-1,
+    "order_close":-1,
+    "order_vol":-1,
+
+    "deal_open": -1, 
+    "deal_close": -1, 
+    
+    "__comment__6":"not in use for now",
+    "deal_vol": -1, 
+    "deal_amt": -1.0, 
+
+    "commission":0.0,
+    "stamp_duty":0.0,
+    "transfer_fee":0.0,
+    "other_fees":0.0,
+    "remarks":"起始配号:226168906"
+
+
+}

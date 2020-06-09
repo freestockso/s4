@@ -244,6 +244,10 @@ bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_n
 
 }
 
+bool read_histroy_DB(const std::filesystem::path& history_db, std::vector<s4_history_t>& history_data)
+{
+	
+}
 
 } // namespace TDX
 } // namespace S4
