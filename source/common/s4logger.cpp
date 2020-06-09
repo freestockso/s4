@@ -12,6 +12,7 @@ s4logger::s4logger()
 	_param = new glb_conf_t::logger_t;
 }
 
+//p has to be glb_conf_t::logger_t*
 void s4logger::init(void* p) noexcept {
 	flush();
 

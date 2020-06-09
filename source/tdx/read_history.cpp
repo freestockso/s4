@@ -184,6 +184,67 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
     return true;
 }
 
+bool history_deal_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_name, const std::string& table_name)
+{
+	std::vector<S4::tdx_xyzq_history_deal_t> deals;
+	bool ret;
+	ret = S4::TDX::read_history_deal(file_name, deals);
+	if (!ret) {
+		return false;
+	}
+
+	S4::sqlite::tdx_xyzq_history_deal_t_dbTbl deal_tbl;
+	history_db.to_table<S4::sqlite::tdx_xyzq_history_deal_t_dbTbl::data_t>(&deal_tbl, table_name, deals);
+
+	std::vector<S4::tdx_xyzq_history_deal_t> deals_rd;
+	history_db.read_table< S4::sqlite::tdx_xyzq_history_deal_t_dbTbl::data_t>(&deal_tbl, table_name, deals_rd);
+
+	if (deals.size() != deals_rd.size()) {
+		LCL_ERR("deal DB write - read unequal! w.size={:}, r.size={:}", deals.size(), deals_rd.size());
+	}
+	for (size_t i = 0; i < min(deals.size(), deals_rd.size()); ++i) {
+		if (deals[i] != deals_rd[i]) {
+			LCL_ERR("deal DB write - read unequal! w[{:}] != r[{:}]", i, i);		//as example, 8 and 9 are unequal for reordered by DB
+		}
+		else {
+			LCL_INFO("deal DB write - read OK! w[{:}] == r[{:}]", i, i);
+		}
+	}
+	return true;
+}
+
+bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_name, const std::string& table_name)
+{
+	std::vector<S4::tdx_xyzq_history_order_t> orders;
+	bool ret;
+	ret = S4::TDX::read_history_order(file_name, orders);
+	if (!ret) {
+		return false;
+	}
+
+	S4::sqlite::tdx_xyzq_history_order_t_dbTbl order_tbl;
+	history_db.to_table<S4::sqlite::tdx_xyzq_history_order_t_dbTbl::data_t>(&order_tbl, table_name, orders);
+
+	std::vector<S4::tdx_xyzq_history_order_t> orders_rd;
+	history_db.read_table< S4::sqlite::tdx_xyzq_history_order_t_dbTbl::data_t>(&order_tbl, table_name, orders_rd);
+
+	if (orders.size() != orders_rd.size()) {
+		LCL_ERR("order DB write - read unequal! w.size={:}, r.size={:}", orders.size(), orders_rd.size());
+	}
+	for (size_t i = 0; i < min(orders.size(), orders_rd.size()); ++i) {
+		if (orders[i] != orders_rd[i]) {
+			LCL_ERR("order DB write - read unequal! w[{:}] != r[{:}]", i, i);
+		}
+		else {
+			LCL_INFO("order DB write - read OK! w[{:}] == r[{:}]", i, i);
+		}
+	}
+
+	return true;
+
+}
+
+
 } // namespace TDX
 } // namespace S4
 
