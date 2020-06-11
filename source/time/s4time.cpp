@@ -172,7 +172,7 @@ void rptTime::estimate(size_t now, size_t size, size_t gap)
 	INFO("{} progress:  [ {:d}/{:d} ]  used={:0.2f}s  ET(all={:0.2f}s; res={:0.2f}s)", m_target, now, size, dlt, tall, tres);
 }
 
-bool isDealTime_stock(time_minuSec_t minuSec, mktCode_t mktCode)
+bool isDealTime_stock(time_minuSec_t minuSec, mktCodeI_t mktCode)
 {
 	//TODO: snapshot's time is not so precise.
 	if (minuSec >= 91500 && minuSec <= 92500) {

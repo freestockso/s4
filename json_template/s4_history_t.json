@@ -1,5 +1,6 @@
 {
     "__sqlite_capable__" : true,
+    "__sqlite_primary__" : "id, time_utcSec, status",
     "__assign_type_fields__": {
         "date":"time_date_t", 
         "id":"int64_t", 
@@ -9,7 +10,7 @@
         "order_take":"price_t", 
         "order_stop":"price_t", 
         "order_close":"price_t", 
-        "vol_share_t":-1,
+        "order_vol":"vol_share_t", 
         
         "deal_open":"price_t", 
         "deal_close":"price_t", 
@@ -30,7 +31,7 @@
     "__comment__0":"strategy name",
     "stgName": "tdx_xyzq",
 
-    "insCode":"sz000001",
+    "mktCodeStr":"sz000001",
     "__comment__2":"/// name, 平安银行 is not good for sqliteDB",
     "time_utcSec": 123,
     "datetime": "2018_04_26__00_00_00",

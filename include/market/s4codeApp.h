@@ -26,14 +26,17 @@
  * pureCodeInt : 1, 997, 600004;  ??
  * pureCodeStr : "000001", "000997", "600004"; basic (tushare/ol)
  * *********************************/
-typedef int mktCode_t;
+typedef int mktCodeI_t;
+typedef int pureCodeI_t;
 
 //"600997" : "sh600997", "000001":"sz000001"
 std::string pureCodeStr_to_mktCodeStr(const std::string& pureCode);
 //"600997" : 170600997, "000001": 330000001
-mktCode_t pureCodeStr_to_mktCode(const std::string& pureCode);
+mktCodeI_t pureCodeStr_to_mktCode(const std::string& pureCode);
 //600997 : "sh600997", 1:"sz000001"
 std::string pureCodeInt_to_mktCodeStr(const int pureCode);
+//600997 : "600997", 1:"000001"
+std::string pureCodeInt_to_pureCodeStr(const int pureCode);
 //600997 : 170600997, 1: 330000001
 int pureCodeInt_to_mktCodeInt(const int pureCode);
 
@@ -52,13 +55,13 @@ int mktCodeStr_to_mktCodeInt(const std::string& mktCode);
 //170600997 : "sh600997", 330000001: "sz000001"
 std::string mktCodeInt_to_mktCodeStr(int mktCode);
 
-bool isSZmkt(mktCode_t MktCodeInt);
-bool isSHmkt(mktCode_t MktCodeInt);
-bool isCYmkt(mktCode_t MktCodeInt);
-bool isKCmkt(mktCode_t MktCodeInt);
+bool isSZmkt(mktCodeI_t MktCodeInt);
+bool isSHmkt(mktCodeI_t MktCodeInt);
+bool isCYmkt(mktCodeI_t MktCodeInt);
+bool isKCmkt(mktCodeI_t MktCodeInt);
 
-bool isStk(mktCode_t MktCodeInt);
-bool isIdx(mktCode_t MktCodeInt);
+bool isStk(mktCodeI_t MktCodeInt);
+bool isIdx(mktCodeI_t MktCodeInt);
 
 bool isStk(const std::string & MktCodeStr);
 

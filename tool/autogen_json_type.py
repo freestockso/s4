@@ -18,7 +18,8 @@ cpp_headers = \
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
-* Script author: ChenZaihui<chinsaiki@outlook.com>
+    "__sqlite_primary__":"", # assign the primary key of sqlite, if not assigned, first existing col of [ 'id', 'date', 'mktCode', 'datetime', 'code'] will be assigned automatically.
+* Script author: ChinSaiki<chinsaiki@outlook.com>
 */
 #pragma once
 
@@ -36,7 +37,14 @@ json_cpp_headers = cpp_headers + \
 #include <vector>
 """
 
-keep_words = ['__default_value_fields__', '__optional_fields__', '__assign_type_fields__', '__assign_set_lists__', '__sqlite_capable__']
+keep_words = [
+    '__default_value_fields__', 
+    '__optional_fields__', 
+    '__assign_type_fields__', 
+    '__assign_set_lists__', 
+    '__sqlite_capable__', 
+    '__sqlite_primary__'
+]
 
 def determin_value_type(value):
     if isinstance(value, str):
@@ -267,7 +275,7 @@ def get_eq(type_name, json_dict):
 
 
     cpp_ueq = '''
-	bool operator !=(const {}& d)
+	bool operator !=(const {}& d) const
 	{{
 		return !((*this)==d);
 	}}
@@ -278,7 +286,7 @@ def get_eq(type_name, json_dict):
         eq_list.append('{0} == d.{0}'.format(col))
 
     cpp_eq = '''
-	bool operator ==(const {0}& d)
+	bool operator ==(const {0}& d) const
 	{{
 		if ({1})
 		{{

@@ -19,7 +19,7 @@ std::string pureCodeStr_to_mktCodeStr(const std::string& pureCode)
 	}
 }
 //"600997" : 170600997, "000001": 330000001
-mktCode_t pureCodeStr_to_mktCode(const std::string& pureCode)
+mktCodeI_t pureCodeStr_to_mktCode(const std::string& pureCode)
 {
 	int c = 0;
 	for (int i = 0; i < pureCode.size(); ++i) {
@@ -37,6 +37,13 @@ std::string pureCodeInt_to_mktCodeStr(const int pureCode)
 	else {
 		sprintf_s(c, "sz%06d", pureCode);
 	}
+	return move(std::string(c));
+}
+//600997 : "600997", 1:"000001"
+std::string pureCodeInt_to_pureCodeStr(const int pureCode)
+{
+	char c[9];
+	sprintf_s(c, "%06d", pureCode);
 	return move(std::string(c));
 }
 
@@ -247,25 +254,25 @@ bool isStk(const std::string & MktCodeStr)
 	return false;
 }
 
-bool isSZmkt(mktCode_t MktCodeInt)
+bool isSZmkt(mktCodeI_t MktCodeInt)
 {
 	if (MktCodeInt > SZ_PRB && MktCodeInt < SZ_PRB + PRB_MK)
 		return true;
 	return false;
 }
-bool isSHmkt(mktCode_t MktCodeInt)
+bool isSHmkt(mktCodeI_t MktCodeInt)
 {
 	if (MktCodeInt > SH_PRB && MktCodeInt < SH_PRB + PRB_MK)
 		return true;
 	return false;
 }
-bool isCYmkt(mktCode_t MktCodeInt)
+bool isCYmkt(mktCodeI_t MktCodeInt)
 {
 	if (MktCodeInt > CY_PRB && MktCodeInt < CY_PRB + CY_PRB_MK)
 		return true;
 	return false;
 }
-bool isKCmkt(mktCode_t MktCodeInt)
+bool isKCmkt(mktCodeI_t MktCodeInt)
 {
 	if (MktCodeInt > KC_PRB && MktCodeInt < KC_PRB + KC_PRB_MK)
 		return true;
@@ -273,7 +280,7 @@ bool isKCmkt(mktCode_t MktCodeInt)
 }
 
 
-bool isStk(mktCode_t MktCodeInt)
+bool isStk(mktCodeI_t MktCodeInt)
 {
 	if (isSHmkt(MktCodeInt)) {
 		if (MktCodeInt >= SH_PRB + 600000 && MktCodeInt <= SH_PRB + 609999)
@@ -292,7 +299,7 @@ bool isStk(mktCode_t MktCodeInt)
 	return false;
 }
 //Ö¸Êý
-bool isIdx(mktCode_t MktCodeInt)
+bool isIdx(mktCodeI_t MktCodeInt)
 {
 	if (isSHmkt(MktCodeInt)) {
 		if (MktCodeInt >= SH_PRB && MktCodeInt <= SH_PRB + 999)

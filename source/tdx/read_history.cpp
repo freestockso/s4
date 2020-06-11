@@ -5,6 +5,7 @@
 #include "jsonTypes/tdx_xyzq_history_deal_t.h"
 #include "jsonTypes/tdx_xyzq_history_order_t.h"
 #include "types/s4convertors.h"
+#include "market/s4codeApp.h"
 #include "time/s4time.h"
 
 CREATE_LOCAL_LOGGER(tdx_read_history)
@@ -16,26 +17,6 @@ using namespace std;
 namespace S4{
 namespace TDX{
 
-static vector<string> deal_titles = {
-/*
-成交日期	
-成交时间	
-证券代码	
-证券名称	
-买卖标志	
-成交价格	
-成交数量	
-成交编号	
-委托编号	
-股东代码	
-成交金额	
-佣金	
-印花税	
-过户费	
-其他费	
-备注
-*/
-};
 
 //可能跳过的成交记录：打新配号、股息
 bool read_history_deal(const std::string& file_name, std::vector<tdx_xyzq_history_deal_t>& deals)
@@ -75,7 +56,7 @@ bool read_history_deal(const std::string& file_name, std::vector<tdx_xyzq_histor
 					int minu = (int)IntConvertor::convert(time[1]);
 					int sec = (int)IntConvertor::convert(time[2]);
 					deal_HMS = hour * 10000 + minu * 100 + sec;
-				}else if (t == "证券代码") { deal.stock_code = v;	//pureCodeStr
+				}else if (t == "证券代码") { deal.stock_code = pureCodeInt_to_pureCodeStr((int)IntConvertor::convert(v));	//pureCodeStr
 				}else if (t == "证券名称") { deal.stock_name = v;
 				}else if (t == "买卖标志") { deal.opt_type = v;
 				}else if (t == "成交价格") { deal.deal_price = (fprice_t)DoubleConvertor::convert(v);
@@ -89,7 +70,7 @@ bool read_history_deal(const std::string& file_name, std::vector<tdx_xyzq_histor
 				}else if (t == "备注") {    deal.remarks = v;
 				}
 			}
-			mktCode_t mktCode = pureCodeStr_to_mktCode(deal.stock_code);
+			mktCodeI_t mktCode = pureCodeStr_to_mktCode(deal.stock_code);
 			if (deal_HMS == 0 || !isDealTime_stock(deal_HMS, mktCode)) {
 				LCL_WARN("drop deal line for not-market-time:\n{:}", str);
 				continue;
@@ -149,7 +130,7 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
 					int minu = (int)IntConvertor::convert(time[1]);
 					int sec = (int)IntConvertor::convert(time[2]);
 					order_HMS = hour * 10000 + minu * 100 + sec;
-				}else if (t == "证券代码") { order.stock_code = v;	//pureCodeStr
+				}else if (t == "证券代码") { order.stock_code = pureCodeInt_to_pureCodeStr((int)IntConvertor::convert(v));	//pureCodeStr
 				}else if (t == "证券名称") { order.stock_name = v;
 				}else if (t == "买卖标志") { order.opt_type = v;
 				}else if (t == "委托类别") { order.delegate_type = v;
@@ -244,17 +225,149 @@ bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_n
 
 }
 
-// static
-bool merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t> deals_rd, std::vector<s4_history_t>& history_data)
+
+
+static
+void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders_rd, std::vector<s4_history_t>& history_data)
 {
-	return true;
+	for(const auto& order : orders_rd){
+		s4_history_t data;
+		//id through open-close
+		data.id = order.id;
+		data.date = order.date;
+		//strategy name
+		data.stgName = "tdx_xyzq_histroy";	//	tdx_xyzq
+		data.mktCodeStr = pureCodeStr_to_mktCodeStr(order.stock_code);	//	sz000001
+		data.time_utcSec = order.time_utcSec;	//	123
+		data.datetime = utc_to_str(order.time_utcSec);	//	2018_04_26__00_00_00
+		//current option of id: open / change_take / change_stop / close / change_close / abort
+		//current status of id: new / opened / closed / open_aborting / close_abort_sent / aborted
+		if (order.opt_type == "买入") {
+			if (order.delegate_type == "撤单") {
+				data.optType = "abort";
+				if (order.status == "已成") {
+					data.status = "aborted";
+				}
+				else {
+					data.status = "open_aborting";
+				}
+			}
+			else {
+				data.optType = "open";
+				data.status = "new";	//	new
+			}
+			data.order_open = fPrice_to_iPrice(order.order_price);	//	-1
+			data.order_close = -1;	//	-1
+			data.order_vol = order.order_vol;	//	-1
+		}
+		else if (order.opt_type == "卖出") {
+			if (order.delegate_type == "撤单") {
+				data.optType = "close";
+				if (order.status == "已成") {
+					data.status = "opened";
+				}
+				else {
+					data.status = "close_aborting";
+				}
+			}
+			else {
+				data.optType = "close";
+				data.status = "opened";
+			}
+			data.order_open = -1;	//	-1
+			data.order_close = fPrice_to_iPrice(order.order_price);
+			data.order_vol = order.order_vol;	//	-1
+		}
+		else {
+			continue;
+		}
+		//long as stock only for now
+		data.position = "long";	//	long
+		data.order_take = -1;	//	-1
+		data.order_stop = -1;	//	-1
+
+		data.deal_open = -1;
+		data.deal_close = -1;	//	-1
+		//not in use for now
+		data.deal_vol = -1;	//	-1
+		data.deal_amt = -1.0;	//	
+		data.commission = 0.0;	//	0.0
+		data.stamp_duty = 0.0;	//	0.0
+		data.transfer_fee = 0.0;	//	0.0
+		data.other_fees = 0.0;	//	0.0
+		data.remarks = order.quote_mode;	//	起始配号:226168906
+
+		history_data.emplace_back(data);
+
+	}
 }
 
 
-bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, const std::set<std::string>& table_list)
+static
+void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd, std::vector<s4_history_t>& history_data)
+{
+	for (const auto& deal : deals_rd) {
+		s4_history_t data;
+		//id through open-close
+		data.id = deal.id;
+		data.date = deal.date;
+		//strategy name
+		data.stgName = "tdx_xyzq_histroy";	//	tdx_xyzq
+		data.mktCodeStr = pureCodeStr_to_mktCodeStr(deal.stock_code);	//	sz000001
+		data.time_utcSec = deal.time_utcSec;	//	123
+		data.datetime = utc_to_str(deal.time_utcSec);	//	2018_04_26__00_00_00
+		//current option of id: open / change_take / change_stop / close / change_close / abort
+		//current status of id: new / opened / closed / aborted
+		if (deal.opt_type == "买入") {
+			data.optType = "open";
+			data.status = "opened";	//	new
+			data.deal_open = fPrice_to_iPrice(deal.deal_price);
+			data.deal_close = -1;	//	-1
+		}
+		else if (deal.opt_type == "卖出") {
+			data.optType = "close";
+			data.status = "closed";	//	new
+			data.deal_open = -1;	//	-1
+			data.deal_close = fPrice_to_iPrice(deal.deal_price);
+		}
+		else {
+			continue;
+		}
+		//long as stock only for now
+		data.position = "long";	//	long
+		data.order_open = -1;	//	-1
+		data.order_take = -1;	//	-1
+		data.order_stop = -1;	//	-1
+		data.order_close = -1;	//	-1
+		data.order_vol = -1;	//	-1
+
+		//not in use for now
+		data.deal_vol = deal.deal_vol;	//	-1
+		data.deal_amt = deal.deal_amount;	//	-1.0
+		data.commission = deal.commission;	//	0.0
+		data.stamp_duty = deal.stamp_duty;	//	0.0
+		data.transfer_fee = deal.transfer_fee;	//	0.0
+		data.other_fees = deal.other_fees;	//	0.0
+		data.remarks = deal.remarks;	//	起始配号:226168906
+
+		history_data.emplace_back(data);
+
+	}
+}
+
+bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, 
+	const std::set<std::string>& table_list, const std::vector<pureCodeI_t>& stk_list)
 {
 	history_data.clear();
 	sqlite::DB_t db(db_file_path.string(), SQLite::OPEN_READONLY);
+
+	std::string condition = "";
+	if (stk_list.size()) {
+		condition = " WHERE stock_code = " + pureCodeInt_to_pureCodeStr(stk_list[0]);
+		for (size_t i = 1; i < stk_list.size(); ++i) {
+			condition += " OR stock_code = " + pureCodeInt_to_pureCodeStr(stk_list[i]);
+		}
+	}
 
 	S4::sqlite::tdx_xyzq_history_deal_t_dbTbl deal_tbl;
 	std::vector<S4::tdx_xyzq_history_deal_t> deals_rd;
@@ -285,11 +398,12 @@ bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_h
 			continue;
 		}
 
-		//TODO
 		if(table_type == 0){
-			db.read_table<tdx_xyzq_history_deal_t>(&deal_tbl, table, deals_rd);
+			db.read_table<tdx_xyzq_history_deal_t>(&deal_tbl, table, deals_rd, condition);
+			merge_history_deal(deals_rd, history_data);
 		}else{
-			db.read_table<tdx_xyzq_history_order_t>(&order_tbl, table, orders_rd);
+			db.read_table<tdx_xyzq_history_order_t>(&order_tbl, table, orders_rd, condition);
+			merge_history_order(orders_rd, history_data);
 		}
 
 	}

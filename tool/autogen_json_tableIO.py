@@ -88,23 +88,22 @@ def dict_to_cols(json_dict):
 
 PRIMARY_KEY_in_order = [ 'id', 'date', 'mktCode', 'datetime', 'code']
 
-def get_K_COL(cols):
+def get_K_COL(cols, primary = None):
     K_COL = \
 """
 const std::string K_COL =
     "( "
 """
-    primary_key = None
+    primary_key = primary
     for name in cols:
         v_type = cols[name]
         K_COL += '        "{}\t{}, "\n'.format(name, v_type)
-        if primary_key is None:
-            primary_key = name
 
-    for key in PRIMARY_KEY_in_order:
-        if key in cols:
-            primary_key = key
-            break
+    if primary_key is None:
+        for key in PRIMARY_KEY_in_order:
+            if key in cols:
+                primary_key = key
+                break
 
     K_COL += \
 '''
@@ -237,10 +236,14 @@ if __name__ == "__main__":
         print("not __sqlite_capable__")
         exit(0)
 
+    primary = None
+    if "__sqlite_primary__" in json_instance:
+        primary = json_instance["__sqlite_primary__"]
+
 
     cols, __assign_type_fields__ = dict_to_cols(json_instance)
     K_IN = get_K_IN(cols)
-    K_COL = get_K_COL(cols)
+    K_COL = get_K_COL(cols, primary)
     class_t = get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fields__)
     # print(class_t)
 

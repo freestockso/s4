@@ -13,7 +13,8 @@
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
-* Script author: ChenZaihui<chinsaiki@outlook.com>
+    "__sqlite_primary__":"", # assign the primary key of sqlite, if not assigned, first existing col of [ 'id', 'date', 'mktCode', 'datetime', 'code'] will be assigned automatically.
+* Script author: ChinSaiki<chinsaiki@outlook.com>
 */
 #pragma once
 
@@ -171,7 +172,7 @@ struct tdx_xyzq_history_deal_t {
 		return true;
 	}
 
-	bool operator ==(const tdx_xyzq_history_deal_t& d)
+	bool operator ==(const tdx_xyzq_history_deal_t& d) const
 	{
 		if (date == d.date &&
 			time_format == d.time_format &&
@@ -194,7 +195,7 @@ struct tdx_xyzq_history_deal_t {
 		return false;
 	}
 
-	bool operator !=(const tdx_xyzq_history_deal_t& d)
+	bool operator !=(const tdx_xyzq_history_deal_t& d) const
 	{
 		return !((*this)==d);
 	}

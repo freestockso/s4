@@ -13,7 +13,8 @@
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
-* Script author: ChenZaihui<chinsaiki@outlook.com>
+    "__sqlite_primary__":"", # assign the primary key of sqlite, if not assigned, first existing col of [ 'id', 'date', 'mktCode', 'datetime', 'code'] will be assigned automatically.
+* Script author: ChinSaiki<chinsaiki@outlook.com>
 */
 #pragma once
 
@@ -36,7 +37,7 @@ struct s4_history_t {
 	time_date_t date;	//	0
 	//strategy name
 	std::string stgName;	//	tdx_xyzq
-	std::string insCode;	//	sz000001
+	std::string mktCodeStr;	//	sz000001
 	///// name, 平安银行 is not good for sqliteDB
 	time_utcSec_t time_utcSec;	//	123
 	std::string datetime;	//	2018_04_26__00_00_00
@@ -50,7 +51,7 @@ struct s4_history_t {
 	price_t order_take;	//	-1
 	price_t order_stop;	//	-1
 	price_t order_close;	//	-1
-	int order_vol;	//	-1
+	vol_share_t order_vol;	//	-1
 	price_t deal_open;	//	-1
 	price_t deal_close;	//	-1
 	//not in use for now
@@ -84,9 +85,9 @@ struct s4_history_t {
 				throw e;
 			}
 			try{
-				s4_history_t_var.insCode = json_var.at("insCode").get<std::string>();
+				s4_history_t_var.mktCodeStr = json_var.at("mktCodeStr").get<std::string>();
 			}catch(const std::exception& e){
-				ERR("{:} not found in json! e={:}", "insCode", e.what());
+				ERR("{:} not found in json! e={:}", "mktCodeStr", e.what());
 				throw e;
 			}
 			try{
@@ -144,7 +145,7 @@ struct s4_history_t {
 				throw e;
 			}
 			try{
-				s4_history_t_var.order_vol = json_var.at("order_vol").get<int>();
+				s4_history_t_var.order_vol = json_var.at("order_vol").get<vol_share_t>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "order_vol", e.what());
 				throw e;
@@ -215,7 +216,7 @@ struct s4_history_t {
 			json_var["id"] = s4_history_t_var.id;
 			json_var["date"] = s4_history_t_var.date;
 			json_var["stgName"] = s4_history_t_var.stgName;
-			json_var["insCode"] = s4_history_t_var.insCode;
+			json_var["mktCodeStr"] = s4_history_t_var.mktCodeStr;
 			json_var["time_utcSec"] = s4_history_t_var.time_utcSec;
 			json_var["datetime"] = s4_history_t_var.datetime;
 			json_var["optType"] = s4_history_t_var.optType;
@@ -242,12 +243,12 @@ struct s4_history_t {
 		return true;
 	}
 
-	bool operator ==(const s4_history_t& d)
+	bool operator ==(const s4_history_t& d) const
 	{
 		if (id == d.id &&
 			date == d.date &&
 			stgName == d.stgName &&
-			insCode == d.insCode &&
+			mktCodeStr == d.mktCodeStr &&
 			time_utcSec == d.time_utcSec &&
 			datetime == d.datetime &&
 			optType == d.optType &&
@@ -273,7 +274,7 @@ struct s4_history_t {
 		return false;
 	}
 
-	bool operator !=(const s4_history_t& d)
+	bool operator !=(const s4_history_t& d) const
 	{
 		return !((*this)==d);
 	}
@@ -286,7 +287,7 @@ struct s4_history_t {
         inline int s4_history_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/s4_history_t.json");
-            std::string i("{    \"__sqlite_capable__\" : true,    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"id\":\"int64_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"order_open\":\"price_t\",         \"order_take\":\"price_t\",         \"order_stop\":\"price_t\",         \"order_close\":\"price_t\",         \"vol_share_t\":-1,                \"deal_open\":\"price_t\",         \"deal_close\":\"price_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amt\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"date\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"insCode\":\"sz000001\",    \"__comment__2\":\"/// name, 平安银行 is not good for sqliteDB\",    \"time_utcSec\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"order_open\":-1,    \"order_take\":-1,    \"order_stop\":-1,    \"order_close\":-1,    \"order_vol\":-1,    \"deal_open\": -1,     \"deal_close\": -1,         \"__comment__6\":\"not in use for now\",    \"deal_vol\": -1,     \"deal_amt\": -1.0,     \"commission\":0.0,    \"stamp_duty\":0.0,    \"transfer_fee\":0.0,    \"other_fees\":0.0,    \"remarks\":\"起始配号:226168906\"}");
+            std::string i("{    \"__sqlite_capable__\" : true,    \"__sqlite_primary__\" : \"id, time_utcSec, status\",    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"id\":\"int64_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"order_open\":\"price_t\",         \"order_take\":\"price_t\",         \"order_stop\":\"price_t\",         \"order_close\":\"price_t\",         \"order_vol\":\"vol_share_t\",                 \"deal_open\":\"price_t\",         \"deal_close\":\"price_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amt\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"date\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"mktCodeStr\":\"sz000001\",    \"__comment__2\":\"/// name, 平安银行 is not good for sqliteDB\",    \"time_utcSec\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"order_open\":-1,    \"order_take\":-1,    \"order_stop\":-1,    \"order_close\":-1,    \"order_vol\":-1,    \"deal_open\": -1,     \"deal_close\": -1,         \"__comment__6\":\"not in use for now\",    \"deal_vol\": -1,     \"deal_amt\": -1.0,     \"commission\":0.0,    \"stamp_duty\":0.0,    \"transfer_fee\":0.0,    \"other_fees\":0.0,    \"remarks\":\"起始配号:226168906\"}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

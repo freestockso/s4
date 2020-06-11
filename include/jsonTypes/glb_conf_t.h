@@ -13,7 +13,8 @@
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
-* Script author: ChenZaihui<chinsaiki@outlook.com>
+    "__sqlite_primary__":"", # assign the primary key of sqlite, if not assigned, first existing col of [ 'id', 'date', 'mktCode', 'datetime', 'code'] will be assigned automatically.
+* Script author: ChinSaiki<chinsaiki@outlook.com>
 */
 #pragma once
 
@@ -46,6 +47,7 @@ struct glb_conf_t {
 	logger_t logger;
 	struct db_t {
 		std::string root;	//	../db
+		std::string history_tdx_qs;	//	s4_history_tdx_xyzq.db
 		std::string history_order;	//	s4_history_order.db
 	};
 	db_t db;
@@ -106,6 +108,12 @@ struct glb_conf_t {
 				throw e;
 			}
 			try{
+				glb_conf_t_var.db.history_tdx_qs = json_var_db.at("history_tdx_qs").get<std::string>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "history_tdx_qs", e.what());
+				throw e;
+			}
+			try{
 				glb_conf_t_var.db.history_order = json_var_db.at("history_order").get<std::string>();
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "history_order", e.what());
@@ -141,6 +149,7 @@ struct glb_conf_t {
 			json_var["logger"] = json_var_logger;
 			nlohmann::json json_var_db;
 			json_var_db["root"] = glb_conf_t_var.db.root;
+			json_var_db["history_tdx_qs"] = glb_conf_t_var.db.history_tdx_qs;
 			json_var_db["history_order"] = glb_conf_t_var.db.history_order;
 			json_var["db"] = json_var_db;
 			nlohmann::json json_var_tdx;
@@ -161,7 +170,7 @@ struct glb_conf_t {
         inline int glb_conf_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/glb_conf_t.json");
-            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
+            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

@@ -42,4 +42,4 @@ private:
     double _rptGate;
 };
 
-bool isDealTime_stock(time_minuSec_t minuSec, mktCode_t mktCode);
+bool isDealTime_stock(time_minuSec_t minuSec, mktCodeI_t mktCode);

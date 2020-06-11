@@ -13,7 +13,8 @@
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
-* Script author: ChenZaihui<chinsaiki@outlook.com>
+    "__sqlite_primary__":"", # assign the primary key of sqlite, if not assigned, first existing col of [ 'id', 'date', 'mktCode', 'datetime', 'code'] will be assigned automatically.
+* Script author: ChinSaiki<chinsaiki@outlook.com>
 */
 #pragma once
 
@@ -52,7 +53,7 @@ public:
 			K_data.id,
 			K_data.date,
 			K_data.stgName,
-			K_data.insCode,
+			K_data.mktCodeStr,
 			K_data.time_utcSec,
 			K_data.datetime,
 			K_data.optType,
@@ -81,7 +82,7 @@ public:
         K_data.id = (int64_t)query.getColumn(0).getInt64();
 		K_data.date = (time_date_t)query.getColumn(1).getInt64();
 		K_data.stgName = query.getColumn(2).getString();
-		K_data.insCode = query.getColumn(3).getString();
+		K_data.mktCodeStr = query.getColumn(3).getString();
 		K_data.time_utcSec = (time_utcSec_t)query.getColumn(4).getInt64();
 		K_data.datetime = query.getColumn(5).getString();
 		K_data.optType = query.getColumn(6).getString();
@@ -91,7 +92,7 @@ public:
 		K_data.order_take = (price_t)query.getColumn(10).getInt64();
 		K_data.order_stop = (price_t)query.getColumn(11).getInt64();
 		K_data.order_close = (price_t)query.getColumn(12).getInt64();
-		K_data.order_vol = query.getColumn(13).getInt64();
+		K_data.order_vol = (vol_share_t)query.getColumn(13).getInt64();
 		K_data.deal_open = (price_t)query.getColumn(14).getInt64();
 		K_data.deal_close = (price_t)query.getColumn(15).getInt64();
 		K_data.deal_vol = (vol_share_t)query.getColumn(16).getInt64();
@@ -115,7 +116,7 @@ const std::string K_COL =
         "id	INTEGER, "
         "date	INTEGER, "
         "stgName	TEXT, "
-        "insCode	TEXT, "
+        "mktCodeStr	TEXT, "
         "time_utcSec	INTEGER, "
         "datetime	TEXT, "
         "optType	TEXT, "
@@ -136,14 +137,14 @@ const std::string K_COL =
         "other_fees	DOUBLE, "
         "remarks	TEXT, "
 
-        "PRIMARY KEY(id)"
+        "PRIMARY KEY(id, time_utcSec, status)"
     ")";
 
 
 
 const std::string K_IN =
     "("
-    "id, date, stgName, insCode, time_utcSec, datetime, optType, position, status, order_open, order_take, order_stop, order_close, order_vol, deal_open, deal_close, deal_vol, deal_amt, commission, stamp_duty, transfer_fee, other_fees, remarks"
+    "id, date, stgName, mktCodeStr, time_utcSec, datetime, optType, position, status, order_open, order_take, order_stop, order_close, order_vol, deal_open, deal_close, deal_vol, deal_amt, commission, stamp_duty, transfer_fee, other_fees, remarks"
     ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 ;
 

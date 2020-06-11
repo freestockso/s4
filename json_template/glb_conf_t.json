@@ -30,6 +30,7 @@
     },
     "db":{
         "root" : "../db",
+        "history_tdx_qs": "s4_history_tdx_xyzq.db",
         "history_order": "s4_history_order.db"
     },
     "tdx":{
