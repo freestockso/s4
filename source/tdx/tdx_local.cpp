@@ -1,13 +1,16 @@
-#include "tdxLocal.h"
-#include "s3app.h"
-#include "s3codeApp.h"
+#include "tdx_local.h"
 #include <io.h>
 #include <fstream>
-#include "../logger/s3logger.h"
+#include "common/s4logger.h"
+#include "time/s4time.h"
+#include <assert.h>
 
 using namespace std;
 
-CREATE_LOCAL_LOGGER("tdxif")
+CREATE_LOCAL_LOGGER("tdx_lcl")
+
+namespace S4{
+namespace TDX{
 
 tdxLocal_t::tdxLocal_t(const std::string& tdxPath)
 {
@@ -53,7 +56,7 @@ int tdxLocal_t::parseTime(const struct tdxRawMinuK_t& rawData, struct minuK_t& m
 	tmTime.tm_isdst = 0;
 	tmTime.tm_sec = 0;
 
-	minuK.time = time_to_epoch(&tmTime);
+	minuK.time = tm_to_utc(&tmTime);
 	// time_t t = mktime(&minuK.time);	//take TimeZone as Asia/Shanghai
 	// tm tmTime = *gmtime(&t);		//take no TimeZone, so time shifts if t was made by mktime.
 	// tm tmTimeb = *gmtime(&minuK.utcSec);
@@ -85,12 +88,12 @@ bool tdxLocal_t::readMinuK_nb(const std::string& code, const int endDate,
 // [bgnDate, endDate]
 int tdxLocal_t::readDayK_raw(mktCodeI_t mktCode, struct dayK_t *& rawData)
 {
-	char[1024] path;
+	char path[1024];
 	int bReadFail;
 	int size;
 	int dataCnt = 0;
 
-	pureCodeI_t code = mktCodeInt_to_pureCodeInt(mktCOde);
+	pureCodeI_t code = mktCodeInt_to_pureCodeInt(mktCode);
 	if (isSHmkt(mktCode)){
 		sprintf(path, "%s%s%d.day", m_tdxPath.c_str(), m_dayFolderSZ.c_str(), code);
 	}else{
@@ -132,7 +135,7 @@ bool tdxLocal_t::readDayK(const std::string& pureCode, vec_dayK_t& Kque,
 bool tdxLocal_t::readDayK(mktCodeI_t mktCode, vec_dayK_t& Kque,
 	int bgnDate, int endDate)
 {
-	assert(endData > bgnDate);
+	assert(endDate > bgnDate);
 
 	Kque.clear();
 
@@ -197,16 +200,16 @@ bool tdxLocal_t::readDayK_nb(const std::string& pureCode, int endDate,
 		int nb_preEnd, vec_dayK_t& Kque)
 {
 	mktCodeI_t mktCode = pureCodeStr_to_mktCode(pureCode);
-	return readDayK(mktCode, endDate, nb_preEnd, Kque);
+	return readDayK_nb(mktCode, endDate, nb_preEnd, Kque);
 }
 
-int tdxLocal_t::readDayK_nb(mktCodeI_t mktCode, int endDate, 
+bool tdxLocal_t::readDayK_nb(mktCodeI_t mktCode, int endDate, 
 		int nb_preEnd, vec_dayK_t& Kque)
 {
 	Kque.clear();
 
 	struct dayK_t * rawData;
-	int dataCnt = readDayK_raw(code, rawData);
+	int dataCnt = readDayK_raw(mktCode, rawData);
 	if (dataCnt < 0) return false;
 
 	int endI = 0, i;
@@ -241,3 +244,5 @@ int tdxLocal_t::readDayK_nb(mktCodeI_t mktCode, int endDate,
 	return 0;
 }
 
+}
+}

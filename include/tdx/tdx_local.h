@@ -61,8 +61,8 @@ private:
 	static int parseTime(const struct tdxRawMinuK_t& rawData, struct minuK_t& minuK);
 	static void toMinuK(const struct tdxRawMinuK_t& rawData, struct minuK_t& minuK);
 
-	static int readMinuK_raw(const std::string& code, struct tdxRawMinuK_t *& rawData, const int minuFreq);
-	static int readDayK_raw(mktCodeI_t mktCode, struct dayK_t *& rawData)
+	int readMinuK_raw(const std::string& code, struct tdxRawMinuK_t *& rawData, const int minuFreq);
+	int readDayK_raw(mktCodeI_t mktCode, struct dayK_t *& rawData);
 };
 
 
