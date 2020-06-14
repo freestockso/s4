@@ -10,6 +10,7 @@
 #include "db_sqlite/db.h"
 
 #include "jsonTypes/s4_history_t.h"
+
 namespace S4{
 namespace TDX{
 

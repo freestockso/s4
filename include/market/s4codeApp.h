@@ -2,8 +2,9 @@
 
 #define PRB_MK 999999
 #define SH_PRB 170000000
-#define KC_PRB 330688000
+#define KC_PRB 170688000
 #define KC_PRB_MK 1000
+
 #define SZ_PRB 330000000
 #define CY_PRB 330300000
 #define CY_PRB_MK 10000

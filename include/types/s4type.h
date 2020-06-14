@@ -10,34 +10,36 @@
 
 #include "s4type_precision.h"
 #include "s4type_time.h"
+#include "market/s4codeApp.h"	//types of code
+
 // #include "s3type_future.h"
 
 /************************************************************************/
-/* WARNING: Vol in DayK/minuK/GBBQ is in Gu, Vol in Snap is in Shou = 100 Gu!*/
+/* WARNING: Vol in DayK/minuK/GBBQ is in Gu(1 share), Vol in Snap is in Shou(1 hand) = 100 Gu!*/
 /************************************************************************/
 typedef std::vector<struct minuK_t> vec_minuK_t;
 struct minuK_t
 {
-	time_t time;	//utcSec
-	int open;
-	int high;
-	int low;
-	int close;
-	float amount;	//yuan
-	uint32_t volume;//gu
+	time_utcSec_t time;	//utcSec
+	price_t open;
+	price_t high;
+	price_t low;
+	price_t close;
+	amount_t amount;	//yuan
+	uint32_t volume;	//gu (1 share)
 };
 
 typedef std::vector<struct dayK_t> vec_dayK_t;
 struct dayK_t
 {
-	int date;			//YYYYMMDD
-	int open;
-	int high;
-	int low;
-	int close;
-	float amount;		//yuan
-	uint32_t volume;	//gu
-	int preClose;		//nothing inside, but need here for tdx-file-reading
+	time_date_t date;			//YYYYMMDD
+	price_t open;
+	price_t high;
+	price_t low;
+	price_t close;
+	amount_t amount;		//yuan
+	uint32_t volume;		//gu (1 share)
+	price_t preClose;		//nothing inside, but need here for tdx-file-reading
 };
 
 struct stk_tdx_quote_t
@@ -54,7 +56,7 @@ struct stk_tdx_quote_t
 	int reversed_bytes1;		//-价格*100
 	int vol;					//总量 手
 	int cur_vol;				//现量 手 index?
-	float amount;
+	amount_t amount;
 	int s_vol;
 	int b_vol;
 	int reversed_bytes2;		//市场

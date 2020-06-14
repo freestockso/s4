@@ -42,6 +42,7 @@ include(SetPlatformFeatures)
 include(SystemInformation)
 
 add_definitions(-D__STDC_CONSTANT_MACROS)#ffmepg or some libs require this
+add_definitions(-D__STDC_FORMAT_MACROS)
 
 message(STATUS "CMAKE_C_COMPILER=${CMAKE_C_COMPILER} CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
 
