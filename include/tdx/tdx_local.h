@@ -15,12 +15,12 @@ public:
 
 	//clear Kque inside
 	//[0]=oldest; [-1]=newest
-	bool readDayK(const std::string& pureCode, vec_dayK_t& Kque,
+	bool readDayK(const std::string& mktCode, vec_dayK_t& Kque,
 		int bgnDate = 0, int endDate = 21001231);
 	bool readDayK(mktCodeI_t mktCode, vec_dayK_t& Kque,
 		int bgnDate = 0, int endDate = 21001231);
 
-	bool readDayK_nb(const std::string& pureCode, int endDate, 
+	bool readDayK_nb(const std::string& mktCode, int endDate, 
 		int nb_preEnd, vec_dayK_t& Kque);
 	bool readDayK_nb(mktCodeI_t mktCode, int endDate,
 		int nb_preEnd, vec_dayK_t& Kque);

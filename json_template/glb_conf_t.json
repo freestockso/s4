@@ -35,5 +35,14 @@
     },
     "tdx":{
         "root" : "E:\\work\\s4\\doc\\tdx_test"
+    },
+    "snap":{
+        "DB_list":[
+            {
+                "bgnDate":0,
+                "endDate":21000000,
+                "path":"../db/snap/snap_test.db"
+            }
+        ]
     }
 }

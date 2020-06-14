@@ -26,7 +26,7 @@ struct minuK_t
 	price_t low;
 	price_t close;
 	amount_t amount;	//yuan
-	uint32_t volume;	//gu (1 share)
+	vol_share_t volume;	//gu (1 share)
 };
 
 typedef std::vector<struct dayK_t> vec_dayK_t;
@@ -38,7 +38,7 @@ struct dayK_t
 	price_t low;
 	price_t close;
 	amount_t amount;		//yuan
-	uint32_t volume;		//gu (1 share)
+	vol_share_t volume;		//gu (1 share)
 	price_t preClose;		//nothing inside, but need here for tdx-file-reading
 };
 
@@ -149,6 +149,8 @@ enum timeMode_t
 	tMINU,
 	tSnap,
 	//tTick,
+
+	tUNKNOWN,
 };
 
 enum orderType_t {

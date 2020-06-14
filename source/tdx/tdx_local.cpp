@@ -125,10 +125,10 @@ int tdxLocal_t::readDayK_raw(mktCodeI_t mktCode, struct dayK_t *& rawData)
 	return dataCnt;
 }
 
-bool tdxLocal_t::readDayK(const std::string& pureCode, vec_dayK_t& Kque,
+bool tdxLocal_t::readDayK(const std::string& mktCodeStr, vec_dayK_t& Kque,
 	int bgnDate, int endDate)
 {
-	mktCodeI_t mktCode = pureCodeStr_to_mktCode(pureCode);
+	mktCodeI_t mktCode = mktCodeStr_to_mktCodeInt(mktCodeStr);
 	return readDayK(mktCode, Kque, bgnDate, endDate);
 }
 
@@ -204,10 +204,10 @@ bool tdxLocal_t::readDayK(mktCodeI_t mktCode, vec_dayK_t& Kque,
 	return true;
 }
 
-bool tdxLocal_t::readDayK_nb(const std::string& pureCode, int endDate, 
+bool tdxLocal_t::readDayK_nb(const std::string& mktCodeStr, int endDate,
 		int nb_preEnd, vec_dayK_t& Kque)
 {
-	mktCodeI_t mktCode = pureCodeStr_to_mktCode(pureCode);
+	mktCodeI_t mktCode = mktCodeStr_to_mktCodeInt(mktCodeStr);
 	return readDayK_nb(mktCode, endDate, nb_preEnd, Kque);
 }
 

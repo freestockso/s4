@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
 	int bgn = 20160000;
 	int end = 20200614;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
 	bgn = 0;
 	end = 20200614;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
 	bgn = 0;
 	end = 20200613;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
 	bgn = 20111010;
 	end = 20200612;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 
 	bgn = 20200613;
 	end = 20200614;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (dayK.size()) {
 		LCL_FATAL("read {:} where is empty scope!");
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
 	bgn = 20200612;
 	end = 99999999;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 
 	bgn = 0;
 	end = 20110101;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (dayK.size()) {
 		LCL_FATAL("read {:} where is empty scope!");
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 
 	bgn = 0;
 	end = 20111010;
-	tdxLocal.readDayK("000997", dayK, bgn, end);
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 
 	bgn = 0;
 	end = 20200612;
-	tdxLocal.readDayK("688004", dayK, bgn, end);
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 
 	bgn = 20200612;
 	end = 20200612;
-	tdxLocal.readDayK("688004", dayK, bgn, end);
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 
 	bgn = 0;
 	end = 20200611;
-	tdxLocal.readDayK("688004", dayK, bgn, end);
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
 	if (dayK.size()) {
 		LCL_FATAL("read {:} where is empty scope!");
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 
 	bgn = 20200611;
 	end = 20200611;
-	tdxLocal.readDayK("688004", dayK, bgn, end);
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
 	if (dayK.size()) {
 		LCL_FATAL("read {:} where is empty scope!");
@@ -140,7 +140,7 @@ int main(int argc, char** argv)
 
 	bgn = 20200612;
 	end = 99999999;
-	tdxLocal.readDayK("688004", dayK, bgn, end);
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");

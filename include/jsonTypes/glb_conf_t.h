@@ -52,9 +52,18 @@ struct glb_conf_t {
 	};
 	db_t db;
 	struct tdx_t {
-		std::string root;	//	E:/work/o999_s/tdx/
+		std::string root;	//	E:\work\s4\doc\tdx_test
 	};
 	tdx_t tdx;
+	struct snap_t {
+		struct DB_list_t {
+			int bgnDate;	//	0
+			int endDate;	//	21000000
+			std::string path;	//	../db/snap/snap_test.db
+		};
+		std::vector<glb_conf_t::snap_t::DB_list_t> DB_list;
+	};
+	snap_t snap;
 
 	/* from json */
 	static bool from_json(const nlohmann::json& json_var, glb_conf_t& glb_conf_t_var){
@@ -126,6 +135,35 @@ struct glb_conf_t {
 				ERR("{:} not found in json! e={:}", "root", e.what());
 				throw e;
 			}
+			const nlohmann::json& json_var_snap = json_var["snap"];
+			try{
+				const nlohmann::json& json_var_snap_DB_list = json_var_snap.at("DB_list");
+				for(auto& json_var_snap_DB_list_x: json_var_snap_DB_list.items()){
+					glb_conf_t::snap_t::DB_list_t glb_conf_t_var_snap_DB_list;
+					try{
+						glb_conf_t_var_snap_DB_list.bgnDate = json_var_snap_DB_list_x.value().at("bgnDate").get<int>();
+					}catch(const std::exception& e){
+						ERR("{:} not found in json! e={:}", "bgnDate", e.what());
+						throw e;
+					}
+					try{
+						glb_conf_t_var_snap_DB_list.endDate = json_var_snap_DB_list_x.value().at("endDate").get<int>();
+					}catch(const std::exception& e){
+						ERR("{:} not found in json! e={:}", "endDate", e.what());
+						throw e;
+					}
+					try{
+						glb_conf_t_var_snap_DB_list.path = json_var_snap_DB_list_x.value().at("path").get<std::string>();
+					}catch(const std::exception& e){
+						ERR("{:} not found in json! e={:}", "path", e.what());
+						throw e;
+					}
+					glb_conf_t_var.snap.DB_list.emplace_back(glb_conf_t_var_snap_DB_list);
+				}
+			}catch(const std::exception& e){
+				ERR("parse field {:} fail! e={:}", "DB_list", e.what());
+				throw e;
+			}
 		}catch (const std::exception& e){
 			ERR("parse json {:} \nfail:{:}", json_var.dump(4), e.what());
 			return false;
@@ -155,6 +193,16 @@ struct glb_conf_t {
 			nlohmann::json json_var_tdx;
 			json_var_tdx["root"] = glb_conf_t_var.tdx.root;
 			json_var["tdx"] = json_var_tdx;
+			nlohmann::json json_var_snap;
+			json_var_snap["DB_list"] = nlohmann::json();
+			for(const auto& glb_conf_t_var_snap_DB_list_x: glb_conf_t_var.snap.DB_list){
+				json json_var_snap_DB_list;
+				json_var_snap_DB_list["bgnDate"] = glb_conf_t_var_snap_DB_list_x.bgnDate;
+				json_var_snap_DB_list["endDate"] = glb_conf_t_var_snap_DB_list_x.endDate;
+				json_var_snap_DB_list["path"] = glb_conf_t_var_snap_DB_list_x.path;
+				json_var_snap["DB_list"].push_back(json_var_snap_DB_list);
+			}
+			json_var["snap"] = json_var_snap;
 		}catch (const std::exception& e){
 		ERR("to json {:} \nfail:{:}", json_var.dump(4), e.what());
 			return false;
@@ -170,7 +218,7 @@ struct glb_conf_t {
         inline int glb_conf_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/glb_conf_t.json");
-            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:/work/o999_s/tdx/\"    }}");
+            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:\\work\\s4\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

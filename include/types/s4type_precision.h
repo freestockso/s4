@@ -48,3 +48,15 @@ typedef int32_t vol_board_t;
 #define vBoard_unit (100)
 // #define vShare_to_vBoard(x)  ((x)/vBoard_unit)
 #define vBoard_to_vShare(x)  ((x)*vBoard_unit)
+
+//换手率
+typedef double turnover_t;
+
+//复权
+typedef double fq_index_t;
+typedef double fq_share_t;
+
+
+#define _MAX_(x,y) (((x)>(y))?(x):(y))
+#define _MIN_(x,y) (((x)<(y))?(x):(y))
+#define _ABS_(x) ((x)<0?-(x):(x))
