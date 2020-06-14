@@ -1,4 +1,4 @@
-#include "tdx_local.h"
+#include "tdx/tdx_local.h"
 #include <io.h>
 #include <fstream>
 #include "common/s4logger.h"
@@ -14,23 +14,23 @@ namespace TDX{
 
 tdxLocal_t::tdxLocal_t(const std::string& tdxPath)
 {
-	size_t pos=0;
-	size_t end;
-	string path;
-	
-	do {
-		end = tdxPath.find(';', pos);
-		path = tdxPath.substr(pos, end - pos);
-		if (_access(path.c_str(), 4) != 0) {
-			//perror((string("tdxLocal_t tdxPath ") + path).c_str());
-		}
-		else {
-			LCL_INFO("find valid TDX={}", path);
-			break;
-		}
-		pos = end+1;
-	} while (pos <= tdxPath.size());
-	m_tdxPath = path;
+	//size_t pos=0;
+	//size_t end;
+	//string path;
+	//
+	//do {
+	//	end = tdxPath.find(';', pos);
+	//	path = tdxPath.substr(pos, end - pos);
+	//	if (_access(path.c_str(), 4) != 0) {
+	//		//perror((string("tdxLocal_t tdxPath ") + path).c_str());
+	//	}
+	//	else {
+	//		LCL_INFO("find valid TDX={}", path);
+	//		break;
+	//	}
+	//	pos = end+1;
+	//} while (pos <= tdxPath.size());
+	m_tdxPath = tdxPath;
 }
 
 void tdxLocal_t::toMinuK(const struct tdxRawMinuK_t& rawData, struct minuK_t& minuK)
