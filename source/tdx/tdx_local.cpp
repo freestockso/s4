@@ -95,9 +95,9 @@ int tdxLocal_t::readDayK_raw(mktCodeI_t mktCode, struct dayK_t *& rawData)
 
 	pureCodeI_t code = mktCodeInt_to_pureCodeInt(mktCode);
 	if (isSHmkt(mktCode)){
-		sprintf(path, "%s%s%d.day", m_tdxPath.c_str(), m_dayFolderSZ.c_str(), code);
+		sprintf(path, "%s%ssh%d.day", m_tdxPath.c_str(), m_dayFolderSH.c_str(), code);
 	}else{
-		sprintf(path, "%s%s%06d.day", m_tdxPath.c_str(), m_dayFolderSH.c_str(), code);
+		sprintf(path, "%s%ssz%06d.day", m_tdxPath.c_str(), m_dayFolderSZ.c_str(), code);
 	}
 	
 	FILE *f = fopen(path, "rb");
@@ -135,7 +135,7 @@ bool tdxLocal_t::readDayK(const std::string& pureCode, vec_dayK_t& Kque,
 bool tdxLocal_t::readDayK(mktCodeI_t mktCode, vec_dayK_t& Kque,
 	int bgnDate, int endDate)
 {
-	assert(endDate > bgnDate);
+	assert(endDate >= bgnDate);
 
 	Kque.clear();
 
@@ -146,28 +146,35 @@ bool tdxLocal_t::readDayK(mktCodeI_t mktCode, vec_dayK_t& Kque,
 	int bgn;
 	int i;
 	const int search_gap = 16;
-	if (rawData[0].date >= bgnDate){
+	if (rawData[0].date >= bgnDate) {
 		bgn = i = 0;
+	}else if(rawData[dataCnt - 1].date < bgnDate){
+		return true;
 	}else{
 		//jump to first date
-		for(i=0; i< dataCnt; i+=search_gap){
-			if (rawData[i].date >= bgnDate)
+		for(i=0; i < dataCnt; i+=search_gap){
+			if (i >= dataCnt || rawData[i].date >= bgnDate)
 				break;
 		}
-		if (i > 0){
-			for(; i > 0; i--){
-				if (rawData[i].date <= bgnDate)
+		if (i > 0) {
+			for (int j=0; j < search_gap && i > 0; j++, i--) {
+				if (i < dataCnt && rawData[i].date <= bgnDate)
 					break;
 			}
 			if (rawData[i].date < bgnDate)	//i = first day in scope
 				i++;
 		}
 		bgn = i;
+		assert(rawData[i].date >= bgnDate && (i == 0 || rawData[i-1].date < bgnDate));
 	}
 	
 	if (rawData[dataCnt-1].date <= endDate){
 		i = dataCnt;
-	}else{
+	}
+	else if (rawData[0].date > endDate) {
+		return true;
+	}
+	else{
 		//jump to last date
 		for (; i < dataCnt; i+=search_gap) {
 			// if (rawData[i].date < bgnDate)
@@ -181,10 +188,11 @@ bool tdxLocal_t::readDayK(mktCodeI_t mktCode, vec_dayK_t& Kque,
 				break;
 		}
 		i++;//i = first day out scope
+		assert(rawData[i].date > endDate && (i == 0 || rawData[i - 1].date <= endDate));
 	}
 
 	size_t len = i - bgn;
-	assert((int)len<=dataCnt);
+	assert(len<= (size_t)dataCnt);
 
 	Kque.resize(len);
 	memcpy(&Kque[0], &rawData[bgn], sizeof(dayK_t)*len);
@@ -233,7 +241,7 @@ bool tdxLocal_t::readDayK_nb(mktCodeI_t mktCode, int endDate,
 	if (i < 0)i = 0;
 
 	size_t len = endI - i;
-	assert((int)len<=dataCnt);
+	assert(len<= (size_t)dataCnt);
 
 	Kque.resize(len);
 	memcpy(&Kque[0], &rawData[i], sizeof(dayK_t)*len);

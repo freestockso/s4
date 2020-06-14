@@ -116,9 +116,9 @@ public:
 	}
 
 	template<typename... Args>
-	void fatal(const std::string& preamble, const char *fmt, const Args &... args)
+	void fatal(const std::string& preamble, const std::string& file, int line, const char *fmt, const Args &... args)
 	{
-		std::string s = preamble + fmt;
+		std::string s = preamble + " file:"+ file + " line:" + std::to_string(line) + " " + fmt;
 		if (_file_all) {
 			_file_all->critical(s.c_str(), args...);
 		}
@@ -197,7 +197,7 @@ private:
 #define	INFO(...) {S4::s4logger::pInstance()->info("[global]", __VA_ARGS__);}
 #define	WARN(...) {S4::s4logger::pInstance()->warn("[global]", __VA_ARGS__);S4::s4logger::pInstance()->flush();}
 #define	ERR(...) {S4::s4logger::pInstance()->err("[global]", __VA_ARGS__);S4::s4logger::pInstance()->flush();}
-#define	FATAL(...) {S4::s4logger::pInstance()->fatal("[global]", __VA_ARGS__);}
+#define	FATAL(...) {S4::s4logger::pInstance()->fatal("[global]", __FILE__, __LINE__, __VA_ARGS__);}
 
 #define CREATE_LOCAL_LOGGER(NAME) static const char * __LCL_NAME__ = "["#NAME"] ";
 
@@ -205,6 +205,6 @@ private:
 #define	LCL_INFO(...) {S4::s4logger::pInstance()->info(__LCL_NAME__, __VA_ARGS__);}
 #define	LCL_WARN(...) {S4::s4logger::pInstance()->warn(__LCL_NAME__, __VA_ARGS__);S4::s4logger::pInstance()->flush();}
 #define	LCL_ERR(...) {S4::s4logger::pInstance()->err(__LCL_NAME__, __VA_ARGS__);S4::s4logger::pInstance()->flush();}
-#define	LCL_FATAL(...) {S4::s4logger::pInstance()->fatal(__LCL_NAME__, __VA_ARGS__);}
+#define	LCL_FATAL(...) {S4::s4logger::pInstance()->fatal(__LCL_NAME__, __FILE__, __LINE__, __VA_ARGS__);}
 
 }//namespace S4

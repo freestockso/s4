@@ -52,7 +52,7 @@ private:
 	std::string m_tdxPath;
 
 	const std::string m_minuFolderSZ = "\\vipdoc\\sz\\minline\\";
-	const std::string m_minuFolderSH = "vipdoc\\sh\\minline\\";
+	const std::string m_minuFolderSH = "\\vipdoc\\sh\\minline\\";
 
 	const std::string m_dayFolderSZ = "\\vipdoc\\sz\\lday\\";
 	const std::string m_dayFolderSH = "\\vipdoc\\sh\\lday\\";
