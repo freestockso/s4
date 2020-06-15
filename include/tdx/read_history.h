@@ -21,7 +21,7 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
 bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_name, const std::string& table_name);
 
 //if table_list is empty, it will read all tables from db.
-bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, 
+bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, 
 	const std::set<std::string>& table_list = {}, const std::vector<mktCodeI_t>& stk_list = {});
 
 } // namespace TDX

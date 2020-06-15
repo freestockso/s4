@@ -34,7 +34,7 @@
         "history_order": "s4_history_order.db"
     },
     "tdx":{
-        "root" : "E:\\work\\s4\\doc\\tdx_test"
+        "root" : "..\\doc\\tdx_test"
     },
     "snap":{
         "DB_list":[

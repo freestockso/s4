@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
 	//order/deal DB -> history
 	std::vector<s4_history_t> history_data;
-	ret = TDX::read_histroy_DB(db_history_qs_path.string(), history_data);
+	ret = TDX::read_history_DB(db_history_qs_path.string(), history_data);
 	if (!ret) {
 		LCL_ERR("history_order_to_DB fail!");
 	}

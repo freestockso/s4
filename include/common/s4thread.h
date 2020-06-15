@@ -172,7 +172,7 @@ public:
 	};
 
 	virtual bool restart(int* ec = nullptr) {
-		if (!stop(ec))
+		if (!stop())
 			return false;
 		if (!start(ec))
 			return false;
@@ -195,7 +195,7 @@ public:
 		return true;
 	}
 
-	virtual bool stop(int* ec = nullptr){
+	virtual bool stop(){
 		if(!th_id)
 			return true;
 
@@ -223,14 +223,20 @@ private:
 protected:
 	//true: goto main run loop
 	//false: error and stop thread
-	virtual bool pre_main_run_loop_act(int* ec)
+	virtual bool pre_main_run_loop_act(int* ec = nullptr)
 	{
+		if (ec != nullptr) {
+			*ec = 0;
+		}
 		return true;
 	}
 	//true: keep running
 	//false: error and break main_run
-	virtual int main_run_loop_act(int* ec)
+	virtual int main_run_loop_act(int* ec = nullptr)
 	{
+		if (ec != nullptr) {
+			*ec = 0;
+		}
 
 		//do something here
 		process_sleep(0.001);	
@@ -238,8 +244,11 @@ protected:
 		return true;
 	}
 
-	virtual void post_main_run_loop_act(int* ec)
+	virtual void post_main_run_loop_act(int* ec = nullptr)
 	{
+		if (ec != nullptr) {
+			*ec = 0;
+		}
 	}
 
 private:

@@ -46,8 +46,8 @@ stkInfo_t::stkInfo_t(const std::string&s) :
 	// pCycQlib(NULL),
 	pMAlib(NULL),
 	pMinuKQ(NULL),
-	name(s),
-	mkCodeInt(mktCodeStr_to_mktCodeInt(s))
+	_name(s),
+	_mkCodeInt(mktCodeStr_to_mktCodeInt(s))
 	// pSnanpQ(NULL)
 {}
 
@@ -375,8 +375,8 @@ snap
 //
 void stkInfo_t::addInfo(stkInfo_t& newInfo)
 {
-	if (this->name != newInfo.name) {
-		LCL_ERR("Illegal to add stkInfo of {} to {}", this->name, newInfo.name);
+	if (this->name() != newInfo.name()) {
+		LCL_ERR("Illegal to add stkInfo of {} to {}", this->name(), newInfo.name());
 		return;
 	}
 	//TODO: copy to NULL, use share_ptr
@@ -465,10 +465,14 @@ void stkInfo_lib_t::insert(const std::string & stkName, std::shared_ptr<stkInfo_
     _lib.insert(std::pair<int, std::shared_ptr<stkInfo_t>>(mkCode, info));
 }
 
-const stkInfo_t* stkInfo_lib_t::get(const std::string & stkName) const
+stkInfo_t* stkInfo_lib_t::get(const std::string & stkName) const
 {
 	int mkCode = mktCodeStr_to_mktCodeInt(stkName);
 	if (_lib.count(mkCode) == 0) {
+#ifndef DO_CHECK_NON_LOAD
+		return nullptr;
+#endif // !DO_CHECK_NON_LOAD
+		std::cout << "Try to getInfo of none-loading stk:" + stkName << endl;
 		throw ThreadDataIfError("Try to getInfo of non-loading stk:" + stkName);
 	}
 	return _lib.find(mkCode)->second.get();
@@ -512,7 +516,7 @@ void stkInfo_lib_t::insert(mktCodeI_t mkCode, std::shared_ptr<stkInfo_t> info)
 	_lib.insert(std::pair<mktCodeI_t, std::shared_ptr<stkInfo_t>>(mkCode, info));
 }
 
-const stkInfo_t* stkInfo_lib_t::get(mktCodeI_t mkCode) const
+stkInfo_t* stkInfo_lib_t::get(mktCodeI_t mkCode) const
 {
 	if (_lib.count(mkCode) == 0) {
 #ifndef DO_CHECK_NON_LOAD
@@ -709,14 +713,21 @@ bool thread_data_if_t::preloadReady(void)
 {
 	return _preaload_ready;
 }
-bool thread_data_if_t::usePreload(void)
+bool thread_data_if_t::usePreload(bool append)
 {
 	if (_preaload_ready) {
 		Locker lock(_mutex);
-		_pNowLib = _pNextLib;
-		_nowReqList = _nextReqList;
-		_nowReqInfo = _nextReqInfo;
-		LCL_INFO("use preload ok!");
+		if (!append || !_pNowLib || _nowReqInfo != _nextReqInfo) {//replace
+			_pNowLib = _pNextLib;
+			_nowReqList = _nextReqList;
+			_nowReqInfo = _nextReqInfo;
+			LCL_INFO("use preload replace!");
+		}
+		else {
+			_pNowLib->append(*_pNextLib);
+			_nowReqList.insert(_nextReqList.begin(), _nextReqList.end());
+			LCL_INFO("use preload append!");
+		}
 		return true;
 	}
 	LCL_INFO("Cannot use preload before ready!");
@@ -817,11 +828,14 @@ void thread_data_if_t::main_run(int seq)
 	LCL_INFO("thread({:d}) data if terminated!", th_id[seq]);
 }
 
-void thread_data_if_t::readTDXdayK(const std::string& mktCode, S4::infKQ_t& dayKQ, int nb_preEnd, int end)
+bool thread_data_if_t::readTDXdayK(const std::string& mktCode, S4::infKQ_t& dayKQ, int nb_preEnd, int end)
 {
 	vec_dayK_t dayKque_r;
-	_pTdxLocal->readDayK_nb(mktCode, end, nb_preEnd, dayKque_r);
+	if (!_pTdxLocal->readDayK_nb(mktCode, end, nb_preEnd, dayKque_r)) {
+		return false;
+	}
 	dayKQ.add_vec_dayK(dayKque_r);
+	return true;
 }
 
 void thread_data_if_t::loadStkInfo(const std::string & mktCode, std::shared_ptr<stkInfo_lib_t> pLib)
@@ -836,7 +850,6 @@ void thread_data_if_t::loadStkInfo(const std::string & mktCode, std::shared_ptr<
 	//const struct basicDB_t::basicOfCode_t* pBasic = isStk(mktCode)?s3global::g_basicDB.getBasic(mktCodeInt_to_pureCodeInt(mkCode)):NULL;
 
 	std::shared_ptr<stkInfo_t> info = std::make_shared<stkInfo_t>(mktCode);
-	pLib->insert(mkCode, info);
 
 	try {
 		//DayK
@@ -845,8 +858,11 @@ void thread_data_if_t::loadStkInfo(const std::string & mktCode, std::shared_ptr<
 #ifndef TDX_DATA
 		readDBdayK(mktCode, *info->pDayKQ, _nextReqInfo.nbDay_preEndDate, _nextDayCondition);
 #else
-		readTDXdayK(mktCode, *info->pDayKQ, _nextReqInfo.nbDay_preEndDate, _nextReqInfo.endDate);
+		if (!readTDXdayK(mktCode, *info->pDayKQ, _nextReqInfo.nbDay_preEndDate, _nextReqInfo.endDate)) {
+			return;
+		}
 #endif
+		pLib->insert(mkCode, info);	//only insert existing code
 		if ((*info->pDayKQ).size() == 0)
 			return;
 

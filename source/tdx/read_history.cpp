@@ -236,7 +236,7 @@ void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders
 		data.id = order.id;
 		data.date = order.date;
 		//strategy name
-		data.stgName = "tdx_xyzq_histroy";	//	tdx_xyzq
+		data.stgName = "tdx_xyzq_history";	//	tdx_xyzq
 		data.mktCodeStr = pureCodeStr_to_mktCodeStr(order.stock_code);	//	sz000001
 		data.time_utcSec = order.time_utcSec;	//	123
 		data.datetime = utc_to_str(order.time_utcSec);	//	2018_04_26__00_00_00
@@ -312,7 +312,7 @@ void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd
 		data.id = deal.id;
 		data.date = deal.date;
 		//strategy name
-		data.stgName = "tdx_xyzq_histroy";	//	tdx_xyzq
+		data.stgName = "tdx_xyzq_history";	//	tdx_xyzq
 		data.mktCodeStr = pureCodeStr_to_mktCodeStr(deal.stock_code);	//	sz000001
 		data.time_utcSec = deal.time_utcSec;	//	123
 		data.datetime = utc_to_str(deal.time_utcSec);	//	2018_04_26__00_00_00
@@ -355,7 +355,7 @@ void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd
 	}
 }
 
-bool read_histroy_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, 
+bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, 
 	const std::set<std::string>& table_list, const std::vector<pureCodeI_t>& stk_list)
 {
 	history_data.clear();

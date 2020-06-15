@@ -19,6 +19,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include<algorithm>
 
 namespace S4 {
 
@@ -39,24 +40,60 @@ struct stkInfoReq_t {
 	// int bgnDate;
 	int endDate;
 	int nbDay_preEndDate;
+
 	// int bgnMinuDate;	//read minu in unit of day
-	int endMinuDate;	//YYYYMMHH
-	int nbMinu_preEndMinuDate;	//count in minu
-	bool needMinu;
-	std::vector<int> cyc_scope_list;
+	int endMinuDate = 0;	//YYYYMMHH
+	int nbMinu_preEndMinuDate = 0;	//count in minu
+	bool needMinu = false;
+
+	//std::vector<int> cyc_scope_list;
 	std::vector<int> ma_scope_list;
 
-	bool needSnap;
-	std::set<int>  snapDates;	//YYYYMMHH
-    int snap_lmt_Qsize = 0;
+	bool needSnap = false;
+	//std::set<int>  snapDates;	//YYYYMMHH
+	//int snap_lmt_Qsize = 0;
 
 	//bool needTick;	//for future
+	bool operator ==(const stkInfoReq_t& d) const
+	{
+		if (endDate == d.endDate &&
+			nbDay_preEndDate == d.nbDay_preEndDate &&
+			endMinuDate == d.endMinuDate &&
+			nbMinu_preEndMinuDate == d.nbMinu_preEndMinuDate &&
+			needMinu == d.needMinu &&
+			needSnap == d.needSnap &&
+			ma_scope_list.size() == d.ma_scope_list.size()
+			)
+		{
+			for (size_t i = 0; i < ma_scope_list.size(); ++i) {
+				bool match = false;
+				for (size_t j = 0; j < ma_scope_list.size(); j++)
+				{
+					if (ma_scope_list[i] == d.ma_scope_list[j]) {
+						match = true;
+						break;
+					}
+				}
+				if (!match) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool operator !=(const stkInfoReq_t& d) const
+	{
+		return !((*this) == d);
+	}
 };
 
 class stkInfo_t {
 public:
-	//stkInfo_t();
-	stkInfo_t(const std::string&);
+	stkInfo_t() {};
+
+	explicit stkInfo_t(const std::string&);
 	~stkInfo_t();
 
 	std::shared_ptr<infKQ_t> pDayKQ;
@@ -65,10 +102,17 @@ public:
 	//MA
 	std::shared_ptr<std::map<int, std::shared_ptr<maQ_t>>> pMAlib;	//MA
 
-	std::shared_ptr <infKQ_t> pMinuKQ;
+	std::shared_ptr<infKQ_t> pMinuKQ;
+	std::string name() const {
+		return _name;
+	}
+	mktCodeI_t mkCode() const {
+		return _mkCodeInt;
+	}
 
-	const std::string name;
-	const int mkCodeInt;
+private:
+	std::string _name;
+	mktCodeI_t _mkCodeInt;
 
 	//tick
 	// std::shared_ptr<infSnapQ_t> pSnanpQ;
@@ -146,6 +190,9 @@ public:
 	};
 
 	lastClk_t reportClk(void) const;
+
+	/* analyze tools */
+
 };
 
 
@@ -155,14 +202,14 @@ public:
 	//access stkInfo by stkName
 	void insert(const std::string & stkName, std::shared_ptr<stkInfo_t> info);
 	size_t count(const std::string & stkName) const;
-	const stkInfo_t* get(const std::string & stkName) const;
+	stkInfo_t* get(const std::string & stkName) const;
 	// void get(const std::string & stkName, stkInfo_t*& info) const;
 	const infK_t* getDay_abs(const std::string & stkName, time_t t) const;
 
 	//access stkInfo by mkCode
 	void insert(mktCodeI_t mkCode, std::shared_ptr<stkInfo_t> info);
 	size_t count(mktCodeI_t mkCode) const;
-	const stkInfo_t* get(mktCodeI_t mkCode) const;
+	stkInfo_t* get(mktCodeI_t mkCode) const;
 	// void get(int mkCode, stkInfo_t*& info) const;
 	const infK_t* getDay_abs(mktCodeI_t mkCode, time_t t) const;
 
@@ -239,7 +286,7 @@ public:
 	//non-block, return false= not ready
 	bool preload(const std::set<std::string>& reqList, const struct stkInfoReq_t& reqInfo);
 	bool preloadReady(void);
-	bool usePreload(void);
+	bool usePreload(bool append);
 
 	int nowLibFinalDay(void);
 
@@ -350,7 +397,7 @@ private:
 
 	// void readDBdayK(const std::string & stkName, S4::infKQ_t& dayKQ, int nb, const std::string& condition="");
 
-	void readTDXdayK(const std::string& mktCode, S4::infKQ_t& dayKQ, int nb_preEnd, int end);
+	bool readTDXdayK(const std::string& mktCode, S4::infKQ_t& dayKQ, int nb_preEnd, int end);
 	// void readDBminuK(const std::string & stkName, S4::infKQ_t& minuKQ, int nb, const std::string& condition = "");
 	// void readTDXminuK(const std::string & stkName, S4::infKQ_t& minuKQ, int nb_preEnd, int end);
 

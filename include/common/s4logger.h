@@ -118,7 +118,7 @@ public:
 	template<typename... Args>
 	void fatal(const std::string& preamble, const std::string& file, int line, const char *fmt, const Args &... args)
 	{
-		std::string s = preamble + " file:"+ file + " line:" + std::to_string(line) + " " + fmt;
+		std::string s = preamble + " file="+ file + " line=" + std::to_string(line) + ": " + fmt;
 		if (_file_all) {
 			_file_all->critical(s.c_str(), args...);
 		}

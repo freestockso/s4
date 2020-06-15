@@ -4,6 +4,7 @@
 #include "types/s4type_time.h"
 #include <string>
 
+#define _DOOMSDAY_ (21001231)
 
 uint64_t nowTime_ms(void);
 

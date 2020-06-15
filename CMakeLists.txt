@@ -67,9 +67,8 @@ set(CMAKE_PREFIX_PATH ${_QT_PATH}) #设置Qt安装路径
 set(CMAKE_AUTOMOC ON) #打开全局moc,设置自动生成moc文件，一定要设置
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
-find_package(Qt5 COMPONENTS Core Gui Qml Quick REQUIRED)
-list(APPEND LINKLIBS   Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick)
-
+find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets REQUIRED)
+list(APPEND LINKLIBS   Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick Qt5::Widgets)
 
 # -- OpenCV --
 # find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc imgcodecs videoio calib3d)
@@ -137,7 +136,7 @@ file(GLOB_RECURSE LIB_INLINE_FILES "include/*.inl")
 file(GLOB_RECURSE LIB_SOURCE_FILES "source/*.cpp")
 set_source_files_properties(${LIB_SOURCE_FILES} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}")
 
-add_library(${PROJECT_NAME} ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
 
 ## collect GLOBAL_INCLUDE_LIST
@@ -154,7 +153,21 @@ set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER libraries)
 
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 list(APPEND LINKLIBS ${PROJECT_NAME})
+message(STATUS "LINKLIBS = ${LINKLIBS}")
 
+## copy qt dlls
+list(APPEND qt_dlls qt5core qt5gui qt5qml qt5quick qt5widgets)
+foreach(qt_dll ${qt_dlls})
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+        "${CMAKE_PREFIX_PATH}/bin/${qt_dll}.dll"      # <--this is in-file
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)                 # <--this is out-file path
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+        "${CMAKE_PREFIX_PATH}/bin/${qt_dll}d.dll"      # <--this is in-file
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)                 # <--this is out-file path
+endforeach()
+        
 
 
 ## Additional module components: benchmarks, examples, plugins, tests, tools and install

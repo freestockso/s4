@@ -249,7 +249,7 @@ bool tdxLocal_t::readDayK_nb(mktCodeI_t mktCode, int endDate,
 	//printf("readDayK(%s) done, [%s : %s] nb=%u\n", code.c_str(), mmQ.cmin().getString(), mmQ.cmax().getString(), Kque.size());
 
 	delete[] rawData;
-	return 0;
+	return true;
 }
 
 }

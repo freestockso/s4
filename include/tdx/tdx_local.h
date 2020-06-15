@@ -34,7 +34,11 @@ public:
 		const int nb_preEnd, std::vector<struct minuK_t>& Kque,  
 		const int minuFreq = 1);
 
-	void readGBBQ(map_gbbd_t& gbbq, map_fhps_t& fhps);
+	void readGBBQ(map_gbbd_t& gbbq, map_fhps_t& fhps) {
+		//TODO
+		gbbq.clear();
+		fhps.clear();
+	};
 private:
 	struct tdxRawMinuK_t
 	{
