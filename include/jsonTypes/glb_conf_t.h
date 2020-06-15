@@ -52,7 +52,7 @@ struct glb_conf_t {
 	};
 	db_t db;
 	struct tdx_t {
-		std::string root;	//	E:\work\s4\doc\tdx_test
+		std::string root;	//	..\doc\tdx_test
 	};
 	tdx_t tdx;
 	struct snap_t {
@@ -218,7 +218,7 @@ struct glb_conf_t {
         inline int glb_conf_t_tester() {
 
             //std::ifstream i("E:/work/s4/./json_template/glb_conf_t.json");
-            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"E:\\work\\s4\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
+            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"..\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

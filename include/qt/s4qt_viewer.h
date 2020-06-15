@@ -30,7 +30,7 @@ public:
     ~s4qt_viewer();
 
 public slots:
-	void load(const std::string& name, const std::string& stgName, const std::string& orderTblName);
+	void load(const std::string& mktCode, const std::string& stgName, const std::string& orderTblName);
 
 signals:
 	void signal_getInfo(const std::string & stkName, const struct S4::stkInfoReq_t& infoReq, class S4::stkInfo_t*& info);

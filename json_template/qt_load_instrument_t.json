@@ -1,0 +1,12 @@
+{
+    "__optional_fields__":[
+        "stgName",
+        "tableName"
+    ],
+    "command" : 1,
+    "seq"     : 0,
+    "mktCode" : "sz002810",
+
+    "stgName" : "tdx_xyzq_history",
+    "tableName": "to20200531"
+}
