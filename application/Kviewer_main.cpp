@@ -4,7 +4,7 @@
 #include "data/s4thread_data_if.h"
 #include "common/s4logger.h"
 #include "common/s4conf.h"
-#include "qt/s4qt_viewer.h"
+#include "Kviewer/s4Kviewer.h"
 
 CREATE_LOCAL_LOGGER("QT-view")
 

@@ -153,3 +153,10 @@ struct consoleError : public Exception
 	consoleError(const std::string& what = "")
 		: Exception("console ERROR:", what) {}
 };
+
+///
+struct network_Error : public Exception
+{
+	network_Error(const std::string& what = "")
+		: Exception("network ERROR:", what) {}
+};

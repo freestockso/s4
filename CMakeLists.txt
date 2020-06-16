@@ -3,7 +3,9 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 ## Global properties
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-if(NOT GLOBAL_LIBS_LIST)
+
+get_property(global_libs GLOBAL PROPERTY GLOBAL_LIBS_LIST)
+if(NOT global_libs)
   define_property(GLOBAL PROPERTY GLOBAL_LIBS_LIST
       BRIEF_DOCS "Global list of libs"
       FULL_DOCS "Global list of libs")
@@ -12,7 +14,8 @@ endif()
 #在子模块中可通过以下语句加入其它库SUB_LIB
 # set_property(GLOBAL APPEND PROPERTY GLOBAL_LIBS_LIST SUB_LIB)
 
-if(NOT GLOBAL_INCLUDE_LIST)
+get_property(global_include GLOBAL PROPERTY GLOBAL_INCLUDE_LIST)
+if(NOT global_include)
   define_property(GLOBAL PROPERTY GLOBAL_INCLUDE_LIST
       BRIEF_DOCS "Global list of includes"
       FULL_DOCS "Global list of includes")
@@ -67,8 +70,8 @@ set(CMAKE_PREFIX_PATH ${_QT_PATH}) #设置Qt安装路径
 set(CMAKE_AUTOMOC ON) #打开全局moc,设置自动生成moc文件，一定要设置
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
-find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets REQUIRED)
-list(APPEND LINKLIBS   Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick Qt5::Widgets)
+find_package(Qt5 COMPONENTS Core Gui Qml Quick Widgets Sql REQUIRED)
+list(APPEND LINKLIBS   Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick Qt5::Widgets Qt5::Sql)
 
 # -- OpenCV --
 # find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc imgcodecs videoio calib3d)
@@ -95,8 +98,8 @@ list(APPEND LINKLIBS   Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick Qt5::Widgets)
 #   set(OPENSSL_USE_STATIC_LIBS TRUE)
 #   set(OPENSSL_MSVC_STATIC_RT TRUE)
 # endif()
-# find_package(OpenSSL REQUIRED)
-# message(STATUS "OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
+find_package(OpenSSL REQUIRED)
+message(STATUS "OpenSSL version: ${OPENSSL_VERSION} ${OPENSSL_INCLUDE_DIR} ${OPENSSL_LIBRARIES}")
 
 # if(WIN32)
 #   find_package(Crypt REQUIRED)
@@ -136,7 +139,15 @@ file(GLOB_RECURSE LIB_INLINE_FILES "include/*.inl")
 file(GLOB_RECURSE LIB_SOURCE_FILES "source/*.cpp")
 set_source_files_properties(${LIB_SOURCE_FILES} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}")
 
-add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES})
+## wrap_ui
+file(GLOB_RECURSE UI_FILES "source/*.ui")
+# foreach(ui_file ${UI_FILES})
+#   qt5_wrap_ui(ui_headers ${ui_file})
+# endforeach()
+# # message(STATUS "UI_FILES = ${UI_FILES}")
+# message(STATUS "ui_headers = ${ui_headers}")
+
+add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
 
 ## collect GLOBAL_INCLUDE_LIST
@@ -156,7 +167,7 @@ list(APPEND LINKLIBS ${PROJECT_NAME})
 message(STATUS "LINKLIBS = ${LINKLIBS}")
 
 ## copy qt dlls
-list(APPEND qt_dlls qt5core qt5gui qt5qml qt5quick qt5widgets)
+list(APPEND qt_dlls qt5core qt5gui qt5qml qt5quick qt5widgets qt5sql)
 foreach(qt_dll ${qt_dlls})
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
@@ -168,7 +179,6 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build 
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)                 # <--this is out-file path
 endforeach()
         
-
 
 ## Additional module components: benchmarks, examples, plugins, tests, tools and install
 if(NOT AI_basic_MODULE)

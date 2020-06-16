@@ -1,7 +1,7 @@
 ﻿#pragma warning(push)
 # pragma warning(disable: 4189) 
 
-#include "qt/s4qt_viewer.h"
+#include "Kviewer/s4Kviewer.h"
 #include "common/s4logger.h"
 
 #include <QSplitter>

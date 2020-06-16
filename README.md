@@ -36,3 +36,11 @@ make install
 ## 数据库:sqlite
 简单，响应快。
 表的实际列需要比tableIO内实现的列多，暂不支持读取列变少的表。
+
+## Thirdparty && Reference
+
+- asio : https://github.com/chriskohlhoff/asio
+- SQLiteCpp : https://github.com/SRombauts/SQLiteCpp
+- logger : https://github.com/gabime/spdlog
+- json : https://github.com/nlohmann/json
+- sqlite3-viewer : https://github.com/darkest-days/sqlite3-viewer

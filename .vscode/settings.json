@@ -81,6 +81,13 @@
         "xmemory0": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
-        "concepts": "cpp"
+        "concepts": "cpp",
+        "cinttypes": "cpp",
+        "resumable": "cpp",
+        "future": "cpp",
+        "queue": "cpp",
+        "shared_mutex": "cpp",
+        "strstream": "cpp",
+        "*.ipp": "cpp"
     }
 }

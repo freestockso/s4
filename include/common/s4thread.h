@@ -232,7 +232,7 @@ protected:
 	}
 	//true: keep running
 	//false: error and break main_run
-	virtual int main_run_loop_act(int* ec = nullptr)
+	virtual bool main_run_loop_act(int* ec = nullptr)
 	{
 		if (ec != nullptr) {
 			*ec = 0;

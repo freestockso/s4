@@ -43,4 +43,12 @@ inline std::shared_ptr<nlohmann::json> readJsonFile(const std::string& filename)
 	return std::move(ret);
 }
 
+
+#define JSON_NO_START       -1
+#define JSON_WAITING_STOP   -2
+#define JSON_ILLEGAL_STOP   -3
+
+
+bool searchJson(std::string str, int & start, int & stop, int* ec=nullptr);
+
 }//namespace S4

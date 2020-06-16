@@ -4,7 +4,7 @@
 #include <QPushButton>
 //#include "qt\console\cliparser.h"
 //#include "qt\s4qt_view_k.h"
-#include "qt\s4qt_data_if.h"
+#include "Kviewer\s4qt_data_if.h"
 
 //namespace Ui {
 //class s4qt_viewer;
