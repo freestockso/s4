@@ -67,7 +67,7 @@ bool read_history_deal(const std::string& file_name, std::vector<tdx_xyzq_histor
 				}else if (t == "印花税") {	deal.stamp_duty = (amount_t)DoubleConvertor::convert(v);
 				}else if (t == "过户费") {	deal.transfer_fee = (amount_t)DoubleConvertor::convert(v);
 				}else if (t == "其他费") {	deal.other_fees = (amount_t)DoubleConvertor::convert(v);
-				}else if (t == "备注") {    deal.remarks = v;
+				}else if (t == "备注") {    deal.remarks = v + "成交";
 				}
 			}
 			mktCodeI_t mktCode = pureCodeStr_to_mktCode(deal.stock_code);
@@ -140,7 +140,7 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
 				}else if (t == "成交价格") { order.deal_price = (fprice_t)DoubleConvertor::convert(v);
 				}else if (t == "成交数量") { order.deal_vol = (vol_share_t)abs(IntConvertor::convert(v));
 				}else if (t == "委托编号") { order.id = (int)IntConvertor::convert(v);
-				}else if (t == "报价方式") { order.quote_mode = v;
+				}else if (t == "报价方式") { order.quote_mode = v + "下单";
 				}
 			}
 			if (order.order_price == (fprice_t)0){

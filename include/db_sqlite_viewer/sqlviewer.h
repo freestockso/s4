@@ -17,7 +17,7 @@ namespace Ui { class SqlViewer; }
 QT_END_NAMESPACE
 
 namespace S4{
-
+class orderModel;
 class SqlViewer : public QMainWindow
 {
     Q_OBJECT
@@ -34,7 +34,7 @@ public slots:
 //    void updateTableList();
     void openTableTab(const QModelIndex &index);
 
-
+    void orderDoubleClicked(const QModelIndex&);
 private:
     Ui::SqlViewer *ui;
     DbConnectDialog *connectionDialog = nullptr;
@@ -48,6 +48,8 @@ private:
 
 private:
     std::shared_ptr<sqlite::DB_t> _pHistory_db;
+    std::map<std::string, orderModel*> _order_models;
+    std::map<std::string, QTableView*> _order_views;
     void onOpen();
     void onLoadConf(void);
     void onOpenDBs(void);
@@ -96,7 +98,7 @@ public:
         case 19: return order.stamp_duty;
         case 20: return order.transfer_fee;
         case 21: return order.other_fees;
-        case 22: return order.remarks.c_str();
+        case 22: return QString::fromLocal8Bit(order.remarks.data());
         default: return {};
         };
     }

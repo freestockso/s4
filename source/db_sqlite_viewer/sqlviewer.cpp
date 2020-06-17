@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QSplitter>
+#include <QSortFilterProxyModel>
+#include <QTableWidget>
 
 #include "history/s4_history_data.h"
 
@@ -22,6 +24,7 @@ SqlViewer::SqlViewer(QWidget *parent)
 //    Subclassing is needed for mouse events
 //    connect(ui->tabWidget,&QTabWidget::mousePressEvent,this,&tabClickHandler);
     connect(ui->tabWidget,&QTabWidget::tabCloseRequested,this,&SqlViewer::tabCloseRequestHandler);
+
     ui->statusbar->showMessage("Use \"Ctrl + O\" to open S4 configure json file.");
 }
 
@@ -62,6 +65,7 @@ void SqlViewer::onOpenDBs(void)
     onOpenDB_orders();
     ui->dbTree->setModel(_dbTree_model);
     ui->dbTree->setStyle(QStyleFactory::create("windows"));
+    ui->dbTree->setSortingEnabled(true);
 }
 
 void SqlViewer::onOpenDB_orders(void)
@@ -104,6 +108,7 @@ void SqlViewer::openTableTab_orders(const std::string& table_name)
     for (auto& order : history_data) {
         model->append(order);
     }
+    _order_models[table_name] = model;
 
     if(tabAlreadyExists(table_name.c_str())){
         QWidget *tab = tableMap.find(table_name.c_str()).value();
@@ -114,12 +119,30 @@ void SqlViewer::openTableTab_orders(const std::string& table_name)
         QTableView* tv = new QTableView(this);
         tableMap.insert(table_name.c_str(),tv);
         //QSqlQueryModel *model = dbHandler->getTableData(table_name.c_str());
-        tv->setModel(model);
+        QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
+        proxyModel->setSourceModel(model);
+        tv->setModel(proxyModel);
+        tv->setSortingEnabled(true);
+        tv->setSelectionBehavior(QAbstractItemView::SelectRows);
+        _order_views[table_name] = tv;
+        connect(tv, SIGNAL(doubleClicked(const QModelIndex & )), this, SLOT(orderDoubleClicked(const QModelIndex&)));
+
         int i = ui->tabWidget->addTab(tv, table_name.c_str());
         ui->tabWidget->setCurrentIndex(i);
     }
 }
 
+void SqlViewer::orderDoubleClicked(const QModelIndex& index)
+{
+    const QString tabName = ui->tabWidget->tabText(ui->tabWidget->currentIndex());
+    QTableView* tv = (QTableWidget*)ui->tabWidget->currentWidget();//_order_views[tabName.toStdString()];
+    int row = tv->currentIndex().row();
+    QAbstractItemModel* model = tv->model();
+    QModelIndex indexCode = model->index(row, 3);
+    const std::string mktCode = model->data(indexCode).toString().toStdString();
+
+    ui->statusbar->showMessage(mktCode.c_str());
+}
 
 
 void SqlViewer::openTableTab(const QModelIndex &index){
