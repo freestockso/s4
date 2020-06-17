@@ -1,13 +1,15 @@
-#include "db_sqlite_viewer/sqlviewer.h"
+ï»¿#include "db_sqlite_viewer/sqlviewer.h"
 #include "ui_sqlviewer.h"
 #include "common/s4conf.h"
 #include <QMessageBox>
 #include <QStyleFactory>
+#include <QSplitter>
 
 #include "history/s4_history_data.h"
-#include "jsonTypes/s4_history_t_dbTbl.h"
 
 namespace S4{
+
+#define HISTORY_ORDER_TREE_ROOT "history-orders"
 
 SqlViewer::SqlViewer(QWidget *parent)
     : QMainWindow(parent)
@@ -56,7 +58,7 @@ void SqlViewer::onLoadConf(void)
 void SqlViewer::onOpenDBs(void)
 {
     _dbTree_model = new QStandardItemModel(this);
-    _dbTree_model->setHorizontalHeaderLabels(QStringList() << QStringLiteral("Êý¾Ý¿â"));
+    _dbTree_model->setHorizontalHeaderLabels(QStringList() << QStringLiteral("æ•°æ®åº“"));
     onOpenDB_orders();
     ui->dbTree->setModel(_dbTree_model);
     ui->dbTree->setStyle(QStyleFactory::create("windows"));
@@ -68,12 +70,12 @@ void SqlViewer::onOpenDB_orders(void)
     glb_conf_t::db_t db = glb_conf::pInstance()->db();
     std::filesystem::path db_root_path = db.root;
     std::filesystem::path db_history_path = db_root_path / db.history_order;
-    sqlite::DB_t history_db(db_history_path.string());
+    _pHistory_db = std::make_shared<sqlite::DB_t>(db_history_path.string());
 
-    std::vector < std::string> history_tables = history_db.get_table_list();
+    std::vector < std::string> history_tables = _pHistory_db->get_table_list();
 
     QStandardItem* orderRoot = new QStandardItem;
-    orderRoot->setText(QStringLiteral("history-orders"));
+    orderRoot->setText(QStringLiteral(HISTORY_ORDER_TREE_ROOT));
     for (auto& tbl : history_tables) {
         QStandardItem* child = new QStandardItem;
         child->setText(tbl.c_str());
@@ -81,38 +83,74 @@ void SqlViewer::onOpenDB_orders(void)
     }
     _dbTree_model->appendRow(orderRoot);
 
-    //S4::sqlite::s4_history_t_dbTbl history_tbl;
+}
+
+
+
+
+void SqlViewer::openTableTab_orders(const std::string& table_name)
+{
+    S4::sqlite::s4_history_t_dbTbl history_tbl;
     //std::string condition = " WHERE mktCodeStr = '" + stkName + "'";
     //if (stgName.size()) {
     //    condition += " AND stgName = '" + stgName + "'";
     //}
-    //history_db.read_table< S4::sqlite::s4_history_t_dbTbl::data_t>(&history_tbl, table_name, history_data, condition);
-}
+    std::vector<struct s4_history_t> history_data;
+    _pHistory_db->read_table<S4::sqlite::s4_history_t_dbTbl::data_t>(&history_tbl, table_name, history_data);
+    std::vector<std::string> col_name = _pHistory_db->get_colum_list(table_name);
 
+    orderModel* model = new orderModel(this);
+    model->setTitle(col_name);
+    for (auto& order : history_data) {
+        model->append(order);
+    }
 
-void SqlViewer::openTableTab(const QModelIndex &index){
-    const QString tabName = index.data(Qt::DisplayRole).toString();
-    if(tabAlreadyExists(tabName)){
-        QWidget *tab = tableMap.find(tabName).value();
+    if(tabAlreadyExists(table_name.c_str())){
+        QWidget *tab = tableMap.find(table_name.c_str()).value();
         int i = ui->tabWidget->indexOf(tab);
         ui->tabWidget->setCurrentIndex(i);
     }
     else{
         QTableView* tv = new QTableView(this);
-        tableMap.insert(tabName,tv);
-        QSqlQueryModel *model = dbHandler->getTableData(tabName);
+        tableMap.insert(table_name.c_str(),tv);
+        //QSqlQueryModel *model = dbHandler->getTableData(table_name.c_str());
         tv->setModel(model);
-
-
-        int i = ui->tabWidget->addTab(tv,tabName);
+        int i = ui->tabWidget->addTab(tv, table_name.c_str());
         ui->tabWidget->setCurrentIndex(i);
     }
+}
 
-    //QString str;
-    //str += QStringLiteral("µ±Ç°Ñ¡ÖÐ£º%1\nrow:%2,column:%3\n").arg(index.data().toString())
-    //    .arg(index.row()).arg(index.column());
-    //str += QStringLiteral("¸¸¼¶£º%1\n").arg(index.parent().data().toString());
-    //ui->label_realTime->setText(str);
+
+
+void SqlViewer::openTableTab(const QModelIndex &index){
+    QString str;
+    str += QStringLiteral("å½“å‰é€‰ä¸­ï¼š%1\nrow:%2,column:%3\n").arg(index.data().toString())
+        .arg(index.row()).arg(index.column());
+    str += QStringLiteral("çˆ¶çº§ï¼š%1\n").arg(index.parent().data().toString());
+    ui->statusbar->showMessage(str);
+
+    if (index.parent().data().toString() == QStringLiteral(HISTORY_ORDER_TREE_ROOT) && _pHistory_db) {
+        std::string table_name = index.data().toString().toStdString();
+        openTableTab_orders(table_name);
+    }
+
+    //const QString tabName = index.data(Qt::DisplayRole).toString();
+    //if(tabAlreadyExists(tabName)){
+    //    QWidget *tab = tableMap.find(tabName).value();
+    //    int i = ui->tabWidget->indexOf(tab);
+    //    ui->tabWidget->setCurrentIndex(i);
+    //}
+    //else{
+    //    QTableView* tv = new QTableView(this);
+    //    tableMap.insert(tabName,tv);
+    //    QSqlQueryModel *model = dbHandler->getTableData(tabName);
+    //    tv->setModel(model);
+
+
+    //    int i = ui->tabWidget->addTab(tv,tabName);
+    //    ui->tabWidget->setCurrentIndex(i);
+    //}
+
 }
 
 void SqlViewer::connectDbDialog()

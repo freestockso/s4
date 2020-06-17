@@ -381,17 +381,29 @@ bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_h
 			continue;
 		}
 		
-		std::map<std::string, std::string> colums = db.get_colum_list(table);
+		std::vector<std::string> colums = db.get_colum_list(table);
+		bool has_deal_price = false;
+		bool has_commission = false;
+		bool has_stamp_duty = false;
+		bool has_delegate_type = false;
+		bool has_order_vol = false;
+		for(auto& c : colums){
+			if (c == "deal_price") has_deal_price = true;
+			if (c == "commission") has_commission = true;
+			if (c == "stamp_duty") has_stamp_duty = true;
+			if (c == "delegate_type") has_delegate_type = true;
+			if (c == "order_vol") has_order_vol = true;
+		}
 		//not deal nor order
-		if (colums.count("deal_price")==0){
+		if (!has_deal_price){
 			LCL_WARN("tdx history DB {:} contains non-history table: {:}", db_file_path.string(), table);
 			continue;
 		}
 		//check is deal or order
 		int table_type;
-		if(colums.count("commission")!=0 && colums.count("stamp_duty")!=0){
+		if(!has_commission && !has_stamp_duty){
 			table_type = 0;	//deal
-		}else if(colums.count("delegate_type")!=0 && colums.count("order_vol")!=0){
+		}else if(!has_delegate_type && !has_order_vol){
 			table_type = 1;	//order
 		}else{
 			LCL_WARN("tdx history DB {:} contains non-history table: {:}", db_file_path.string(), table);

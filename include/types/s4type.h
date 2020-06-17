@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <time.h>
 #include <stdint.h>
@@ -45,7 +45,7 @@ struct dayK_t
 struct stk_tdx_quote_t
 {
 	int mktCode;
-	uint16_t active1;			//active1Ôö¼Ó1£¬±íÊ¾ÕâÆÚ¼ä·¢Éú¹ý³É½»¡£Èç¹ûÃ»ÓÐ³É½»£¬Ã¿´Î¿ìÕÕ¸ø³öµÄÊ±¼ä´Á¡¢Îåµµ¼Û¸ñºÍÎ¯ÍÐÁ¿¶¼ÊÇ¿ÉÄÜ±ä¶¯µÄ£¬µ«active1²»±ä¡£Èç¹ûactive1Ôö¼Ó1£¬ÄÇÃ´×ÜÁ¿£¬×Ü½ð¶îÒ»¶¨»á±ä¡£
+	uint16_t active1;			//active1å¢žåŠ 1ï¼Œè¡¨ç¤ºè¿™æœŸé—´å‘ç”Ÿè¿‡æˆäº¤ã€‚å¦‚æžœæ²¡æœ‰æˆäº¤ï¼Œæ¯æ¬¡å¿«ç…§ç»™å‡ºçš„æ—¶é—´æˆ³ã€äº”æ¡£ä»·æ ¼å’Œå§”æ‰˜é‡éƒ½æ˜¯å¯èƒ½å˜åŠ¨çš„ï¼Œä½†active1ä¸å˜ã€‚å¦‚æžœactive1å¢žåŠ 1ï¼Œé‚£ä¹ˆæ€»é‡ï¼Œæ€»é‡‘é¢ä¸€å®šä¼šå˜ã€‚
 	int price;
 	int last_close;
 	int open;
@@ -53,13 +53,13 @@ struct stk_tdx_quote_t
 	int low;
 	int reversed_bytes0;
 	timeb timeS;
-	int reversed_bytes1;		//-¼Û¸ñ*100
-	int vol;					//×ÜÁ¿ ÊÖ
-	int cur_vol;				//ÏÖÁ¿ ÊÖ index?
+	int reversed_bytes1;		//-ä»·æ ¼*100
+	int vol;					//æ€»é‡ æ‰‹
+	int cur_vol;				//çŽ°é‡ æ‰‹ index?
 	amount_t amount;
 	int s_vol;
 	int b_vol;
-	int reversed_bytes2;		//ÊÐ³¡
+	int reversed_bytes2;		//å¸‚åœº
 	int reversed_bytes3;
 	int bid1;
 	int ask1;
@@ -86,8 +86,8 @@ struct stk_tdx_quote_t
 	int reversed_bytes6;
 	int reversed_bytes7;
 	int reversed_bytes8;
-	uint16_t reversed_bytes9;	//ÕÇËÙ
-	uint16_t active2;			//»îÔ¾¶È
+	uint16_t reversed_bytes9;	//æ¶¨é€Ÿ
+	uint16_t active2;			//æ´»è·ƒåº¦
 	time_t lcl_time;
 
 	std::string toString(void) const;
@@ -99,21 +99,21 @@ struct gbbd_t
 {
 	//unsigned char isSz;
 	uint32_t strDate;
-	//unsigned char category; //ÐÅÏ¢ÀàÐÍ:1µÄÎª³ýÈ¨³ýÏ¢, ´óÓÚ1µÄÎª¹É±¾±ä¶¯
-	float qianliutong;		//Ç°×ÜÁ÷Í¨(Íò¹É) -> gu
-	float qianzong;			//Ç°×Ü¹É±¾
-	float houliutong;		//ºó×ÜÁ÷Í¨
-	float houzong;			//ºó×Ü¹É±¾
+	//unsigned char category; //ä¿¡æ¯ç±»åž‹:1çš„ä¸ºé™¤æƒé™¤æ¯, å¤§äºŽ1çš„ä¸ºè‚¡æœ¬å˜åŠ¨
+	float qianliutong;		//å‰æ€»æµé€š(ä¸‡è‚¡) -> gu
+	float qianzong;			//å‰æ€»è‚¡æœ¬
+	float houliutong;		//åŽæ€»æµé€š
+	float houzong;			//åŽæ€»è‚¡æœ¬
 };
 struct fhps_t
 {
 	//unsigned char isSz;
 	uint32_t strDate;
-	//unsigned char category; //ÐÅÏ¢ÀàÐÍ:1µÄÎª³ýÈ¨³ýÏ¢, ´óÓÚ1µÄÎª¹É±¾±ä¶¯
-	float hongli;		//Ã¿10¹ÉÅÉ¼¸Ôª -> 1¹É
-	float peigujia;		//Åä¹É¼Û		
-	float songgu;		//Ã¿10¹ÉËÍ¼¸¹É -> 1¹É
-	float peigu;		//Ã¿10¹ÉÅä¼¸¹É -> 1¹É
+	//unsigned char category; //ä¿¡æ¯ç±»åž‹:1çš„ä¸ºé™¤æƒé™¤æ¯, å¤§äºŽ1çš„ä¸ºè‚¡æœ¬å˜åŠ¨
+	float hongli;		//æ¯10è‚¡æ´¾å‡ å…ƒ -> 1è‚¡
+	float peigujia;		//é…è‚¡ä»·		
+	float songgu;		//æ¯10è‚¡é€å‡ è‚¡ -> 1è‚¡
+	float peigu;		//æ¯10è‚¡é…å‡ è‚¡ -> 1è‚¡
 };
 
 

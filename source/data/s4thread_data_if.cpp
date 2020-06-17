@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "data/s4thread_data_if.h"
 #include "common/s4logger.h"
 
@@ -478,9 +478,9 @@ stkInfo_t* stkInfo_lib_t::get(const std::string & stkName) const
 	return _lib.find(mkCode)->second.get();
 }
 
-//"sz399001", //ÉîÛÚ³ÉÖ¸
-//"sz399005", //ÖĞĞ¡°âÖ¸
-//"sz399006"  //´´Òµ°å
+//"sz399001", //æ·±åœ³æˆæŒ‡
+//"sz399005", //ä¸­å°æ‰³æŒ‡
+//"sz399006"  //åˆ›ä¸šæ¿
 const stkInfo_t* stkInfo_lib_t::getMk(const std::string & stkName) const
 {
 	int mkCode = mktCodeStr_to_mktCodeInt(stkName);

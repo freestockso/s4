@@ -1,4 +1,4 @@
-
+# -*- coding: <encoding name> -*- : # -*- coding: utf-8 -*-
 import os
 
 json_folder = "./json_template"

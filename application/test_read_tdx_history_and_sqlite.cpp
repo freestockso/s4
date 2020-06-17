@@ -32,10 +32,10 @@ int main(int argc, char** argv)
 
 	std::vector<std::string> tables = qs_history_db.get_table_list();
 	for (auto& t : tables) {
-		std::map<std::string, std::string> colums = qs_history_db.get_colum_list(t);
+		std::vector<std::string> colums = qs_history_db.get_colum_list(t);
 		LCL_INFO("{:}", t);
 		for (auto& c : colums) {
-			LCL_INFO("\t{:}:{:}", c.first, c.second);
+			LCL_INFO("\t{:}", c);
 		}
 	}
 

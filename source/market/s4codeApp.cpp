@@ -1,4 +1,4 @@
-#include "market/s4codeApp.h"
+﻿#include "market/s4codeApp.h"
 #include "common/s4exceptions.h"
 #include "types/s4convertors.h"
 #include "common/s4logger.h"
@@ -201,46 +201,46 @@ int mktCodeInt_to_pureCodeInt(const int mktCode)
 }
 /*
 SH:
-001��������ծ�ֻ���
-110������
-120��������ҵծȯ��
-129������
-100��������ת��ծȯ��
-201��������ծ�ع���
-310��������ծ�ڻ���
-500������
-550����������
-600������A�ɣ�
-700��������ɣ�
-710������ת��ɣ�
-701������ת�������ɣ�
-711������ת�����ת��ɣ�
-720������������
-730�������¹��깺��
-735�������»����깺��
-737�������¹����ۣ�
-900������B��
+001×××国债现货；
+110×××
+120×××企业债券；
+129×××
+100×××可转换债券；
+201×××国债回购；
+310×××国债期货；
+500×××
+550×××基金；
+600×××A股；
+700×××配股；
+710×××转配股；
+701×××转配股再配股；
+711×××转配股再转配股；
+720×××红利；
+730×××新股申购；
+735×××新基金申购；
+737×××新股配售；
+900×××B股
 
 SZ:
-��1λ	�ڶ�λ	��3-6λ	����
-  0       0       XXXX  A��֤ȯ
-  0       3       XXXX  A��A2Ȩ֤
-  0       7       XXXX  A������
-  0       8       XXXX  A��A1Ȩ֤
-  0       9       XXXX  A��ת��
-  1       0       XXXX  ��ծ�ֻ�
-  1       1       XXXX  ծȯ
-  1       2       XXXX  ��ת��ծȯ
-  1       3       XXXX  ��ծ�ع�
-  1       7       XXXX  ԭ��Ͷ�ʻ���
-  1       8       XXXX  ֤ȯͶ�ʻ���
-  2       0       XXXX  B��֤ȯ
-  2       7       XXXX  B������
-  2       8       XXXX  B��Ȩ֤
-  3       0       XXXX  ��ҵ��֤ȯ
-  3       7       XXXX  ��ҵ������
-  3       8       XXXX  ��ҵ��Ȩ֤
-  3       9       XXXX  �ۺ�ָ��/�ɷ�ָ��
+第1位	第二位	第3-6位	含义
+  0       0       XXXX  A股证券
+  0       3       XXXX  A股A2权证
+  0       7       XXXX  A股增发
+  0       8       XXXX  A股A1权证
+  0       9       XXXX  A股转配
+  1       0       XXXX  国债现货
+  1       1       XXXX  债券
+  1       2       XXXX  可转换债券
+  1       3       XXXX  国债回购
+  1       7       XXXX  原有投资基金
+  1       8       XXXX  证券投资基金
+  2       0       XXXX  B股证券
+  2       7       XXXX  B股增发
+  2       8       XXXX  B股权证
+  3       0       XXXX  创业板证券
+  3       7       XXXX  创业板增发
+  3       8       XXXX  创业板权证
+  3       9       XXXX  综合指数/成份指数
 
 */
 bool isStk(const std::string & MktCodeStr)
@@ -298,7 +298,7 @@ bool isStk(mktCodeI_t MktCodeInt)
 
 	return false;
 }
-//ָ��
+//指数
 bool isIdx(mktCodeI_t MktCodeInt)
 {
 	if (isSHmkt(MktCodeInt)) {

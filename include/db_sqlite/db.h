@@ -19,7 +19,9 @@ public:
 
     // void setConnection(const std::string & cnt);
 	std::vector<std::string> get_table_list(void);
-	std::map<std::string, std::string> get_colum_list(const std::string& table_name);
+
+	// col_name : col_type
+	std::vector<std::string> get_colum_list(const std::string& table_name);
 
     //drop_if_exist: drop table if exist
 	template <typename T>

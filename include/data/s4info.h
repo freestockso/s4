@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <time.h>
 #include <vector>
 //#include "common/s4logger.h"
@@ -281,7 +281,7 @@ namespace S4 {
 
 		_base++;
 		if (_base >= size()) {
-			_base--;//·ÀÖ¹Ò»Ö±ÎŞ·¨Ê¹ÓÃ×îºóÒ»¸ö
+			_base--;//é˜²æ­¢ä¸€ç›´æ— æ³•ä½¿ç”¨æœ€åä¸€ä¸ª
 			_has_base = false;	//
 			return;
 		}
@@ -295,22 +295,22 @@ namespace S4 {
 		if ((*this)[_base]->_time < clk) {
 			//WARN("[W] nextBase start at quite less than clk!");
 			for (; _base < size(); ++_base) {
-				if ((*this)[_base]->_time == clk) {	//Æ¥Åä
+				if ((*this)[_base]->_time == clk) {	//åŒ¹é…
 					_now = clk;
 					_has_base = true;
 					return;
 				}
-				if ((*this)[_base]->_time > clk) {	//Ô½½ç
+				if ((*this)[_base]->_time > clk) {	//è¶Šç•Œ
 					_base--;
 					break;
 				}
 			}
-			if (_base >= size()) {	//Î´ÕÒµ½£¬Ê¹ÓÃ×îºóÒ»¸ö
+			if (_base >= size()) {	//æœªæ‰¾åˆ°ï¼Œä½¿ç”¨æœ€åä¸€ä¸ª
 				_base--;
 			}
 
-			if ((*this)[_base]->_time > _now) {	//Ô½½çµÄÇ°Ò»¸ö»ò×îºóÒ»¸öÊÇÎ´´¦Àí¹ıµÄbar
-				_has_base = true;	//Ê¹ÓÃ´Ëbar
+			if ((*this)[_base]->_time > _now) {	//è¶Šç•Œçš„å‰ä¸€ä¸ªæˆ–æœ€åä¸€ä¸ªæ˜¯æœªå¤„ç†è¿‡çš„bar
+				_has_base = true;	//ä½¿ç”¨æ­¤bar
 			}
 			else {
 				_has_base = false;	//
@@ -319,7 +319,7 @@ namespace S4 {
 			return;
 		}
 
-		//now<clk£¬ÇÒÏÂÒ»¸öbar>clk£¬»ØÍË£¬¼ÌĞøµÈ
+		//now<clkï¼Œä¸”ä¸‹ä¸€ä¸ªbar>clkï¼Œå›é€€ï¼Œç»§ç»­ç­‰
 		_has_base = false;
 		_base--;
 		_now = (*this)[_base]->_time;

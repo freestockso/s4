@@ -46,18 +46,19 @@ std::vector<std::string> DB_t::get_table_list(void)
 	return std::move(ret);
 }
 
-std::map<std::string, std::string> DB_t::get_colum_list(const std::string& table_name)
+std::vector<std::string> DB_t::get_colum_list(const std::string& table_name)
 {
-	std::map<std::string, std::string> ret;
+	std::vector<std::string> ret;
 	try {
 		std::string queryStr("PRAGMA  table_info(" + table_name + ")");
 
 		SQLite::Statement   query(mDb, queryStr);
 
 		while (query.executeStep()) {
-			std::string col = query.getColumn(1).getString();
-			std::string type = query.getColumn(2).getString();
-			ret[col] = type;
+			std::string col_name = query.getColumn(1).getString();
+			//std::string type = query.getColumn(2).getString();
+			//ret[col_name] = type;
+			ret.emplace_back(col_name);
 		}
 	}
 	catch (std::exception & e) {

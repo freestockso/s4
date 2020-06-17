@@ -32,6 +32,8 @@ namespace S4 {
 
 /* type */
 struct qt_load_instrument_t {
+	int command;	//	1
+	int seq;	//	0
 	std::string mktCode;	//	sz002810
 	std::string stgName;	//	tdx_xyzq_history
 	std::string tableName;	//	to20200531
@@ -39,6 +41,18 @@ struct qt_load_instrument_t {
 	/* from json */
 	static bool from_json(const nlohmann::json& json_var, qt_load_instrument_t& qt_load_instrument_t_var){
 		try{
+			try{
+				qt_load_instrument_t_var.command = json_var.at("command").get<int>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "command", e.what());
+				throw e;
+			}
+			try{
+				qt_load_instrument_t_var.seq = json_var.at("seq").get<int>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "seq", e.what());
+				throw e;
+			}
 			try{
 				qt_load_instrument_t_var.mktCode = json_var.at("mktCode").get<std::string>();
 			}catch(const std::exception& e){
@@ -62,6 +76,8 @@ struct qt_load_instrument_t {
 	/* to json */
 	static bool to_json(nlohmann::json& json_var, const qt_load_instrument_t& qt_load_instrument_t_var){
 		try{
+			json_var["command"] = qt_load_instrument_t_var.command;
+			json_var["seq"] = qt_load_instrument_t_var.seq;
 			json_var["mktCode"] = qt_load_instrument_t_var.mktCode;
 			json_var["stgName"] = qt_load_instrument_t_var.stgName;
 			json_var["tableName"] = qt_load_instrument_t_var.tableName;
@@ -74,7 +90,9 @@ struct qt_load_instrument_t {
 
 	bool operator ==(const qt_load_instrument_t& d) const
 	{
-		if (mktCode == d.mktCode &&
+		if (command == d.command &&
+			seq == d.seq &&
+			mktCode == d.mktCode &&
 			stgName == d.stgName &&
 			tableName == d.tableName)
 		{
@@ -95,8 +113,8 @@ struct qt_load_instrument_t {
         /* Tester */
         inline int qt_load_instrument_t_tester() {
 
-            //std::ifstream i("E:/work/s4/./json_template/qt_load_instrument_t.json");
-            std::string i("{    \"__optional_fields__\":[        \"stgName\",        \"tableName\"    ],    \"mktCode\" : \"sz002810\",        \"stgName\" : \"tdx_xyzq_history\",    \"tableName\": \"to20200531\"}");
+            //std::ifstream i("G:/E/work/999_s/s4/./json_template/qt_load_instrument_t.json");
+            std::string i("{    \"__optional_fields__\":[        \"stgName\",        \"tableName\"    ],    \"command\" : 1,    \"seq\"     : 0,    \"mktCode\" : \"sz002810\",    \"stgName\" : \"tdx_xyzq_history\",    \"tableName\": \"to20200531\"}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

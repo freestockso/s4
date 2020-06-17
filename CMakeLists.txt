@@ -139,7 +139,7 @@ file(GLOB_RECURSE LIB_INLINE_FILES "include/*.inl")
 file(GLOB_RECURSE LIB_SOURCE_FILES "source/*.cpp")
 set_source_files_properties(${LIB_SOURCE_FILES} PROPERTIES COMPILE_FLAGS "${PEDANTIC_COMPILE_FLAGS}")
 
-## wrap_ui
+# ## wrap_ui
 file(GLOB_RECURSE UI_FILES "source/*.ui")
 foreach(ui_file ${UI_FILES})
   qt5_wrap_ui(ui_headers ${ui_file})
@@ -147,7 +147,19 @@ endforeach()
 # # message(STATUS "UI_FILES = ${UI_FILES}")
 message(STATUS "ui_headers = ${ui_headers}")
 
-add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES} ${ui_headers})
+foreach(ui_h ${ui_headers})
+  STRING(REGEX REPLACE ".+/(.+)\\..*" "\\1" ui_name ${ui_h})
+  message(STATUS "ui_h = ${ui_h}")
+  message(STATUS "ui_name = ${ui_name}")
+  file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/")
+  # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
+  #     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+  #         "${ui_h}"      # <--this is in-file
+  #         "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")                 # <--this is out-file path
+endforeach()
+
+
+add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
 
 ## collect GLOBAL_INCLUDE_LIST
