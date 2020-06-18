@@ -28,21 +28,23 @@ using asio::ip::tcp;
 
 class chat_client;
 
-class tcp_json_client_t  : public thread_runner_t
+class tcp_json_client_t  : public thread_runner_t, public std::enable_shared_from_this<tcp_json_client_t>
 {
 public:
   explicit tcp_json_client_t(const std::string& port);
+
+  virtual void onRecv(const json_ptr_t&) {};
 
   bool read(json_ptr_t& pJ);
 
   bool write(json_ptr_t pJ);
 
-	virtual bool stop();
+  virtual bool stop();
 
 protected:
   virtual bool main_run_loop_act(int* ec = nullptr) override;
 private:
-    std::shared_ptr<chat_client> _c;
+    std::shared_ptr<chat_client> _cc;
     asio::io_context io_context;
     tcp::resolver::results_type endpoints;
 };
@@ -54,7 +56,8 @@ class chat_client
 {
 public:
   chat_client(asio::io_context& io_context,
-      const tcp::resolver::results_type& endpoints);
+      const tcp::resolver::results_type& endpoints,
+      std::weak_ptr<tcp_json_client_t> pHoster);
 
   bool connectiong();
 
@@ -83,7 +86,7 @@ private:
 
   Mutex _mux;
   json_message_queue _recv_msgs;
-
+  std::weak_ptr<tcp_json_client_t> _pHoster;
   bool _connected;
   bool _connecting;
 

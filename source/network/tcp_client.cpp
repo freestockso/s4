@@ -4,11 +4,13 @@ namespace S4{
 namespace NW{
 
 chat_client::chat_client(asio::io_context &io_context,
-                          const tcp::resolver::results_type &endpoints)
+                          const tcp::resolver::results_type &endpoints,
+                          std::weak_ptr<tcp_json_client_t> pHoster)
     : io_context_(io_context),
       socket_(io_context),
       _connected(false),
-      _connecting(true)
+      _connecting(true),
+      _pHoster(pHoster)
 {
   do_connect(endpoints);
 }
@@ -113,7 +115,11 @@ void chat_client::do_read_body()
                         json_ptr_t pJ = read_msg_.body_json();
                         if( pJ ){
                             Locker l(_mux);
-                            _recv_msgs.emplace_back(pJ);
+                            _recv_msgs.push_back(pJ);
+                            if (_pHoster.use_count()) {
+                                std::shared_ptr<tcp_json_client_t> pH = _pHoster.lock();
+                                pH->onRecv(pJ);
+                            }
                         }
 
                         do_read_header();
@@ -156,12 +162,12 @@ tcp_json_client_t::tcp_json_client_t(const std::string &port)
 
 bool tcp_json_client_t::read(json_ptr_t &pJ)
 {
-  return _c->read(pJ);
+  return _cc->read(pJ);
 }
 
 bool tcp_json_client_t::write(json_ptr_t pJ)
 {
-  if (!_c || !_c->connected())
+  if (!_cc || !_cc->connected())
   {
     return false;
   }
@@ -176,14 +182,14 @@ bool tcp_json_client_t::write(json_ptr_t pJ)
   msg.body_length(s.size());
   std::memcpy(msg.body(), s.c_str(), s.size());
   msg.encode_header();
-  _c->write(msg);
+  _cc->write(msg);
 
   return true;
 }
 
 bool tcp_json_client_t::stop()
 {
-  _c->close();
+  _cc->close();
   return thread_runner_t::stop();
 }
 
@@ -193,9 +199,9 @@ bool tcp_json_client_t::main_run_loop_act(int *ec)
   {
     *ec = 0;
   }
-  if (!_c || (!_c->connectiong() && !_c->connected()))
+  if (!_cc || (!_cc->connectiong() && !_cc->connected()))
   {
-    _c = std::make_shared<chat_client>(io_context, endpoints);
+    _cc = std::make_shared<chat_client>(io_context, endpoints, shared_from_this());
   }
   io_context.run();
 

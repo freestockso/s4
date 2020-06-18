@@ -147,7 +147,7 @@ bool read_history_order(const std::string& file_name, std::vector<tdx_xyzq_histo
 				LCL_WARN("drop order line for price 0:\n{:}", str);
 				continue;
 			}
-			if (order.quote_mode != "买卖") {
+			if (order.quote_mode != "买卖下单") {
 				LCL_WARN("drop order line for quote_mode = {:}:\n{:}", order.quote_mode, str);
 				continue;
 			}
@@ -401,9 +401,9 @@ bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_h
 		}
 		//check is deal or order
 		int table_type;
-		if(!has_commission && !has_stamp_duty){
+		if(has_commission && has_stamp_duty){
 			table_type = 0;	//deal
-		}else if(!has_delegate_type && !has_order_vol){
+		}else if(has_delegate_type && has_order_vol){
 			table_type = 1;	//order
 		}else{
 			LCL_WARN("tdx history DB {:} contains non-history table: {:}", db_file_path.string(), table);

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     //translator.load("myI18N_zh_CN.qm");
     //app.installTranslator(&translator);
 
-    S4::QT::s4qt_viewer v;
+    S4::QT::s4Kviewer v;
     v.show();
 
     return app.exec();

@@ -1,6 +1,7 @@
 ﻿#include "db_sqlite_viewer/sqlviewer.h"
 #include "ui_sqlviewer.h"
 #include "common/s4conf.h"
+#include "qt/Utils.h"
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QSplitter>
@@ -71,9 +72,9 @@ void SqlViewer::onOpen()
         QMessageBox::warning(NULL, "warning", "file format error!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         return;
     }
-    onTcpSetup();
-
     ui->statusbar->showMessage(path);
+
+    onTcpSetup();
     onLoadConf();
 }
 

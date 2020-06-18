@@ -7,7 +7,7 @@
 
 #include "DBHandler.h"
 #include "ddwidget.h"
-#include "Utils.h"
+#include "qt/Utils.h"
 
 namespace Ui {
 class DbConnectDialog;

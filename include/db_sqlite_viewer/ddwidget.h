@@ -9,7 +9,7 @@
 #include <QLabel>
 #include <QLayout>
 
-#include "Utils.h"
+#include "qt/Utils.h"
 
 namespace Ui {
 class DDwidget;

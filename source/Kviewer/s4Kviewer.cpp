@@ -2,10 +2,15 @@
 # pragma warning(disable: 4189) 
 
 #include "Kviewer/s4Kviewer.h"
+#include "ui_s4Kviewer.h"
 #include "common/s4logger.h"
+#include "qt/Utils.h"
 
 #include <QSplitter>
 #include <QScrollArea>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QMetaType>
 
 #ifdef max
 #undef max
@@ -16,11 +21,14 @@ using namespace std;
 namespace S4 {
 namespace QT {
 
-s4qt_viewer::s4qt_viewer(QWidget *parent) :
-    QMainWindow(parent)/*,
-    ui(new Ui::s3QT)*/
+CREATE_LOCAL_LOGGER("Kviewer")
+
+s4Kviewer::s4Kviewer(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::s4Kviewer)
 {   
-    //ui->setupUi(this);
+    ui->setupUi(this);
+	connect(ui->actionOpen, &QAction::triggered, this, &s4Kviewer::onOpen);
 
 
 	//pCLI = new cliparser(this);
@@ -131,8 +139,39 @@ s4qt_viewer::s4qt_viewer(QWidget *parent) :
 
 }
 
+void s4Kviewer::onOpen()
+{
+	QString path = QFileDialog::getOpenFileName(this, tr("Open S4 configure json"), "../json_template", tr("Json files (*.json)"));
 
-void s4qt_viewer::load(const std::string& stkName, const std::string& stgName, const std::string& orderTblName)
+	if (!Utils::fileCanBeOpened(path)) {
+		QMessageBox::warning(NULL, "warning", "file is not readable!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		return;
+	}
+
+	if (!glb_conf::pInstance()->load(path.toStdString()))
+	{
+		QMessageBox::warning(NULL, "warning", "file format error!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		return;
+	}
+	ui->statusbar->showMessage(path);
+
+	onTcpSetup();
+
+	//onLoadConf();
+}
+
+void s4Kviewer::onTcpSetup()
+{
+	_pTcp_json_client = std::make_shared<qt_tcp_json_client>(glb_conf::pInstance()->nw().db_server_port.c_str());
+	_pTcp_json_client->start();
+
+	qRegisterMetaType<std::shared_ptr<nlohmann::json>>("std::shared_ptr<nlohmann::json>");
+	qRegisterMetaType<std::shared_ptr<nlohmann::json>>("std::shared_ptr<nlohmann::json>&");
+	connect(_pTcp_json_client.get(), SIGNAL(signal_onRecv(const std::shared_ptr<nlohmann::json>&)),
+		this, SLOT(onTcpRecvJson(const std::shared_ptr<nlohmann::json>&)));
+}
+
+void s4Kviewer::load(const std::string& stkName, const std::string& stgName, const std::string& orderTblName)
 {
 
 	S4::stkInfoReq_t infoReq;
@@ -159,14 +198,20 @@ void s4qt_viewer::load(const std::string& stkName, const std::string& stgName, c
 	showData();
 }
 
-void s4qt_viewer::showData()
+void s4Kviewer::onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ)
+{
+	LCL_INFO("RecvJson: {:}", pJ->dump(4));
+}
+
+
+void s4Kviewer::showData()
 {
 
 }
 
 
 
-s4qt_viewer::~s4qt_viewer()
+s4Kviewer::~s4Kviewer()
 {
 }
 

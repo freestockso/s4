@@ -30,7 +30,7 @@
     },
     "network":{
         "db_server_ip" : "127.0.0.1",
-        "db_server_port": "8981"
+        "db_server_port": "8980"
     },
     "db":{
         "root" : "../db",
