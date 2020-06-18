@@ -45,6 +45,11 @@ struct glb_conf_t {
 		std::string file_preamble = (std::string)"S4";
 	};
 	logger_t logger;
+	struct network_t {
+		std::string db_server_ip;	//	127.0.0.1
+		std::string db_server_port;	//	8981
+	};
+	network_t network;
 	struct db_t {
 		std::string root;	//	../db
 		std::string history_tdx_qs;	//	s4_history_tdx_xyzq.db
@@ -108,6 +113,19 @@ struct glb_conf_t {
 			try{
 				glb_conf_t_var.logger.file_preamble = json_var_logger.at("file_preamble").get<std::string>();
 			}catch(...){
+			}
+			const nlohmann::json& json_var_network = json_var["network"];
+			try{
+				glb_conf_t_var.network.db_server_ip = json_var_network.at("db_server_ip").get<std::string>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "db_server_ip", e.what());
+				throw e;
+			}
+			try{
+				glb_conf_t_var.network.db_server_port = json_var_network.at("db_server_port").get<std::string>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "db_server_port", e.what());
+				throw e;
 			}
 			const nlohmann::json& json_var_db = json_var["db"];
 			try{
@@ -185,6 +203,10 @@ struct glb_conf_t {
 			json_var_logger["save_path"] = glb_conf_t_var.logger.save_path;
 			json_var_logger["file_preamble"] = glb_conf_t_var.logger.file_preamble;
 			json_var["logger"] = json_var_logger;
+			nlohmann::json json_var_network;
+			json_var_network["db_server_ip"] = glb_conf_t_var.network.db_server_ip;
+			json_var_network["db_server_port"] = glb_conf_t_var.network.db_server_port;
+			json_var["network"] = json_var_network;
 			nlohmann::json json_var_db;
 			json_var_db["root"] = glb_conf_t_var.db.root;
 			json_var_db["history_tdx_qs"] = glb_conf_t_var.db.history_tdx_qs;
@@ -218,7 +240,7 @@ struct glb_conf_t {
         inline int glb_conf_t_tester() {
 
             //std::ifstream i("G:/E/work/999_s/s4/./json_template/glb_conf_t.json");
-            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"..\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
+            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"network\":{        \"db_server_ip\" : \"127.0.0.1\",        \"db_server_port\": \"8981\"    },    \"db\":{        \"root\" : \"../db\",        \"history_tdx_qs\": \"s4_history_tdx_xyzq.db\",        \"history_order\": \"s4_history_order.db\"    },    \"tdx\":{        \"root\" : \"..\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

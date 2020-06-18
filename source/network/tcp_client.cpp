@@ -98,16 +98,22 @@ void chat_client::do_read_body()
                     [this](std::error_code ec, std::size_t /*length*/) {
                       if (!ec)
                       {
-                        std::string s(read_msg_.body(), read_msg_.body_length());
+                        // std::string s(read_msg_.body(), read_msg_.body_length());
 
-                        int bgn, end, err;
-                        if(searchJson(s, bgn, end, &err)){
-                          s = s.substr(bgn, end-bgn+1);
-                          json_ptr_t pJ = std::make_shared<json>(json::parse(s));
-                          {
+                        // int bgn, end, err;
+                        // if(searchJson(s, bgn, end, &err)){
+                        //   s = s.substr(bgn, end-bgn+1);
+                        //   json_ptr_t pJ = std::make_shared<json>(json::parse(s));
+                        //   {
+                        //     Locker l(_mux);
+                        //     _recv_msgs.emplace_back(pJ);
+                        //   }
+                        // }
+
+                        json_ptr_t pJ = read_msg_.body_json();
+                        if( pJ ){
                             Locker l(_mux);
                             _recv_msgs.emplace_back(pJ);
-                          }
                         }
 
                         do_read_header();

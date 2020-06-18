@@ -3,6 +3,9 @@
         "stgName",
         "tableName"
     ],
+    "__default_value_fields__":[
+        "command"
+    ],
     "command" : 1,
     "seq"     : 0,
     "mktCode" : "sz002810",

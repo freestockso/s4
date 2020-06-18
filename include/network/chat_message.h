@@ -1,4 +1,4 @@
-//
+//Base on Asio:
 // chat_message.hpp
 // ~~~~~~~~~~~~~~~~
 //
@@ -7,13 +7,15 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-
-#ifndef CHAT_MESSAGE_HPP
-#define CHAT_MESSAGE_HPP
+#pragma once
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "common/s4json_util.h"
+
+namespace S4{
+namespace NW{
 
 class chat_message
 {
@@ -63,6 +65,18 @@ public:
       body_length_ = max_body_length;
   }
 
+  json_ptr_t body_json() const
+  {
+    std::string s(body(), body_length());
+    json_ptr_t pJ;
+    int bgn, end, err;
+    if(searchJson(s, bgn, end, &err)){
+      s = s.substr(bgn, end-bgn+1);
+      pJ = std::make_shared<json>(json::parse(s));
+    }
+    return std::move(pJ);
+  }
+
   bool decode_header()
   {
     char header[header_length + 1] = "";
@@ -88,4 +102,6 @@ private:
   std::size_t body_length_;
 };
 
-#endif // CHAT_MESSAGE_HPP
+
+}
+}

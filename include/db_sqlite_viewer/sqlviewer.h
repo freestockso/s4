@@ -1,4 +1,5 @@
 #pragma once
+#include "network/tcp_server.h"
 
 #include <QMainWindow>
 #include <QModelIndex>
@@ -50,6 +51,12 @@ private:
     std::shared_ptr<sqlite::DB_t> _pHistory_db;
     std::map<std::string, orderModel*> _order_models;
     std::map<std::string, QTableView*> _order_views;
+
+    volatile bool _tcp_json_server_running = false;
+    std::shared_ptr<NW::tcp_json_server> _pTcp_json_server;
+    void onTcpSetup();
+    int _cmd_seq = 0;
+
     void onOpen();
     void onLoadConf(void);
     void onOpenDBs(void);

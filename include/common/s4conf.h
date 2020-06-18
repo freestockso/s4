@@ -38,6 +38,10 @@ public:
 		return _v;
 	}
 
+	const glb_conf_t::network_t& nw() const {
+		return _v.network;
+	}
+
 	const glb_conf_t::db_t& db() const {
 		return _v.db;
 	}

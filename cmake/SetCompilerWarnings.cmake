@@ -26,8 +26,8 @@ if(MSVC)
 
   # Make all warnings into errors and increases the number of sections that an object file can contain
   if(CMAKE_WARN_AS_ERROR)
-    set(CMAKE_C_FLAGS_CUSTOM "${CMAKE_C_FLAGS_CUSTOM} /WX /bigobj /utf-8")
-    set(CMAKE_CXX_FLAGS_CUSTOM "${CMAKE_CXX_FLAGS_CUSTOM} /WX /bigobj /utf-8")
+    set(CMAKE_C_FLAGS_CUSTOM "${CMAKE_C_FLAGS_CUSTOM} /WX /bigobj") # /utf-8
+    set(CMAKE_CXX_FLAGS_CUSTOM "${CMAKE_CXX_FLAGS_CUSTOM} /WX /bigobj") # /utf-8
     message(STATUS "----- CMAKE_WARN_AS_ERROR ON -----")
   else()
     message(STATUS "----- CMAKE_WARN_AS_ERROR OFF -----")

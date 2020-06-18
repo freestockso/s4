@@ -28,6 +28,10 @@
         "save_path":"./logs",
         "file_preamble":"S4"
     },
+    "network":{
+        "db_server_ip" : "127.0.0.1",
+        "db_server_port": "8981"
+    },
     "db":{
         "root" : "../db",
         "history_tdx_qs": "s4_history_tdx_xyzq.db",

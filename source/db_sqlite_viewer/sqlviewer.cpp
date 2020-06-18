@@ -8,10 +8,13 @@
 #include <QTableWidget>
 
 #include "history/s4_history_data.h"
+#include "jsonTypes/nw_load_instrument_t.h"
 
 namespace S4{
 
 #define HISTORY_ORDER_TREE_ROOT "history-orders"
+
+using asio::ip::tcp;
 
 SqlViewer::SqlViewer(QWidget *parent)
     : QMainWindow(parent)
@@ -26,12 +29,32 @@ SqlViewer::SqlViewer(QWidget *parent)
     connect(ui->tabWidget,&QTabWidget::tabCloseRequested,this,&SqlViewer::tabCloseRequestHandler);
 
     ui->statusbar->showMessage("Use \"Ctrl + O\" to open S4 configure json file.");
+
+
 }
 
 SqlViewer::~SqlViewer()
 {
     delete dbHandler;
     delete ui;
+}
+
+void SqlViewer::onTcpSetup()
+{
+    if (!_tcp_json_server_running) {
+        std::thread t([this]() {
+            asio::io_context io_context;
+            tcp::endpoint endpoint(tcp::v4(), std::atoi(glb_conf::pInstance()->nw().db_server_port.c_str()));
+
+            _pTcp_json_server = std::make_shared<NW::tcp_json_server>(io_context, endpoint);
+
+            _tcp_json_server_running = true;
+            io_context.run();
+            _tcp_json_server_running = false;
+        });
+
+        t.detach();
+    }
 }
 
 void SqlViewer::onOpen()
@@ -48,6 +71,8 @@ void SqlViewer::onOpen()
         QMessageBox::warning(NULL, "warning", "file format error!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         return;
     }
+    onTcpSetup();
+
     ui->statusbar->showMessage(path);
     onLoadConf();
 }
@@ -142,6 +167,20 @@ void SqlViewer::orderDoubleClicked(const QModelIndex& index)
     const std::string mktCode = model->data(indexCode).toString().toStdString();
 
     ui->statusbar->showMessage(mktCode.c_str());
+
+    if (_tcp_json_server_running) {
+        if (_pTcp_json_server && _pTcp_json_server->client_nb()) {
+            nw_load_instrument_t cmd;
+            cmd.seq = _cmd_seq++;
+            cmd.mktCode = mktCode;
+            cmd.stgName = "";
+            cmd.tableName = tabName.toStdString();
+            json_ptr_t pJ = make_json_ptr();
+            nw_load_instrument_t::to_json(*pJ, cmd);
+            _pTcp_json_server->write_broadcast(pJ);
+        }
+    }
+
 }
 
 
