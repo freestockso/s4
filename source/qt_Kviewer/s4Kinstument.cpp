@@ -1,10 +1,10 @@
-#include "qt_Kviewer/s4Kinstument.h"
+﻿#include "qt_Kviewer/s4Kinstument.h"
 #include <QGridLayout>
 
 namespace S4{
 namespace QT{
     
-Kinstrument_wid::Kinstrument_wid(QWidget *parent = nullptr) :
+Kinstrument_wid::Kinstrument_wid(QWidget *parent) :
     QWidget(parent)
 {
     _K_view = new QGraphicsView(this);
@@ -14,10 +14,13 @@ Kinstrument_wid::Kinstrument_wid(QWidget *parent = nullptr) :
     
 	//网格分割
 	QGridLayout *pLayout = new QGridLayout();
-	pLayout->addWidget(_K_view, 0, 0, 3, 6);	
-	pLayout->addWidget(_indicator_tab, 3, 0, 1, 6);
-	pLayout->addWidget(_cyc_tab, 0, 6, 3, 1);
-	pLayout->addWidget(_basic_tab, 3, 6, 1, 1);
+	pLayout->addWidget(_K_view, 0, 0, 3, 6);		//3x6 row x col
+	pLayout->addWidget(_indicator_tab, 3, 0, 1, 6);	//1x6
+	pLayout->addWidget(_cyc_tab, 0, 6, 3, 1);		//3x1
+	pLayout->addWidget(_basic_tab, 3, 6, 1, 1);		//1x1
+
+	_cyc_tab->setMaximumWidth(400);
+	_basic_tab->setMaximumWidth(400);
 
 	pLayout->setRowStretch(0, 4);			//
 	pLayout->setRowStretch(3, 1);			//

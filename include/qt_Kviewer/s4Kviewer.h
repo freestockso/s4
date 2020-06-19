@@ -42,9 +42,9 @@ private:
     Ui::s4Kviewer *ui;
 
 	//s3qt::myKwin* pmyKwin;
-	QTabWidget* _instument_tab;
-	// QTabWidget* _instument_tab2;
-	// QTabWidget* _instument_tab3;
+	QTabWidget* _instrument_tab;
+	// QTabWidget* _instrument_tab2;
+	// QTabWidget* _instrument_tab3;
 
 	//cliparser* pCLI;
 	data_panel_t _data_panel;

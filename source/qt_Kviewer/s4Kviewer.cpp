@@ -31,9 +31,9 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
     ui->setupUi(this);
 	connect(ui->actionOpen, &QAction::triggered, this, &s4Kviewer::onOpen);
 
-	_instument_tab = new QTabWidget(this);
-	// _instument_tab2 = new QTabWidget(this);
-	// _instument_tab3 = new QTabWidget(this);
+	_instrument_tab = new QTabWidget(this);
+	// _instrument_tab2 = new QTabWidget(this);
+	// _instrument_tab3 = new QTabWidget(this);
 
 	//pCLI = new cliparser(this);
 	//pCLI->setFocusPolicy(Qt::StrongFocus);
@@ -61,9 +61,9 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
     splitterMain->setHandleWidth(1);
 
     //splitterLeft->addWidget(pkBar);
-    splitterV1->addWidget(_instument_tab);
-	// splitterV2->addWidget(_instument_tab2);
-	// splitterV3->addWidget(_instument_tab3);
+    splitterV1->addWidget(_instrument_tab);
+	// splitterV2->addWidget(_instrument_tab2);
+	// splitterV3->addWidget(_instrument_tab3);
 
 	QList<int> list;
 	list << 100;//v1
@@ -139,6 +139,8 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 	if (!history_trade_data.size()) {
 		FATAL("loadOrdres fail");
 	}
+
+	load("sz002810", "", "");
 #endif // !NDEBUG
 
 }
@@ -210,7 +212,10 @@ void s4Kviewer::onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ)
 
 void s4Kviewer::showData()
 {
-
+	Kinstrument_wid* K = new Kinstrument_wid(_instrument_tab);
+	
+	int i = _instrument_tab->addTab(K, _data_panel.info.name().c_str());
+	_instrument_tab->setCurrentIndex(i);
 }
 
 
