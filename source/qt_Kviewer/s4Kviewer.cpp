@@ -5,7 +5,7 @@
 #include "ui_s4Kviewer.h"
 #include "common/s4logger.h"
 #include "qt_common/Utils.h"
-#include "qt_Kviewer/s4Kinstument.h"
+#include "qt_Kviewer/s4Kinstrument.h"
 
 #include <QSplitter>
 #include <QScrollArea>
@@ -212,7 +212,7 @@ void s4Kviewer::onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ)
 
 void s4Kviewer::showData()
 {
-	Kinstrument_wid* K = new Kinstrument_wid(_instrument_tab);
+	Kinstrument* K = new Kinstrument(_instrument_tab);
 	
 	int i = _instrument_tab->addTab(K, _data_panel.info.name().c_str());
 	_instrument_tab->setCurrentIndex(i);

@@ -11,6 +11,13 @@
                 "E:\\Qt\\5.11.1\\msvc2017_64\\include\\QtWidgets",
                 "E:\\Qt\\5.11.1\\msvc2017_64\\include\\QtSql",
                 "E:\\Qt\\5.11.1\\msvc2017_64\\include\\QtGui",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\QtCore",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\QtQml",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\QtQuick",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\QtWidgets",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\QtSql",
+                "G:\\Qt\\5.11.1\\msvc2017_64\\include\\QtGui",
                 "${workspaceFolder}/thirdparty/json/include",
                 "${workspaceFolder}/thirdparty/spdlog/include",
                 "${workspaceFolder}/thirdparty/SQLiteCpp/include"

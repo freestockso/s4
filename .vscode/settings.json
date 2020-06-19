@@ -90,6 +90,7 @@
         "strstream": "cpp",
         "*.ipp": "cpp",
         "qcolor": "cpp",
-        "qwidget": "cpp"
+        "qwidget": "cpp",
+        "qgraphicsscene": "cpp"
     }
 }
