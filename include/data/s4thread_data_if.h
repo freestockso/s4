@@ -3,14 +3,14 @@
 #include "common/s4exceptions.h"
 #include "tdx/tdx_local.h"
 #include "db_sqlite/db.h"
-#include "db_sqlite/tableIO_dayK.h"
+// #include "db_sqlite/tableIO_dayK.h"
 // #include "db_sqlite/tableIO_minuK.h"
 #include "data/s4info.h"
 // #include "data/s4infCYC.h"
 #include "data/s4infK.h"
 #include "data/s4infMA.h"
 // #include "data/s4infSnap.h"
-#include "market/s4codeApp.h"
+#include "common/s4mktCode.h"
 
 #include "common/s4conf.h"
 // #include "tdx/tdx_ol.h"
@@ -361,7 +361,7 @@ private:
 	//bool _snap_toDB;
 	//bool _snap_fromDB;
 	//std::string _snap_dbPath_toSave;
-	//glb_conf_t::snap_t::DB_list_t _snapDBconfs_toLoad;
+	//glb_conf_ctx_t::snap_t::DB_list_t _snapDBconfs_toLoad;
 private:
 	void main_run(int seq);
 

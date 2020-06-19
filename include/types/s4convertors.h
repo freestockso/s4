@@ -9,6 +9,8 @@
 
 #include "common/s4exceptions.h"
 
+namespace S4{
+
 typedef int64_t signed_int;
 typedef uint64_t unsigned_int;
 
@@ -293,3 +295,5 @@ struct BoolConvertor
 			return result;
 	}
 };
+
+}//namespace S4

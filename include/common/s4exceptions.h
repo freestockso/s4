@@ -1,7 +1,9 @@
 #pragma once
+
 #include <string>
 #include <stdexcept>
 
+namespace S4{
 
 /// Base QuickFIX exception type.
 struct Exception : public std::logic_error
@@ -160,3 +162,6 @@ struct network_Error : public Exception
 	network_Error(const std::string& what = "")
 		: Exception("network ERROR:", what) {}
 };
+
+
+}//S4

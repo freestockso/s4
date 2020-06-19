@@ -1,7 +1,7 @@
 #pragma once
 #include "s4info.h"
 #include "types/s4type.h"
-#include "time/s4time.h"
+#include "common/s4time.h"
 
 namespace S4 {
 

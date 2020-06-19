@@ -5,12 +5,14 @@
 //#include "s3exceptions.h"
 #include "types/s4type.h"
 #include "types/s4convertors.h"
-#include "string/s4string.h"
-#include "time/s4time.h"
-#include "market/s4codeApp.h"
+#include "common/s4string.h"
+#include "common/s4time.h"
+#include "common/s4mktCode.h"
 #include <string>
 
 using namespace std;
+
+namespace S4{
 
 string stk_tdx_quote_t::toString() const
 {
@@ -212,3 +214,5 @@ std::string horder_t::toString(void) const {
 		+ "source=" + source;
 	return std::move(s);
 }
+
+}//namespace S4

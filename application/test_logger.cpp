@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 	INFO("console only at begning.");
 	WARN("Going to take place of default logger setting");
 
-	S4::glb_conf_t::logger_t p;
+	S4::glb_conf_ctx_t::logger_t p;
 	p.save_path = "./logs";
 	p.enable_file_all = true;
 	S4::s4logger::pInstance()->init(&p);

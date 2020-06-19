@@ -28,6 +28,7 @@ endif()
 set (PROJECT_NAME S4)
 project(${PROJECT_NAME})
 message(STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
+message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
 
 ## Thirdparty
 add_subdirectory("thirdparty")
@@ -147,14 +148,28 @@ endforeach()
 #message(STATUS "UI_FILES = ${UI_FILES}")
 #message(STATUS "ui_headers = ${ui_headers}")
 
+file(GLOB_RECURSE QT_AUTO_FILES "${CMAKE_CURRENT_BINARY_DIR}/moc_*.cpp")
+# file(GLOB_RECURSE QT_AUTO_HEADS "${CMAKE_CURRENT_BINARY_DIR}/ui_*.h")
+list(APPEND qt_auto_list ${QT_AUTO_FILES})
+# list(APPEND qt_auto_list ${QT_AUTO_HEADS})
+foreach(auto_file ${qt_auto_list})
+  file(REMOVE "${auto_file}")
+  # message(STATUS "${auto_file}")
+endforeach()
+
+
 # set(ui_headers_auto "")
 foreach(ui_h ${ui_headers})
   STRING(REGEX REPLACE ".+/(.+)\\..*" "\\1" ui_name ${ui_h})
   message(STATUS "ui_h = ${ui_h}")
-  message(STATUS "ui_name = ${ui_name}")
-  file(REMOVE "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_h}")
-  file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/")
-  list(APPEND ui_headers_auto "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")
+  # message(STATUS "ui_name = ${ui_name}")
+  IF(EXISTS "${ui_h}")
+    file(REMOVE "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_h}")
+    file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/")
+    list(APPEND ui_headers_auto "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")
+  else()
+    message(STTUS "^^^^^^^^^^^^^^^^^^^^^ missing")
+  endif()
   # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
   #     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
   #         "${ui_h}"      # <--this is in-file

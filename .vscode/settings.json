@@ -88,6 +88,8 @@
         "queue": "cpp",
         "shared_mutex": "cpp",
         "strstream": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "qcolor": "cpp",
+        "qwidget": "cpp"
     }
 }

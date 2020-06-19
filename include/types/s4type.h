@@ -10,9 +10,11 @@
 
 #include "s4type_precision.h"
 #include "s4type_time.h"
-#include "market/s4codeApp.h"	//types of code
+#include "common/s4mktCode.h"	//types of code
 
 // #include "s3type_future.h"
+
+namespace S4{
 
 /************************************************************************/
 /* WARNING: Vol in DayK/minuK/GBBQ is in Gu(1 share), Vol in Snap is in Shou(1 hand) = 100 Gu!*/
@@ -213,5 +215,5 @@ struct horder_t
 	std::string toString(void) const;
 };
 
-
+}//namespace S4
 

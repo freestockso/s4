@@ -1,12 +1,12 @@
 ﻿#include <fstream>
-#include "string/s4string.h"
+#include "common/s4string.h"
 #include "tdx/read_history.h"
 #include "common/s4logger.h"
 #include "jsonTypes/tdx_xyzq_history_deal_t.h"
 #include "jsonTypes/tdx_xyzq_history_order_t.h"
 #include "types/s4convertors.h"
-#include "market/s4codeApp.h"
-#include "time/s4time.h"
+#include "common/s4mktCode.h"
+#include "common/s4time.h"
 
 CREATE_LOCAL_LOGGER(tdx_read_history)
 
@@ -228,10 +228,10 @@ bool history_order_to_DB(S4::sqlite::DB_t& history_db, const std::string& file_n
 
 
 static
-void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders_rd, std::vector<s4_history_t>& history_data)
+void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders_rd, std::vector<s4_history_trade_t>& history_trade_data)
 {
 	for(const auto& order : orders_rd){
-		s4_history_t data;
+		s4_history_trade_t data;
 		//id through open-close
 		data.id = order.id;
 		data.date = order.date;
@@ -297,17 +297,17 @@ void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders
 		data.other_fees = 0.0;	//	0.0
 		data.remarks = order.quote_mode;	//	起始配号:226168906
 
-		history_data.emplace_back(data);
+		history_trade_data.emplace_back(data);
 
 	}
 }
 
 
 static
-void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd, std::vector<s4_history_t>& history_data)
+void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd, std::vector<s4_history_trade_t>& history_trade_data)
 {
 	for (const auto& deal : deals_rd) {
-		s4_history_t data;
+		s4_history_trade_t data;
 		//id through open-close
 		data.id = deal.id;
 		data.date = deal.date;
@@ -350,15 +350,15 @@ void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd
 		data.other_fees = deal.other_fees;	//	0.0
 		data.remarks = deal.remarks;	//	起始配号:226168906
 
-		history_data.emplace_back(data);
+		history_trade_data.emplace_back(data);
 
 	}
 }
 
-bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_t>& history_data, 
+bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_history_trade_t>& history_trade_data, 
 	const std::set<std::string>& table_list, const std::vector<pureCodeI_t>& stk_list)
 {
-	history_data.clear();
+	history_trade_data.clear();
 	sqlite::DB_t db(db_file_path.string(), SQLite::OPEN_READONLY);
 
 	std::string condition = "";
@@ -412,10 +412,10 @@ bool read_history_DB(const std::filesystem::path& db_file_path, std::vector<s4_h
 
 		if(table_type == 0){
 			db.read_table<tdx_xyzq_history_deal_t>(&deal_tbl, table, deals_rd, condition);
-			merge_history_deal(deals_rd, history_data);
+			merge_history_deal(deals_rd, history_trade_data);
 		}else{
 			db.read_table<tdx_xyzq_history_order_t>(&order_tbl, table, orders_rd, condition);
-			merge_history_order(orders_rd, history_data);
+			merge_history_order(orders_rd, history_trade_data);
 		}
 
 	}

@@ -2,7 +2,7 @@
 #include <io.h>
 #include <fstream>
 #include "common/s4logger.h"
-#include "time/s4time.h"
+#include "common/s4time.h"
 #include <assert.h>
 
 using namespace std;

@@ -1,5 +1,7 @@
 #include "types/s4convertors.h"
 
+namespace S4{
+
 //
 #include "double-conversion/diy-fp.cc"
 #include "double-conversion/fixed-dtoa.cc"
@@ -55,3 +57,5 @@ int DoubleConvertor::fast_fixed_dtoa(char * buffer, int size, double value)
 
 	return builder.position();
 }
+
+}//namespace S4

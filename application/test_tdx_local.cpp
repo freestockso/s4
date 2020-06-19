@@ -9,7 +9,7 @@ using namespace std::filesystem;
 
 int main(int argc, char** argv)
 {
-	glb_conf::pInstance()->load("../json_template/glb_conf_t.json");
+	glb_conf::pInstance()->load("../json_template/glb_conf_ctx_t.json");
 	s4logger::pInstance()->init((void*)glb_conf::pInstance()->pLogger());
 
 	path tdx_root(glb_conf::pInstance()->tdx().root);

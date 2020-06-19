@@ -1,0 +1,52 @@
+{
+    "logger":{
+        "__assign_type_fields__": { 
+            "level" : "spdlog::level::level_enum",
+            "max_file_size_MB" : "size_t",
+            "max_files" : "size_t"
+        },
+        "__default_value_fields__": [
+            "enable_console",
+            "enable_file_all",
+            "enable_file_all_pure",
+            "enable_file_err",
+            "enable_file_err_pure",
+            "level",
+            "max_file_size_MB",
+            "max_files",
+            "save_path",
+            "file_preamble"
+        ],
+        "enable_console" : true,
+        "enable_file_all": false,
+        "enable_file_all_pure":true,
+        "enable_file_err": false,
+        "enable_file_err_pure":true,
+        "level" : 2,
+        "max_file_size_MB" : 9999,
+        "max_files":10,
+        "save_path":"./logs",
+        "file_preamble":"S4"
+    },
+    "network":{
+        "db_viewer_ip" : "127.0.0.1",
+        "db_viewer_port": "8980"
+    },
+    "db":{
+        "root" : "../db",
+        "history_broker": "s4_history_tdx_xyzq.db",
+        "history_trade": "s4_history_trade.db"
+    },
+    "tdx":{
+        "root" : "..\\doc\\tdx_test"
+    },
+    "snap":{
+        "DB_list":[
+            {
+                "bgnDate":0,
+                "endDate":21000000,
+                "path":"../db/snap/snap_test.db"
+            }
+        ]
+    }
+}
