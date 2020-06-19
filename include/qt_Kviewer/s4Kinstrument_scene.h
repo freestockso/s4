@@ -26,6 +26,8 @@ protected:
     
 protected:
     void drawBK();
+
+    void drawTest();
 protected:
     QPointF _pos;
 

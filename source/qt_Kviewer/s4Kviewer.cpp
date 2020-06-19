@@ -110,35 +110,35 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
 
 #ifndef NDEBUG
-	S4::stkInfoReq_t _infoReq;
-	_infoReq.endDate = _DOOMSDAY_;
-	_infoReq.nbDay_preEndDate = std::numeric_limits<int>::max();
+	//S4::stkInfoReq_t _infoReq;
+	//_infoReq.endDate = _DOOMSDAY_;
+	//_infoReq.nbDay_preEndDate = std::numeric_limits<int>::max();
 
-	S4::stkInfo_t* info;
+	//S4::stkInfo_t* info;
 
-	emit signal_getInfo("sz000997", _infoReq, info);
-	if (info == nullptr) {
-		FATAL("getInfo fail");
-	}
-	emit signal_getInfo("sh688004", _infoReq, info);
-	if (info == nullptr) {
-		FATAL("getInfo fail");
-	}
-	emit signal_getInfo("sh688001", _infoReq, info);
-	if (info != nullptr) {
-		FATAL("getInfo NG");
-	}
+	//emit signal_getInfo("sz000997", _infoReq, info);
+	//if (info == nullptr) {
+	//	FATAL("getInfo fail");
+	//}
+	//emit signal_getInfo("sh688004", _infoReq, info);
+	//if (info == nullptr) {
+	//	FATAL("getInfo fail");
+	//}
+	//emit signal_getInfo("sh688001", _infoReq, info);
+	//if (info != nullptr) {
+	//	FATAL("getInfo NG");
+	//}
 
-	//////////////
-	emit signal_getInfo("sz002810", _infoReq, info);
-	if (info == nullptr) {
-		FATAL("getInfo NG");
-	}
-	std::vector<S4::s4_history_trade_t> history_trade_data;
-	emit signal_loadOrdres("sz002810", "tdx_xyzq_history", "to20200531", history_trade_data);
-	if (!history_trade_data.size()) {
-		FATAL("loadOrdres fail");
-	}
+	////////////////
+	//emit signal_getInfo("sz002810", _infoReq, info);
+	//if (info == nullptr) {
+	//	FATAL("getInfo NG");
+	//}
+	//std::vector<S4::s4_history_trade_t> history_trade_data;
+	//emit signal_loadOrdres("sz002810", "tdx_xyzq_history", "to20200531", history_trade_data);
+	//if (!history_trade_data.size()) {
+	//	FATAL("loadOrdres fail");
+	//}
 
 	load("sz002810", "", "");
 #endif // !NDEBUG
