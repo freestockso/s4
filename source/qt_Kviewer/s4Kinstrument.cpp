@@ -7,12 +7,20 @@ namespace QT{
 Kinstrument::Kinstrument(QWidget *parent) :
     QWidget(parent)
 {
+	this->setMouseTracking(true);
 	int i;
 	_K_tab = new QTabWidget(this);
+	_K_tab->setMouseTracking(true);
 	Kinstrument_scene* _K_scene = new Kinstrument_scene(this);
 	Kinstrument_view* _K_view = new Kinstrument_view(_K_scene, this);
 	i = _K_tab->addTab(_K_view, "day");
 	_K_tab->setCurrentIndex(i);
+	if (!_K_tab->hasMouseTracking()) {
+		_K_tab->setMouseTracking(true);
+	}
+	if (!_K_view->hasMouseTracking()) {
+		_K_view->setMouseTracking(true);
+	}
 
 
     _indicator_tab = new QTabWidget(this);

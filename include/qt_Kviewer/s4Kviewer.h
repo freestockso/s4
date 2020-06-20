@@ -7,6 +7,8 @@
 #include "qt_common/s4qt_data_if.h"
 //#include "network/tcp_client.h"
 #include "qt_common/s4qt_tcp.h"
+#include <QDebug>
+#include <QMouseEvent>
 
 namespace Ui {
 class s4Kviewer;
@@ -53,6 +55,11 @@ private:
 	std::shared_ptr<qt_tcp_json_client> _pTcp_json_client;
 
 	std::shared_ptr<QPushButton> button;
+private:
+	void mouseMoveEvent(QMouseEvent* )
+	{
+		//qDebug() << "Kview " << hasMouseTracking() << " " << event->pos().x() << ", " << event->pos().y();
+	}
 
 private:
 	void showData();

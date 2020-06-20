@@ -21,13 +21,24 @@ public:
 //signals:
 //    void cursorPosition(QPointF);
 
-private:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+protected:
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
+    void wheelEvent(QWheelEvent* event);
 
 protected:
 	QGraphicsScene* _scene;
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
+    
+    QPointF _scene_pos;
+    QPointF _view_pos;
+
+protected:
+    void zoomIn();
+    void zoomOut();
+
+    QGraphicsItemGroup* _crossLine = nullptr;
+    void paintCrosshair();
 };
 
 }

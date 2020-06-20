@@ -17,6 +17,13 @@ class Kinstrument_scene : public QGraphicsScene
 public:
     Kinstrument_scene(QWidget* parent = 0);
 
+    struct ctx_t {
+        qreal h_min;    // h_min is at bottum, but y=0 is at top
+        qreal h_max;
+        qreal w_min;    // w_min at x=0
+        qreal w_max;
+    };
+
 //signals:
 //    void cursorPosition(QPointF);
 

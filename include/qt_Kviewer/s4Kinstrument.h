@@ -7,6 +7,8 @@
 #include <QKeyEvent>
 #include <QGraphicsView>
 #include <QTabWidget>
+#include <QDebug>
+#include <QMouseEvent>
 
 
 namespace S4{
@@ -19,6 +21,10 @@ class Kinstrument: public QWidget
 public:
     explicit Kinstrument(QWidget *parent = nullptr);
 
+    void mouseMoveEvent(QMouseEvent* )
+    {
+        //qDebug() << "Kinstrument " << hasMouseTracking() << " " << event->pos().x() << ", " << event->pos().y();
+    }
 private:
     // K_view
     QTabWidget* _K_tab;

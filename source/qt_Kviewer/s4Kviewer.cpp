@@ -29,9 +29,12 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
     ui(new Ui::s4Kviewer)
 {   
     ui->setupUi(this);
+	ui->centralwidget->setMouseTracking(true);
 	connect(ui->actionOpen, &QAction::triggered, this, &s4Kviewer::onOpen);
 
+	this->setMouseTracking(true);
 	_instrument_tab = new QTabWidget(this);
+	_instrument_tab->setMouseTracking(true);
 	// _instrument_tab2 = new QTabWidget(this);
 	// _instrument_tab3 = new QTabWidget(this);
 
@@ -53,6 +56,9 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
 	
     QSplitter *splitterMain = new QSplitter(Qt::Vertical, 0); //新建主分割窗口，水平分割
+	if (!splitterMain->hasMouseTracking()) {
+		splitterMain->setMouseTracking(true);
+	}
 
     QSplitter *splitterV1 = new QSplitter(Qt::Vertical, splitterMain);
 	// QSplitter *splitterV2 = new QSplitter(Qt::Vertical, splitterMain);
@@ -62,6 +68,9 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
     //splitterLeft->addWidget(pkBar);
     splitterV1->addWidget(_instrument_tab);
+	if (!splitterV1->hasMouseTracking()) {
+		splitterV1->setMouseTracking(true);
+	}
 	// splitterV2->addWidget(_instrument_tab2);
 	// splitterV3->addWidget(_instrument_tab3);
 
@@ -216,6 +225,15 @@ void s4Kviewer::showData()
 	
 	int i = _instrument_tab->addTab(K, _data_panel.info.name().c_str());
 	_instrument_tab->setCurrentIndex(i);
+	if (!hasMouseTracking()) {
+		setMouseTracking(true);
+	}
+	if (!_instrument_tab->hasMouseTracking()) {
+		_instrument_tab->setMouseTracking(true);
+	}
+	if (!K->hasMouseTracking()) {
+		K->setMouseTracking(true);
+	}
 }
 
 
