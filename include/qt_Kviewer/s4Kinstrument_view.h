@@ -27,10 +27,14 @@ public:
         _isLogCoor = log;
     }
 
+    void setTransform(const QTransform& matrix, bool combine = false);
+    void resetTransform();
+
 protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void wheelEvent(QWheelEvent* event);
+
 
 protected:
     Kinstrument_scene* _scene;
@@ -42,6 +46,9 @@ protected:
 
     QPointF _view_pos;
 
+    QTransform _antiT;
+    QPointF _XYantiScale;
+
     bool _isLogCoor = true;
 protected:
     qreal val_to_sceneh(qreal val);
@@ -51,6 +58,7 @@ protected:
     void zoomIn();
     void zoomOut();
 
+    void grabTransInfo();
     QPointF getXYscale();
 
     QGraphicsItemGroup* _crossLine = nullptr;

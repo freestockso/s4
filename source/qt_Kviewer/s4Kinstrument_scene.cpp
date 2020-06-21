@@ -34,7 +34,6 @@ void Kinstrument_scene::initSceneCanvas()
 
 	_h_val_pxl = (_ctx.val_h_max() - _ctx.val_h_min()) / (this->height());
 
-	//_h_log_pxl = qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1) / (this->height());
 	_h_log_max = qLn(_ctx.val_h_max()) / qLn(1.1);
 	_h_log_min = qLn(_ctx.val_h_min()) / qLn(1.1);
 	_h_log_pxl = (_h_log_max - _h_log_min) / (this->height());
@@ -50,8 +49,6 @@ qreal Kinstrument_scene::val_h_to_y(qreal val)
 		y_o = height() - (val - _ctx.val_h_min()) / _h_val_pxl;	//
 	}
 	else {
-		//qreal p_max_h = qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1);
-		//qreal p_gap = height() / p_max_h;
 		y_o = qLn(_ctx.val_h_max() / val) / qLn(1.1) / _h_log_pxl;
 	}
 	return y_o;
@@ -73,15 +70,12 @@ qreal Kinstrument_scene::y_to_val_h(qreal y)
 qreal Kinstrument_scene::val_w_to_x(qreal val)
 {
 	qreal x_o;
-	//qreal p_gap = (width() - 1) / (_ctx.val_w_max() - _ctx.val_w_min());
-	//x_o = p_gap * (val - _ctx.val_w_min());	//
 	x_o = (val - _ctx.val_w_min()) / _w_val_pxl + sceneRect().x();	//
 	return x_o;
 }
 
 qreal Kinstrument_scene::x_to_val_w(qreal x)
 {
-	//return (_ctx.val_w_max() - _ctx.val_w_min()) * x / (width() - 1) + _ctx.val_h_min();
 	return (x - sceneRect().x()) * _w_val_pxl + _ctx.val_w_min();
 }
 
@@ -199,16 +193,12 @@ void Kinstrument_scene::drawTest()
 	//	}
 	//}
 
+	qDebug() << "---------";
 	qDebug() << x_w_min << x_w_max;
 	qDebug() << y_v_min << y_v_max;
 	qDebug() << sceneRect();
-	qDebug() << "---------";
 	qDebug() << v_m << sceneRect().y() + sceneRect().height() << val_h_to_y(v_m) << y_to_val_h(val_h_to_y(v_m));
 	qDebug() << v_M << sceneRect().y() << val_h_to_y(v_M) << y_to_val_h(val_h_to_y(v_M));
-	//qDebug() << "_h_val_pxl" << _h_val_pxl;
-	//qDebug() << "_h_log_pxl" << _h_log_pxl;
-	//qDebug() << "height" << height();
-	//qDebug() << "width" << width();
 	qDebug() << w_m << sceneRect().x() << val_w_to_x(w_m) << x_to_val_w(val_w_to_x(w_m));
 	qDebug() << w_M << sceneRect().x() + sceneRect().width() << val_w_to_x(w_M) << x_to_val_w(val_w_to_x(w_M));
 }

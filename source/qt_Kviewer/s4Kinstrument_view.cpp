@@ -13,13 +13,13 @@ Kinstrument_view::Kinstrument_view(Kinstrument_scene*scene, QWidget *parent):
     QGraphicsView(scene, parent),
 	_scene(scene)
 {
+	//TODO: scrollBar not always On
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     _colorpalette = std::make_shared<qt_colorpalette_t>();
 
 	this->setMouseTracking(true);
-
 }
 
 //Kinstrument_view::void cursorPosition(QPointF);
@@ -60,8 +60,12 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 {
 	_view_pos = event->pos();
 	_scene_pos = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
+
+	//TODO: move to resize?
+	qreal w = width();
+	qreal h = height();
 	_scene_lu = QGraphicsView::mapToScene(0, 0);
-	_scene_rd = QGraphicsView::mapToScene(width()-1, height()-1);
+	_scene_rd = QGraphicsView::mapToScene(w - 1, h - 1);
 
 	paintCrosshair();
 }
@@ -71,8 +75,6 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 	//qDebug() << "Delta: " << event->angleDelta();
 	_view_pos = event->pos();
 	_scene_pos = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
-	_scene_lu = QGraphicsView::mapToScene(0, 0);
-	_scene_rd = QGraphicsView::mapToScene(width() - 1, height() - 1);
 
 	int angle = event->angleDelta().y();
 
@@ -83,6 +85,32 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 
 	paintCrosshair();
 }
+
+void Kinstrument_view::grabTransInfo()
+{
+
+	_antiT.reset();
+	_antiT.scale(1.0 / transform().m11(), 1.0 / transform().m22());
+
+	_XYantiScale.setX(abs(_antiT.m11()));
+	_XYantiScale.setY(abs(_antiT.m22()));
+}
+
+
+void Kinstrument_view::resetTransform()
+{
+	QGraphicsView::resetTransform();
+	grabTransInfo();
+}
+
+
+void Kinstrument_view::setTransform(const QTransform& matrix, bool combine)
+{
+	QGraphicsView::setTransform(matrix, combine);
+	grabTransInfo();
+}
+
+
 
 void Kinstrument_view::zoomIn()
 {
@@ -185,9 +213,8 @@ void Kinstrument_view::paintCrosshair()
 		delete _crossLine;							//好像解决了内存泄露
 	}
 
-	QPointF XYscale = getXYscale();
-	QPen xPen = QPen(_colorpalette->crosshair, 1.0 / XYscale.x()/*width*/, Qt::DashLine);
-	QPen yPen = QPen(_colorpalette->crosshair, 1.0 / XYscale.y()/*width*/, Qt::DashLine);
+	QPen xPen = QPen(_colorpalette->crosshair, _XYantiScale.x()/*width*/, Qt::DashLine);
+	QPen yPen = QPen(_colorpalette->crosshair, _XYantiScale.y()/*width*/, Qt::DashLine);
 
 	QList<QGraphicsItem*> cl;
 	if (_scene_pos.y() >= _scene->sceneRect().y() && _scene_pos.y() < _scene->sceneRect().y()+_scene->height()) {
@@ -210,9 +237,6 @@ void Kinstrument_view::paintCrosshair()
 	_crossLine = _scene->createItemGroup(cl);
 	_crossLine->setZValue(100);
 
-	QTransform T;
-	T.scale(1.0 / transform().m11(), 1.0 / transform().m22());
-
 	qreal val_h = _scene->y_to_val_h(_scene_pos.y());
 	QString txt;
 	txt.sprintf("%0.2f", val_h);
@@ -220,7 +244,7 @@ void Kinstrument_view::paintCrosshair()
 	text->setText(txt);
 	text->setPos(_scene_pos.x() + text->boundingRect().width(), _scene_pos.y());
 	text->setBrush(_colorpalette->labels[1].front);
-	text->setTransform(T);
+	text->setTransform(_antiT);
 	text->setZValue(100);
 	_crossLine->addToGroup(text);
 
@@ -229,7 +253,7 @@ void Kinstrument_view::paintCrosshair()
 	box->setPen(QPen(Qt::NoPen));
 	box->setPos(_scene_pos.x() + text->boundingRect().width(), _scene_pos.y());
 	box->setBrush(_colorpalette->labels[1].back);
-	box->setTransform(T);
+	box->setTransform(_antiT);
 	box->setZValue(99);
 	_crossLine->addToGroup(box);
 
