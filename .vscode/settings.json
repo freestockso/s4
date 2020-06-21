@@ -91,6 +91,7 @@
         "*.ipp": "cpp",
         "qcolor": "cpp",
         "qwidget": "cpp",
-        "qgraphicsscene": "cpp"
+        "qgraphicsscene": "cpp",
+        "qbrush": "cpp"
     }
 }

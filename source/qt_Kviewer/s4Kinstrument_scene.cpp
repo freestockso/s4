@@ -42,7 +42,7 @@ void Kinstrument_scene::initSceneCanvas()
 }
 
 //Kinstrument_scene::void cursorPosition(QPointF);
-qreal Kinstrument_scene::val_h_to_y(qreal val)
+qreal Kinstrument_scene::val_h_to_y(qreal val) const
 {
 	qreal y_o;
 	if (!_isLogCoor) {
@@ -54,7 +54,7 @@ qreal Kinstrument_scene::val_h_to_y(qreal val)
 	return y_o;
 }
 
-qreal Kinstrument_scene::y_to_val_h(qreal y)
+qreal Kinstrument_scene::y_to_val_h(qreal y) const
 {
 	if (!_isLogCoor) {
 		return _ctx.val_h_max() - y * _h_val_pxl;
@@ -67,16 +67,30 @@ qreal Kinstrument_scene::y_to_val_h(qreal y)
 	}
 }
 
-qreal Kinstrument_scene::val_w_to_x(qreal val)
+qreal Kinstrument_scene::val_w_to_x(qreal val) const
 {
 	qreal x_o;
 	x_o = (val - _ctx.val_w_min()) / _w_val_pxl + sceneRect().x();	//
 	return x_o;
 }
 
-qreal Kinstrument_scene::x_to_val_w(qreal x)
+qreal Kinstrument_scene::x_to_val_w(qreal x) const
 {
 	return (x - sceneRect().x()) * _w_val_pxl + _ctx.val_w_min();
+}
+QString Kinstrument_scene::y_to_val_label(qreal y) const
+{
+	qreal val_h = y_to_val_h(y);
+	QString txt;
+	txt.sprintf("%0.2f", val_h);
+	return txt;
+}
+QString Kinstrument_scene::x_to_val_label(qreal x) const
+{
+	int val_w = int(x_to_val_w(x) + 0.5);
+	QString txt;
+	txt.sprintf("%d", val_w);
+	return txt;
 }
 
 void Kinstrument_scene::mousePressEvent(QGraphicsSceneMouseEvent* event)

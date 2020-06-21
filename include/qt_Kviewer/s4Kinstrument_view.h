@@ -66,7 +66,8 @@ protected:
     QGraphicsItemGroup* _grid = nullptr;
     void paintGrid();
 
-    void paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV);
+    void paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV,
+        bool onLeft = true, int shift = 20);
 
 };
 

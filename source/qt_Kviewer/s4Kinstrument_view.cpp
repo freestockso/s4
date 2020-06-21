@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QGraphicsLineItem>
 #include <QtCore/qmath.h>
+#include "qt_Kviewer/s4K_label.h"
 
 namespace S4 {
 namespace QT {
@@ -20,6 +21,7 @@ Kinstrument_view::Kinstrument_view(Kinstrument_scene*scene, QWidget *parent):
     _colorpalette = std::make_shared<qt_colorpalette_t>();
 
 	this->setMouseTracking(true);
+
 }
 
 //Kinstrument_view::void cursorPosition(QPointF);
@@ -59,13 +61,14 @@ void Kinstrument_view::mousePressEvent(QMouseEvent* event)
 void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 {
 	_view_pos = event->pos();
-	_scene_pos = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
+	_scene_mouse = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
 
 	//TODO: move to resize?
 	qreal w = width();
 	qreal h = height();
 	_scene_lu = QGraphicsView::mapToScene(0, 0);
 	_scene_rd = QGraphicsView::mapToScene(w - 1, h - 1);
+	_scene_rd -= QPointF(17, 17);//scrollBar size
 
 	paintCrosshair();
 }
@@ -74,7 +77,7 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 {
 	//qDebug() << "Delta: " << event->angleDelta();
 	_view_pos = event->pos();
-	_scene_pos = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
+	_scene_mouse = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
 
 	int angle = event->angleDelta().y();
 
@@ -121,12 +124,12 @@ void Kinstrument_view::zoomIn()
 
 	setMouseTracking(false);
 	QPointF scene_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
-	QPointF pre_pos_dlt = scene_center - _scene_pos;
-	QPointF now_center = pre_pos_dlt / zoom_rate + _scene_pos;// +QPointF(this->transform().m11() * zoom_fix.x(), this->transform().m22() * zoom_fix.y());
+	QPointF pre_pos_dlt = scene_center - _scene_mouse;
+	QPointF now_center = pre_pos_dlt / zoom_rate + _scene_mouse;// +QPointF(this->transform().m11() * zoom_fix.x(), this->transform().m22() * zoom_fix.y());
 	QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
 	now_center += fix;
 	//qDebug() << "+";
-	//qDebug() << "_scene_pos " << _scene_pos;
+	//qDebug() << "_scene_mouse " << _scene_mouse;
 	//qDebug() << "scene_center " << scene_center;
 	//qDebug() << "pre_pos_dlt " << pre_pos_dlt;
 	//qDebug() << "now_center " << now_center;
@@ -161,12 +164,12 @@ void Kinstrument_view::zoomOut()
 
 	setMouseTracking(false);
 	QPointF scene_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
-	QPointF pre_pos_dlt = scene_center - _scene_pos;
-	QPointF now_center = pre_pos_dlt * zoom_rate + _scene_pos;
+	QPointF pre_pos_dlt = scene_center - _scene_mouse;
+	QPointF now_center = pre_pos_dlt * zoom_rate + _scene_mouse;
 	QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
 	now_center += fix;
 	//qDebug() << "-";
-	//qDebug() << "_scene_pos " << _scene_pos;
+	//qDebug() << "_scene_mouse " << _scene_mouse;
 	//qDebug() << "scene_center " << scene_center;
 	//qDebug() << "pre_pos_dlt " << pre_pos_dlt;
 	//qDebug() << "now_center " << now_center;
@@ -203,13 +206,57 @@ QPointF Kinstrument_view::getXYscale()
 	return std::move(QPointF(xscale, yscale));
 }
 
+void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV,
+	bool onLeft, int shift)
+{
+	if ( !pGroup)
+		pGroup = _scene->createItemGroup(QList<QGraphicsItem*>{});
+
+	QPointF scene_pos = mapToScene(view_pos.x(), view_pos.y());
+	//if (scene_pos.y() < 0)
+	//	scene_pos.setY(0);
+	//if (scene_pos.y() > _scene->height())
+	//	scene_pos.setY(_scene->height());
+	//if (scene_pos.x() < 0)
+	//	scene_pos.setX(0);
+	//if (scene_pos.x() > _scene->width())
+	//	scene_pos.setX(_scene->width());
+
+	qreal x = scene_pos.x();//_scene_pos.x();
+	qreal y = scene_pos.y();
+
+	qreal rx = getXYscale().x();//_antiT.m11();
+	//qreal ry = _antiT.m22();
+	Klabel_t* label_x = new Klabel_t;
+	label_x->setText(txt);
+
+	if (onLeft) {
+		x -= (shift + label_x->boundingRect().width()) / rx;
+	}
+	else {
+		x += shift / rx;
+	}
+	if (x < _scene_lu.x())
+		x = _scene_lu.x();
+	if (x >= _scene_rd.x() - label_x->boundingRect().width())
+		x = _scene_rd.x() - label_x->boundingRect().width();
+	//y += 20 / ry;
+	if (view_pos.y() >= height() - label_x->boundingRect().height() - 17)
+		y -= label_x->boundingRect().height();
+
+	label_x->setTransform(_antiT);
+
+	label_x->setColor(color_pair);
+	label_x->setPos(x, y);
+	label_x->setZValue(zV);
+	pGroup->addToGroup(label_x);
+
+}
 
 void Kinstrument_view::paintCrosshair()
 {
 	if (_crossLine) {
-		//_scene->destroyItemGroup(_crossLine);
 		_scene->removeItem(_crossLine);				//从scene删掉元素（以及group），但没有释放内存
-		//scene->destroyItemGroup(_crossLine);		//解包，包中元素打散回scene
 		delete _crossLine;							//好像解决了内存泄露
 	}
 
@@ -217,45 +264,32 @@ void Kinstrument_view::paintCrosshair()
 	QPen yPen = QPen(_colorpalette->crosshair, _XYantiScale.y()/*width*/, Qt::DashLine);
 
 	QList<QGraphicsItem*> cl;
-	if (_scene_pos.y() >= _scene->sceneRect().y() && _scene_pos.y() < _scene->sceneRect().y()+_scene->height()) {
+	if (_scene_mouse.y() >= _scene->sceneRect().y() && _scene_mouse.y() < _scene->sceneRect().y()+_scene->height()) {
 		QGraphicsLineItem* hline = new QGraphicsLineItem;
-		hline->setLine(_scene_lu.x(), _scene_pos.y(), _scene_rd.x(), _scene_pos.y());
+		hline->setLine(_scene_lu.x(), _scene_mouse.y(), _scene_rd.x(), _scene_mouse.y());
 		hline->setPen(xPen);
-		//hline->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
-		//_crossLine->addToGroup(hline);
 		cl.append(hline);
 	}
 
-	if (_scene_pos.x() >= _scene->sceneRect().x() && _scene_pos.x() < _scene->sceneRect().x()+_scene->width()) {
+	if (_scene_mouse.x() >= _scene->sceneRect().x() && _scene_mouse.x() < _scene->sceneRect().x()+_scene->width()) {
 		QGraphicsLineItem* vline = new QGraphicsLineItem;
-		vline->setLine(_scene_pos.x(), _scene_lu.y(), _scene_pos.x(), _scene_rd.y());
+		vline->setLine(_scene_mouse.x(), _scene_lu.y(), _scene_mouse.x(), _scene_rd.y());
 		vline->setPen(yPen);
-		//vline->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
-		//_crossLine->addToGroup(vline);
 		cl.append(vline);
 	}
 	_crossLine = _scene->createItemGroup(cl);
 	_crossLine->setZValue(100);
 
-	qreal val_h = _scene->y_to_val_h(_scene_pos.y());
-	QString txt;
-	txt.sprintf("%0.2f", val_h);
-	QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem;
-	text->setText(txt);
-	text->setPos(_scene_pos.x() + text->boundingRect().width(), _scene_pos.y());
-	text->setBrush(_colorpalette->labels[1].front);
-	text->setTransform(_antiT);
-	text->setZValue(100);
-	_crossLine->addToGroup(text);
+	{
+		QString txt_y = _scene->y_to_val_label(_scene_mouse.y());
+		paintLabel(_crossLine, _view_pos, txt_y, _colorpalette->labels[0], 100);
+	}
 
-	QGraphicsRectItem* box = new QGraphicsRectItem;
-	box->setRect(text->boundingRect());
-	box->setPen(QPen(Qt::NoPen));
-	box->setPos(_scene_pos.x() + text->boundingRect().width(), _scene_pos.y());
-	box->setBrush(_colorpalette->labels[1].back);
-	box->setTransform(_antiT);
-	box->setZValue(99);
-	_crossLine->addToGroup(box);
+	{
+		QString txt_x = _scene->x_to_val_label(_scene_mouse.x());
+		paintLabel(_crossLine, {_view_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false);
+	}
+
 
 }
 
