@@ -31,6 +31,15 @@ void Kinstrument_scene::initSceneCanvas()
 	width *= _ctx.val_w_pxl();
 	
 	setSceneRect(-_ctx.val_w_pxl() * 0.5, 0, width, height);
+
+	_h_val_pxl = (_ctx.val_h_max() - _ctx.val_h_min()) / (this->height());
+
+	//_h_log_pxl = qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1) / (this->height());
+	_h_log_max = qLn(_ctx.val_h_max()) / qLn(1.1);
+	_h_log_min = qLn(_ctx.val_h_min()) / qLn(1.1);
+	_h_log_pxl = (_h_log_max - _h_log_min) / (this->height());
+
+	_w_val_pxl = (_ctx.val_w_max() - _ctx.val_w_min()) / (this->width() - 1);
 }
 
 //Kinstrument_scene::void cursorPosition(QPointF);
@@ -38,13 +47,12 @@ qreal Kinstrument_scene::val_h_to_y(qreal val)
 {
 	qreal y_o;
 	if (!_isLogCoor) {
-		qreal p_gap = (height() - 1) / (_ctx.val_h_max() - _ctx.val_h_min());
-		y_o = p_gap * (_ctx.val_h_max() - val);	//
+		y_o = height() - (val - _ctx.val_h_min()) / _h_val_pxl;	//
 	}
 	else {
-		qreal p_max_h = qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1);
-		qreal p_gap = height() / p_max_h;
-		y_o = qLn(_ctx.val_h_max() / val) / qLn(1.1) * p_gap;
+		//qreal p_max_h = qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1);
+		//qreal p_gap = height() / p_max_h;
+		y_o = qLn(_ctx.val_h_max() / val) / qLn(1.1) / _h_log_pxl;
 	}
 	return y_o;
 }
@@ -52,27 +60,29 @@ qreal Kinstrument_scene::val_h_to_y(qreal val)
 qreal Kinstrument_scene::y_to_val_h(qreal y)
 {
 	if (!_isLogCoor) {
-		return _ctx.val_h_max() - (_ctx.val_h_max() - _ctx.val_h_min()) * y / (height() - 1);
+		return _ctx.val_h_max() - y * _h_val_pxl;
 	}
 	else
 	{
-		qreal coor = y * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / height() / qLn(1.1);
-		qreal ex = qExp(coor * qLn(1.1));
-		return _ctx.val_h_max() - ex * _ctx.val_h_min();
+		qreal log_coor = _h_log_max - y * _h_log_pxl;
+		qreal ex = qExp(log_coor * qLn(1.1));
+		return ex;
 	}
 }
 
 qreal Kinstrument_scene::val_w_to_x(qreal val)
 {
 	qreal x_o;
-	qreal p_gap = (width() - 1) / (_ctx.val_w_max() - _ctx.val_w_min());
-	x_o = p_gap * (val - _ctx.val_w_min());	//
+	//qreal p_gap = (width() - 1) / (_ctx.val_w_max() - _ctx.val_w_min());
+	//x_o = p_gap * (val - _ctx.val_w_min());	//
+	x_o = (val - _ctx.val_w_min()) / _w_val_pxl + sceneRect().x();	//
 	return x_o;
 }
 
 qreal Kinstrument_scene::x_to_val_w(qreal x)
 {
-	return (_ctx.val_w_max() - _ctx.val_w_min()) * x / (width() - 1) + _ctx.val_h_min();
+	//return (_ctx.val_w_max() - _ctx.val_w_min()) * x / (width() - 1) + _ctx.val_h_min();
+	return (x - sceneRect().x()) * _w_val_pxl + _ctx.val_w_min();
 }
 
 void Kinstrument_scene::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -109,7 +119,6 @@ void Kinstrument_scene::drawTest()
 		w_M
 	);
 	setCtx(test_ctx);
-	initSceneCanvas();
 
 	QPen pen = QPen(_colorpalette->positive_boxes[0].body, 1.0/*this param Sets the pen width to the given width in pixels with integer precision.*/);
 
@@ -193,7 +202,15 @@ void Kinstrument_scene::drawTest()
 	qDebug() << x_w_min << x_w_max;
 	qDebug() << y_v_min << y_v_max;
 	qDebug() << sceneRect();
-
+	qDebug() << "---------";
+	qDebug() << v_m << sceneRect().y() + sceneRect().height() << val_h_to_y(v_m) << y_to_val_h(val_h_to_y(v_m));
+	qDebug() << v_M << sceneRect().y() << val_h_to_y(v_M) << y_to_val_h(val_h_to_y(v_M));
+	//qDebug() << "_h_val_pxl" << _h_val_pxl;
+	//qDebug() << "_h_log_pxl" << _h_log_pxl;
+	//qDebug() << "height" << height();
+	//qDebug() << "width" << width();
+	qDebug() << w_m << sceneRect().x() << val_w_to_x(w_m) << x_to_val_w(val_w_to_x(w_m));
+	qDebug() << w_M << sceneRect().x() + sceneRect().width() << val_w_to_x(w_M) << x_to_val_w(val_w_to_x(w_M));
 }
 
 }

@@ -218,7 +218,7 @@ void Kinstrument_view::paintCrosshair()
 	txt.sprintf("%0.2f", val_h);
 	QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem;
 	text->setText(txt);
-	text->setPos(_scene_pos.x(), _scene_pos.y());
+	text->setPos(_scene_pos.x() + text->boundingRect().width(), _scene_pos.y());
 	text->setBrush(_colorpalette->labels[1].front);
 	text->setTransform(T);
 	text->setZValue(100);
@@ -227,7 +227,7 @@ void Kinstrument_view::paintCrosshair()
 	QGraphicsRectItem* box = new QGraphicsRectItem;
 	box->setRect(text->boundingRect());
 	box->setPen(QPen(Qt::NoPen));
-	box->setPos(_scene_pos.x(), _scene_pos.y());
+	box->setPos(_scene_pos.x() + text->boundingRect().width(), _scene_pos.y());
 	box->setBrush(_colorpalette->labels[1].back);
 	box->setTransform(T);
 	box->setZValue(99);

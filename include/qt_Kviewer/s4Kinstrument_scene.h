@@ -103,6 +103,12 @@ protected:
     QPointF _pos;
     ctx_t _ctx;
     bool _isLogCoor = false;
+    qreal _h_val_pxl = 1;
+    qreal _h_val_pxl_base = 1;
+    qreal _h_log_pxl = 1;
+    qreal _h_log_max = 1;
+    qreal _h_log_min = 1;
+    qreal _w_val_pxl = 1;
 
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
 };
