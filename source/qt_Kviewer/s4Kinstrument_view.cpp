@@ -7,6 +7,10 @@
 namespace S4 {
 namespace QT {
 
+#define VIEW_Z 100 //TODO:global configure
+
+#define SCROLLBAR_WIDTH 17 //TODO: get auto
+
 static const qreal zoom_rate = 1.08;
 static const QPointF zoom_fix = { -10, -9 };
 
@@ -22,6 +26,7 @@ Kinstrument_view::Kinstrument_view(Kinstrument_scene*scene, QWidget *parent):
 
 	this->setMouseTracking(true);
 
+	setCtx_test();
 }
 
 //Kinstrument_view::void cursorPosition(QPointF);
@@ -68,7 +73,7 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 	qreal h = height();
 	_scene_lu = QGraphicsView::mapToScene(0, 0);
 	_scene_rd = QGraphicsView::mapToScene(w - 1, h - 1);
-	_scene_rd -= QPointF(17, 17);//scrollBar size
+	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
 
 	paintCrosshair();
 }
@@ -226,7 +231,7 @@ void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& vi
 	qreal y = scene_pos.y();
 
 	qreal rx = getXYscale().x();//_antiT.m11();
-	//qreal ry = _antiT.m22();
+	qreal ry = getXYscale().y();
 	Klabel_t* label_x = new Klabel_t;
 	label_x->setText(txt);
 
@@ -238,11 +243,11 @@ void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& vi
 	}
 	if (x < _scene_lu.x())
 		x = _scene_lu.x();
-	if (x >= _scene_rd.x() - label_x->boundingRect().width())
-		x = _scene_rd.x() - label_x->boundingRect().width();
+	if (x >= _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx)
+		x = _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx;
 	//y += 20 / ry;
-	if (view_pos.y() >= height() - label_x->boundingRect().height() - 17)
-		y -= label_x->boundingRect().height();
+	if (view_pos.y() >= height() - label_x->boundingRect().height() - SCROLLBAR_WIDTH / ry)
+		y -= label_x->boundingRect().height() + SCROLLBAR_WIDTH / ry;
 
 	label_x->setTransform(_antiT);
 
@@ -255,30 +260,24 @@ void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& vi
 
 void Kinstrument_view::paintCrosshair()
 {
-	if (_crossLine) {
-		_scene->removeItem(_crossLine);				//从scene删掉元素（以及group），但没有释放内存
-		delete _crossLine;							//好像解决了内存泄露
-	}
+	rebuildGroup(_crossLine);
 
 	QPen xPen = QPen(_colorpalette->crosshair, _XYantiScale.x()/*width*/, Qt::DashLine);
 	QPen yPen = QPen(_colorpalette->crosshair, _XYantiScale.y()/*width*/, Qt::DashLine);
 
-	QList<QGraphicsItem*> cl;
 	if (_scene_mouse.y() >= _scene->sceneRect().y() && _scene_mouse.y() < _scene->sceneRect().y()+_scene->height()) {
 		QGraphicsLineItem* hline = new QGraphicsLineItem;
 		hline->setLine(_scene_lu.x(), _scene_mouse.y(), _scene_rd.x(), _scene_mouse.y());
 		hline->setPen(xPen);
-		cl.append(hline);
+		_crossLine->addToGroup(hline);
 	}
 
 	if (_scene_mouse.x() >= _scene->sceneRect().x() && _scene_mouse.x() < _scene->sceneRect().x()+_scene->width()) {
 		QGraphicsLineItem* vline = new QGraphicsLineItem;
 		vline->setLine(_scene_mouse.x(), _scene_lu.y(), _scene_mouse.x(), _scene_rd.y());
 		vline->setPen(yPen);
-		cl.append(vline);
+		_crossLine->addToGroup(vline);
 	}
-	_crossLine = _scene->createItemGroup(cl);
-	_crossLine->setZValue(100);
 
 	{
 		QString txt_y = _scene->y_to_val_label(_scene_mouse.y());
@@ -289,16 +288,55 @@ void Kinstrument_view::paintCrosshair()
 		QString txt_x = _scene->x_to_val_label(_scene_mouse.x());
 		paintLabel(_crossLine, {_view_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false);
 	}
-
+	_crossLine->setZValue(VIEW_Z + 1);
 
 }
 
-void Kinstrument_view::paintGrid()
+void Kinstrument_view::paintGridLines()
+{
+	rebuildGroup(_gridLines);
+
+	QPen xPen = QPen(_colorpalette->grid.front, _XYantiScale.x()/*width*/, Qt::DashLine);
+	QPen yPen = QPen(_colorpalette->grid.front, _XYantiScale.y()/*width*/, Qt::DashLine);
+
+	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max*1.11; i = _isLogCoor? i*1.1: i+_ctx.sc_val_h_max * 0.1) {
+		qreal y = _scene->val_h_to_y(i);
+		QGraphicsLineItem* line = new QGraphicsLineItem(_scene->sceneRect().x(), y, _scene->sceneRect().x() + _scene->sceneRect().width(), y);
+		line->setPen(xPen);
+		_gridLines->addToGroup(line);
+
+		//QString txt = _scene->y_to_val_label(y);
+		//paintLabel(_gridLines, mapFromScene(_scene_lu.x(), y), txt, _colorpalette->labels[1], 99, false, 0);
+	}
+
+	for (int w = _ctx.sc_val_w_min; w <= _ctx.sc_val_w_max; w += 20) {
+		qreal x = _scene->val_w_to_x(w);
+		QGraphicsLineItem* line = new QGraphicsLineItem(x, _scene->sceneRect().y(), x, _scene->sceneRect().y() + _scene->sceneRect().height());
+		line->setPen(yPen);
+		_gridLines->addToGroup(line);
+
+		//QString txt = _scene->x_to_val_label(i);
+		//paintLabel(_gridLines, mapFromScene(x, _scene_lu.y()), txt, _colorpalette->labels[1], 99, false, 0);
+	}
+	_gridLines->setZValue(VIEW_Z);
+}
+
+
+void Kinstrument_view::setCtx_test()
 {
 
+	qreal v_m = 1;
+	qreal v_M = 20;
+	qreal w_m = 0;
+	qreal w_M = 100;
+	ctx_t test_ctx = {
+		v_m,
+		v_M,
+		w_m,
+		w_M
+	};
+	setCtx(test_ctx);
 }
-
-
 
 
 

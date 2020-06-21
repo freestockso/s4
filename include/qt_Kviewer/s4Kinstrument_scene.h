@@ -108,7 +108,7 @@ protected:
 protected:
     QPointF _pos;
     ctx_t _ctx;
-    bool _isLogCoor = false;
+    bool _isLogCoor = true;
     qreal _h_val_pxl = 1;
     qreal _h_val_pxl_base = 1;
     qreal _h_log_pxl = 1;

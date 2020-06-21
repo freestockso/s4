@@ -7,7 +7,7 @@
 namespace S4 {
 namespace QT {
 
-
+#define SCENE_Z 50
 
 Kinstrument_scene::Kinstrument_scene(QWidget* parent):
     QGraphicsScene(parent)
@@ -139,7 +139,7 @@ void Kinstrument_scene::drawTest()
 		qreal y = val_h_to_y(v);
 		QGraphicsLineItem* line = new QGraphicsLineItem(x_w_min, y, x_w_max, y);
 		line->setPen(pen);
-		line->setZValue(100);
+		line->setZValue(SCENE_Z);
 		addItem(line);
 
 		QString txt;
@@ -148,7 +148,7 @@ void Kinstrument_scene::drawTest()
 		text->setText(txt);
 		text->setPos(x_w_min, y);
 		text->setBrush(_colorpalette->labels[1].front);
-		text->setZValue(100);
+		text->setZValue(SCENE_Z);
 		addItem(text);
 
 		QGraphicsRectItem* box = new QGraphicsRectItem;
@@ -156,7 +156,7 @@ void Kinstrument_scene::drawTest()
 		box->setPen(QPen(Qt::NoPen));
 		box->setPos(x_w_min, y);
 		box->setBrush(_colorpalette->labels[1].back);
-		text->setZValue(99);
+		text->setZValue(SCENE_Z-1);
 		addItem(box);
 	}
 
@@ -166,7 +166,7 @@ void Kinstrument_scene::drawTest()
 		qreal x = val_w_to_x(w);
 		QGraphicsLineItem* line = new QGraphicsLineItem(x, y_v_max, x, y_v_min);
 		line->setPen(pen);
-		line->setZValue(100);
+		line->setZValue(SCENE_Z);
 		addItem(line);
 
 		QString txt;
@@ -175,7 +175,7 @@ void Kinstrument_scene::drawTest()
 		text->setText(txt);
 		text->setPos(x, y_v_max);
 		text->setBrush(_colorpalette->labels[1].front);
-		text->setZValue(100);
+		text->setZValue(SCENE_Z);
 		addItem(text);
 
 		QGraphicsRectItem* box = new QGraphicsRectItem;
@@ -183,7 +183,7 @@ void Kinstrument_scene::drawTest()
 		box->setPen(QPen(Qt::NoPen));
 		box->setPos(x, y_v_max);
 		box->setBrush(_colorpalette->labels[1].back);
-		text->setZValue(99);
+		text->setZValue(SCENE_Z-1);
 		addItem(box);
 	}
 	//for (qreal x = 0; x < x_max; x += 100) {

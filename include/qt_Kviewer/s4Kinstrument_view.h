@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
+#include <QGraphicsItemGroup>
 
 namespace S4 {
 namespace QT {
@@ -30,6 +31,20 @@ public:
     void setTransform(const QTransform& matrix, bool combine = false);
     void resetTransform();
 
+    struct ctx_t
+    {
+        qreal sc_val_h_min = -1;    // h_min is at bottum, but y=0 is at top
+        qreal sc_val_h_max = -1;
+        qreal sc_val_w_min = -1;    // w_min at x=0
+        qreal sc_val_w_max = -1;
+    };
+
+    void setCtx(const ctx_t& ctx)
+    {
+        _ctx = ctx;
+        paintGridLines();
+    }
+
 protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
@@ -50,10 +65,20 @@ protected:
     QPointF _XYantiScale;
 
     bool _isLogCoor = true;
+    ctx_t _ctx;
 protected:
     qreal val_to_sceneh(qreal val);
     qreal sceneh_to_val(qreal val);
 
+    void setCtx_test();
+
+    void rebuildGroup(QGraphicsItemGroup*& pGroup) {
+        if (pGroup) {
+            _scene->removeItem(pGroup);				//从scene删掉元素（以及group），但没有释放内存
+            delete pGroup;							//好像解决了内存泄露
+        }
+        pGroup = _scene->createItemGroup(QList<QGraphicsItem*>{});
+    }
 
     void zoomIn();
     void zoomOut();
@@ -63,8 +88,8 @@ protected:
 
     QGraphicsItemGroup* _crossLine = nullptr;
     void paintCrosshair();
-    QGraphicsItemGroup* _grid = nullptr;
-    void paintGrid();
+    QGraphicsItemGroup* _gridLines = nullptr;
+    void paintGridLines();
 
     void paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV,
         bool onLeft = true, int shift = 20);
