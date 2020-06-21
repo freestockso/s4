@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qt_common/s4qt_colorpalette.h"
+#include "qt_Kviewer/s4Kinstrument_scene.h"
 
 #include <QWidget>
 #include <QGraphicsView>
@@ -16,10 +17,15 @@ class Kinstrument_view : public QGraphicsView
 {
     Q_OBJECT
 public:
-    Kinstrument_view(QGraphicsScene *scene, QWidget *parent = 0);
+    Kinstrument_view(Kinstrument_scene*scene, QWidget *parent = 0);
 
 //signals:
 //    void cursorPosition(QPointF);
+
+    void setLogCoor(bool log)
+    {
+        _isLogCoor = log;
+    }
 
 protected:
     void mousePressEvent(QMouseEvent* event);
@@ -27,18 +33,30 @@ protected:
     void wheelEvent(QWheelEvent* event);
 
 protected:
-	QGraphicsScene* _scene;
+    Kinstrument_scene* _scene;
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
     
     QPointF _scene_pos;
+    QPointF _scene_lu;
+    QPointF _scene_rd;
+
     QPointF _view_pos;
 
+    bool _isLogCoor = true;
 protected:
+    qreal val_to_sceneh(qreal val);
+    qreal sceneh_to_val(qreal val);
+
+
     void zoomIn();
     void zoomOut();
 
+    QPointF getXYscale();
+
     QGraphicsItemGroup* _crossLine = nullptr;
     void paintCrosshair();
+    QGraphicsItemGroup* _grid = nullptr;
+    void paintGrid();
 };
 
 }

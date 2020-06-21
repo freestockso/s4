@@ -1,5 +1,8 @@
 #include "qt_Kviewer/s4Kinstrument_scene.h"
 #include <QGraphicsLineItem>
+#include <QtCore/qmath.h>
+#include <QDebug>
+
 
 namespace S4 {
 namespace QT {
@@ -14,8 +17,63 @@ Kinstrument_scene::Kinstrument_scene(QWidget* parent):
 	drawTest();
 }
 
-//Kinstrument_scene::void cursorPosition(QPointF);
+void Kinstrument_scene::initSceneCanvas()
+{
+	//expand ctx
+	_ctx.set_val_h_max( _ctx.val_h_max()*1.1);
+	_ctx.set_val_h_min( _ctx.val_h_min()*0.9);
+	_ctx.set_val_w_max( _ctx.val_w_max()+0.5);
+	_ctx.set_val_w_min( _ctx.val_w_min()-0.5);
 
+	qreal height = _ctx.val_h_10percent_pxl() * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1);
+
+	qreal width = _ctx.val_w_max() - _ctx.val_w_min() + 10;	// 10 for margin
+	width *= _ctx.val_w_pxl();
+	
+	setSceneRect(-_ctx.val_w_pxl() * 0.5, 0, width, height);
+}
+
+//Kinstrument_scene::void cursorPosition(QPointF);
+qreal Kinstrument_scene::val_h_to_y(qreal val)
+{
+	qreal y_o;
+	if (!_isLogCoor) {
+		qreal p_gap = (height() - 1) / (_ctx.val_h_max() - _ctx.val_h_min());
+		y_o = p_gap * (_ctx.val_h_max() - val);	//
+	}
+	else {
+		qreal p_max_h = qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1);
+		qreal p_gap = height() / p_max_h;
+		y_o = qLn(_ctx.val_h_max() / val) / qLn(1.1) * p_gap;
+	}
+	return y_o;
+}
+
+qreal Kinstrument_scene::y_to_val_h(qreal y)
+{
+	if (!_isLogCoor) {
+		return _ctx.val_h_max() - (_ctx.val_h_max() - _ctx.val_h_min()) * y / (height() - 1);
+	}
+	else
+	{
+		qreal coor = y * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / height() / qLn(1.1);
+		qreal ex = qExp(coor * qLn(1.1));
+		return _ctx.val_h_max() - ex * _ctx.val_h_min();
+	}
+}
+
+qreal Kinstrument_scene::val_w_to_x(qreal val)
+{
+	qreal x_o;
+	qreal p_gap = (width() - 1) / (_ctx.val_w_max() - _ctx.val_w_min());
+	x_o = p_gap * (val - _ctx.val_w_min());	//
+	return x_o;
+}
+
+qreal Kinstrument_scene::x_to_val_w(qreal x)
+{
+	return (_ctx.val_w_max() - _ctx.val_w_min()) * x / (width() - 1) + _ctx.val_h_min();
+}
 
 void Kinstrument_scene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
@@ -40,51 +98,101 @@ void Kinstrument_scene::drawBK()
 
 void Kinstrument_scene::drawTest()
 {
-	qreal x_max = 1000;// width();
-	qreal y_max = 1000;// height();
-	setSceneRect(0, 0, x_max - 1, y_max - 1);
+	qreal v_m = 1;
+	qreal v_M = 20;
+	qreal w_m = 0;
+	qreal w_M = 100;
+	ctx_t test_ctx(
+		v_m,
+		v_M,
+		w_m,
+		w_M
+	);
+	setCtx(test_ctx);
+	initSceneCanvas();
 
 	QPen pen = QPen(_colorpalette->positive_boxes[0].body, 1.0/*this param Sets the pen width to the given width in pixels with integer precision.*/);
 
+	qreal x_w_min = val_w_to_x(w_m);
+	qreal x_w_max = val_w_to_x(w_M);
+	qreal y_v_min = height();//val_h_to_y(v_m);
+	qreal y_v_max = 0;//val_h_to_y(v_M);
 	//V
-	for (qreal x = 0; x < x_max; x += 100) {
-		QGraphicsLineItem* line = new QGraphicsLineItem(x, 0, x, y_max - 1);
+	for (qreal v = v_m; v < v_M*1.1; v *=1.1) {
+		qreal y = val_h_to_y(v);
+		QGraphicsLineItem* line = new QGraphicsLineItem(x_w_min, y, x_w_max, y);
 		line->setPen(pen);
 		line->setZValue(100);
 		addItem(line);
+
+		QString txt;
+		txt.sprintf("%0.2f", v);
+		QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem;
+		text->setText(txt);
+		text->setPos(x_w_min, y);
+		text->setBrush(_colorpalette->labels[1].front);
+		text->setZValue(100);
+		addItem(text);
+
+		QGraphicsRectItem* box = new QGraphicsRectItem;
+		box->setRect(text->boundingRect());
+		box->setPen(QPen(Qt::NoPen));
+		box->setPos(x_w_min, y);
+		box->setBrush(_colorpalette->labels[1].back);
+		text->setZValue(99);
+		addItem(box);
 	}
 
 	pen = QPen(_colorpalette->negtive_boxes[0].body, 1.0/*this param Sets the pen width to the given width in pixels with integer precision.*/);
 	//H
-	for (qreal y = 0; y < y_max; y += 100) {
-		QGraphicsLineItem* line = new QGraphicsLineItem(0, y, x_max - 1, y);
+	for (qreal w = w_m; w < w_M + 1; w += 1) {
+		qreal x = val_w_to_x(w);
+		QGraphicsLineItem* line = new QGraphicsLineItem(x, y_v_max, x, y_v_min);
 		line->setPen(pen);
 		line->setZValue(100);
 		addItem(line);
+
+		QString txt;
+		txt.sprintf("%0.0f", w);
+		QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem;
+		text->setText(txt);
+		text->setPos(x, y_v_max);
+		text->setBrush(_colorpalette->labels[1].front);
+		text->setZValue(100);
+		addItem(text);
+
+		QGraphicsRectItem* box = new QGraphicsRectItem;
+		box->setRect(text->boundingRect());
+		box->setPen(QPen(Qt::NoPen));
+		box->setPos(x, y_v_max);
+		box->setBrush(_colorpalette->labels[1].back);
+		text->setZValue(99);
+		addItem(box);
 	}
-	for (qreal x = 0; x < x_max; x += 100) {
-		for (qreal y = 0; y < y_max; y += 100) {
+	//for (qreal x = 0; x < x_max; x += 100) {
+	//	for (qreal y = 0; y < y_max; y += 100) {
+	//		QString txt;
+	//		txt.sprintf("%0.0f,%0.0f", x, y);
+	//		QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem;
+	//		text->setText(txt);
+	//		text->setPos(x, y);
+	//		text->setBrush(_colorpalette->labels[1].front);
+	//		text->setZValue(100);
+	//		addItem(text);
 
-			QString txt;
-			txt.sprintf("%0.0f,%0.0f", x, y);
-			QGraphicsSimpleTextItem* text = new QGraphicsSimpleTextItem;
-			text->setText(txt);
-			text->setPos(x, y);
-			text->setBrush(_colorpalette->labels[1].front);
-			text->setZValue(100);
-			addItem(text);
+	//		QGraphicsRectItem* box = new QGraphicsRectItem;
+	//		box->setRect(text->boundingRect());
+	//		box->setPen(QPen(Qt::NoPen));
+	//		box->setPos(x, y);
+	//		box->setBrush(_colorpalette->labels[1].back);
+	//		text->setZValue(99);
+	//		addItem(box);
+	//	}
+	//}
 
-			QGraphicsRectItem* box = new QGraphicsRectItem;
-			box->setRect(text->boundingRect());
-			box->setPen(QPen(Qt::NoPen));
-			box->setPos(x, y);
-			box->setBrush(_colorpalette->labels[1].back);
-			text->setZValue(99);
-			addItem(box);
-		}
-	}
-
-	setSceneRect(-x_max, -y_max, x_max*3 - 1, y_max*3 - 1);
+	qDebug() << x_w_min << x_w_max;
+	qDebug() << y_v_min << y_v_max;
+	qDebug() << sceneRect();
 
 }
 
