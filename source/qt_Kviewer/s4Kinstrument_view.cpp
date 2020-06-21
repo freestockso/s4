@@ -76,6 +76,9 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
 
 	paintCrosshair();
+
+	//TODO: test here
+	paintGridLabels();
 }
 
 void Kinstrument_view::wheelEvent(QWheelEvent* event)
@@ -212,7 +215,7 @@ QPointF Kinstrument_view::getXYscale()
 }
 
 void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV,
-	bool onLeft, int shift)
+	bool onLeft, int shift, bool auto_fit)
 {
 	if ( !pGroup)
 		pGroup = _scene->createItemGroup(QList<QGraphicsItem*>{});
@@ -241,13 +244,15 @@ void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& vi
 	else {
 		x += shift / rx;
 	}
-	if (x < _scene_lu.x())
-		x = _scene_lu.x();
-	if (x >= _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx)
-		x = _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx;
-	//y += 20 / ry;
-	if (view_pos.y() >= height() - label_x->boundingRect().height() - SCROLLBAR_WIDTH / ry)
-		y -= label_x->boundingRect().height() + SCROLLBAR_WIDTH / ry;
+	if (auto_fit) {
+		if (x < _scene_lu.x())
+			x = _scene_lu.x();
+		if (x >= _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx)
+			x = _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx;
+		//y += 20 / ry;
+		if (view_pos.y() >= height() - label_x->boundingRect().height() - SCROLLBAR_WIDTH / ry)
+			y -= label_x->boundingRect().height() + SCROLLBAR_WIDTH / ry;
+	}
 
 	label_x->setTransform(_antiT);
 
@@ -286,7 +291,7 @@ void Kinstrument_view::paintCrosshair()
 
 	{
 		QString txt_x = _scene->x_to_val_label(_scene_mouse.x());
-		paintLabel(_crossLine, {_view_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false);
+		paintLabel(_crossLine, {_view_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false, 0);
 	}
 	_crossLine->setZValue(VIEW_Z + 1);
 
@@ -319,6 +324,28 @@ void Kinstrument_view::paintGridLines()
 		//paintLabel(_gridLines, mapFromScene(x, _scene_lu.y()), txt, _colorpalette->labels[1], 99, false, 0);
 	}
 	_gridLines->setZValue(VIEW_Z);
+}
+
+void Kinstrument_view::paintGridLabels()
+{
+	rebuildGroup(_gridLabels);
+
+	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max * 1.11; i = _isLogCoor ? i * 1.1 : i + _ctx.sc_val_h_max * 0.1) {
+		qreal y = _scene->val_h_to_y(i);
+		if (y < _scene_lu.y() || y > _scene_rd.y())
+			continue;
+		QString txt = _scene->y_to_val_label(y);
+		paintLabel(_gridLabels, mapFromScene(_scene_lu.x(), y), txt, _colorpalette->labels[2], 99, false, 0, false);
+	}
+
+	for (int w = _ctx.sc_val_w_min; w <= _ctx.sc_val_w_max; w += 20) {
+		qreal x = _scene->val_w_to_x(w);
+		if (x < _scene_lu.x() || x > _scene_rd.x())
+			continue;
+		QString txt = _scene->x_to_val_label(x);
+		paintLabel(_gridLabels, mapFromScene(x, _scene_lu.y()), txt, _colorpalette->labels[2], 99, false, 0, false);
+	}
+	_gridLabels->setZValue(VIEW_Z);
 }
 
 
