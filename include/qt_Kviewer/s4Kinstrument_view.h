@@ -40,7 +40,7 @@ protected:
     Kinstrument_scene* _scene;
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
     
-    QPointF _scene_pos;
+    QPointF _scene_mouse;
     QPointF _scene_lu;
     QPointF _scene_rd;
 
@@ -65,6 +65,9 @@ protected:
     void paintCrosshair();
     QGraphicsItemGroup* _grid = nullptr;
     void paintGrid();
+
+    void paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV);
+
 };
 
 }

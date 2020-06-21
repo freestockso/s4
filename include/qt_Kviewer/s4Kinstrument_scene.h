@@ -82,10 +82,16 @@ public:
         _isLogCoor = log;
     }
 
-    qreal val_h_to_y(qreal val);
-    qreal y_to_val_h(qreal val);
-    qreal val_w_to_x(qreal val);
-    qreal x_to_val_w(qreal val);
+    //h & w is logic value, as price & date_seq, origin at left-bottom
+    //y & x is in scene-coordinate, origin at left-top
+    virtual qreal val_h_to_y(qreal h) const;
+    virtual qreal val_w_to_x(qreal w) const;
+    virtual qreal y_to_val_h(qreal y) const;
+    virtual qreal x_to_val_w(qreal x) const;
+
+    //for label-mark
+    virtual QString y_to_val_label(qreal y) const;
+    virtual QString x_to_val_label(qreal x) const;
 //signals:
 //    void cursorPosition(QPointF);
 

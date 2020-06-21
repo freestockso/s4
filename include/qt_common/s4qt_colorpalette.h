@@ -48,8 +48,9 @@ public:
         QColor("#80c0FF")
     };
     std::vector<color_pair_t> labels = {
-        {Qt::green, Qt::white},
-        {Qt::darkGray, Qt::red}
+        {Qt::darkBlue, Qt::white},
+        {Qt::darkGray, Qt::red},
+        {Qt::darkGreen, Qt::white},
     };
 };
 
