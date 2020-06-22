@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QGraphicsLineItem>
 #include <QtCore/qmath.h>
-#include "qt_Kviewer/s4K_label.h"
+#include "qt_Kviewer/s4Klabel.h"
 
 namespace S4 {
 namespace QT {
@@ -39,9 +39,9 @@ qreal Kinstrument_view::val_to_sceneh(qreal val)
 		y_o = p_gap * (val - _scene->getCtx().val_h_min()) + _scene->sceneRect().y();
 	}
 	else {
-		qreal p_max_h = qLn(_scene->getCtx().val_h_max() / _scene->getCtx().val_h_min()) / qLn(1.1);
+		qreal p_max_h = qLn(_scene->getCtx().val_h_max() / _scene->getCtx().val_h_min()) / qLn(1.0 + _grid_h_gap);
 		p_max_h = _scene->height() / p_max_h;
-		y_o = qLn(val / _scene->getCtx().val_h_min()) / qLn(1.1) * p_max_h;
+		y_o = qLn(val / _scene->getCtx().val_h_min()) / qLn(1.0 + _grid_h_gap) * p_max_h;
 	}
 	return y_o;
 }
@@ -53,14 +53,38 @@ qreal Kinstrument_view::sceneh_to_val(qreal h)
 	}
 	else
 	{
-		qreal coor = h * qLn(_scene->getCtx().val_h_max() / _scene->getCtx().val_h_min()) / _scene->height() / qLn(1.1);
-		qreal ex = qExp(coor * qLn(1.1));
+		qreal coor = h * qLn(_scene->getCtx().val_h_max() / _scene->getCtx().val_h_min()) / _scene->height() / qLn(1.0 + _grid_h_gap);
+		qreal ex = qExp(coor * qLn(1.0 + _grid_h_gap));
 		return ex * _scene->getCtx().val_h_min();
 	}
 }
 
 void Kinstrument_view::mousePressEvent(QMouseEvent* event)
 {
+	if (event->button() == Qt::LeftButton) {
+		//_mouse_item = _scene->itemAt(_scene_mouse, transform());
+		//if (_mouse_item && !_mouse_item->isSelected()) {
+		//	_mouse_item->setSelected(true);
+		//	qDebug() << _mouse_item->pos() << _mouse_item->boundingRect();
+		//}
+
+		qDebug() << "There are" << items(event->pos()).size()
+			<< "items at position" << mapToScene(event->pos());
+		for (auto& i : items(event->pos())) {
+			i->setSelected(true);
+			qDebug() << i->pos() << i->boundingRect();
+		}	
+	}
+
+}
+
+void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
+{
+	if (event->button() == Qt::LeftButton) {
+		//if (_mouse_item) {
+		//	_mouse_item->setSelected(false);
+		//}
+	}
 }
 
 void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
@@ -247,11 +271,11 @@ void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& vi
 	if (auto_fit) {
 		if (x < _scene_lu.x())
 			x = _scene_lu.x();
-		if (x >= _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx)
-			x = _scene_rd.x() - label_x->boundingRect().width() - SCROLLBAR_WIDTH / rx;
+		if (x >= _scene_rd.x() - (label_x->boundingRect().width() + SCROLLBAR_WIDTH) / rx)
+			x = _scene_rd.x() - (label_x->boundingRect().width() + SCROLLBAR_WIDTH) / rx;
 		//y += 20 / ry;
-		if (view_pos.y() >= height() - label_x->boundingRect().height() - SCROLLBAR_WIDTH / ry)
-			y -= label_x->boundingRect().height() + SCROLLBAR_WIDTH / ry;
+		if (y >= _scene_rd.y() - (label_x->boundingRect().height() + SCROLLBAR_WIDTH) / ry)
+			y -= (label_x->boundingRect().height() + SCROLLBAR_WIDTH) / ry;
 	}
 
 	label_x->setTransform(_antiT);
@@ -285,12 +309,12 @@ void Kinstrument_view::paintCrosshair()
 	}
 
 	{
-		QString txt_y = _scene->y_to_val_label(_scene_mouse.y());
+		QString txt_y = _scene->y_to_label_h(_scene_mouse.y());
 		paintLabel(_crossLine, _view_pos, txt_y, _colorpalette->labels[0], 100);
 	}
 
 	{
-		QString txt_x = _scene->x_to_val_label(_scene_mouse.x());
+		QString txt_x = _scene->x_to_label_w(_scene_mouse.x());
 		paintLabel(_crossLine, {_view_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false, 0);
 	}
 	_crossLine->setZValue(VIEW_Z + 1);
@@ -304,7 +328,7 @@ void Kinstrument_view::paintGridLines()
 	QPen xPen = QPen(_colorpalette->grid.front, _XYantiScale.x()/*width*/, Qt::DashLine);
 	QPen yPen = QPen(_colorpalette->grid.front, _XYantiScale.y()/*width*/, Qt::DashLine);
 
-	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max*1.11; i = _isLogCoor? i*1.1: i+_ctx.sc_val_h_max * 0.1) {
+	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max* (1.01 + _grid_h_gap); i = _isLogCoor? i*(1.0 + _grid_h_gap) : i+_ctx.sc_val_h_max * _grid_h_gap) {
 		qreal y = _scene->val_h_to_y(i);
 		QGraphicsLineItem* line = new QGraphicsLineItem(_scene->sceneRect().x(), y, _scene->sceneRect().x() + _scene->sceneRect().width(), y);
 		line->setPen(xPen);
@@ -330,11 +354,11 @@ void Kinstrument_view::paintGridLabels()
 {
 	rebuildGroup(_gridLabels);
 
-	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max * 1.11; i = _isLogCoor ? i * 1.1 : i + _ctx.sc_val_h_max * 0.1) {
+	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max * (1.01 + _grid_h_gap); i = _isLogCoor ? i * (1.0 + _grid_h_gap) : i + _ctx.sc_val_h_max * _grid_h_gap) {
 		qreal y = _scene->val_h_to_y(i);
 		if (y < _scene_lu.y() || y > _scene_rd.y())
 			continue;
-		QString txt = _scene->y_to_val_label(y);
+		QString txt = _scene->y_to_label_h(y);
 		paintLabel(_gridLabels, mapFromScene(_scene_lu.x(), y), txt, _colorpalette->labels[2], 99, false, 0, false);
 	}
 
@@ -342,7 +366,7 @@ void Kinstrument_view::paintGridLabels()
 		qreal x = _scene->val_w_to_x(w);
 		if (x < _scene_lu.x() || x > _scene_rd.x())
 			continue;
-		QString txt = _scene->x_to_val_label(x);
+		QString txt = _scene->x_to_label_w(x);
 		paintLabel(_gridLabels, mapFromScene(x, _scene_lu.y()), txt, _colorpalette->labels[2], 99, false, 0, false);
 	}
 	_gridLabels->setZValue(VIEW_Z);

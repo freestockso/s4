@@ -23,7 +23,7 @@ public:
 //signals:
 //    void cursorPosition(QPointF);
 
-    void setLogCoor(bool log)
+    inline void setLogCoor(bool log)
     {
         _isLogCoor = log;
     }
@@ -45,8 +45,14 @@ public:
         paintGridLines();
     }
 
+    inline void setGridGap(qreal gap_h, qreal gap_w) {
+        _grid_h_gap = gap_h;
+        _grid_w_gap = gap_w;
+    }
+
 protected:
     void mousePressEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void wheelEvent(QWheelEvent* event);
 
@@ -55,6 +61,8 @@ protected:
     Kinstrument_scene* _scene;
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
     
+    QGraphicsItem* _mouse_item;
+
     QPointF _scene_mouse;
     QPointF _scene_lu;
     QPointF _scene_rd;
@@ -65,6 +73,8 @@ protected:
     QPointF _XYantiScale;
 
     bool _isLogCoor = true;
+    qreal _grid_h_gap = 0.2;  //10%
+    qreal _grid_w_gap = 20;
     ctx_t _ctx;
 protected:
     qreal val_to_sceneh(qreal val);
@@ -93,6 +103,7 @@ protected:
     QGraphicsItemGroup* _gridLabels = nullptr;
     void paintGridLabels();
 
+    //paint map from view-position to scen-position
     void paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& view_pos, const QString& txt, const color_pair_t& color_pair, int zV,
         bool onLeft = true, int shift = 20, bool auto_fit = true);
 

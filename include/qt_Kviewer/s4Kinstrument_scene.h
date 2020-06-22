@@ -73,13 +73,16 @@ public:
         initSceneCanvas();
     }
 
-    const ctx_t& getCtx(void) const {
+    inline const ctx_t& getCtx(void) const {
         return _ctx;
     }
 
-    void setLogCoor(bool log)
+    inline void setLogCoor(bool log)
     {
         _isLogCoor = log;
+    }
+    inline void setGridGap(qreal gap_h) {
+        _grid_h_gap = gap_h;
     }
 
     //h & w is logic value, as price & date_seq, origin at left-bottom
@@ -89,15 +92,26 @@ public:
     virtual qreal y_to_val_h(qreal y) const;
     virtual qreal x_to_val_w(qreal x) const;
 
+    //default: label = logic value
+    //for K-bar: lable is datetime_t or time_t, logic value is date_sequence, x/y is scene-coordinate.
+    virtual qreal label_w_to_x(uint64_t w) const{
+        return val_w_to_x(w);
+    };
+
+    //datetime_t or time_t -> date_seq
+    virtual qreal label_w_to_val_w(uint64_t w) const{
+        return w;
+    };
+
     //for label-mark
-    virtual QString y_to_val_label(qreal y) const;
-    virtual QString x_to_val_label(qreal x) const;
+    virtual QString y_to_label_h(qreal y) const;
+    virtual QString x_to_label_w(qreal x) const;
 //signals:
 //    void cursorPosition(QPointF);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
     
 protected:
     void initSceneCanvas();
@@ -105,6 +119,8 @@ protected:
     void drawBK();
 
     void drawTest();
+    void drawTest_curve();
+    void drawTest_bar();
 protected:
     QPointF _pos;
     ctx_t _ctx;
@@ -115,6 +131,7 @@ protected:
     qreal _h_log_max = 1;
     qreal _h_log_min = 1;
     qreal _w_val_pxl = 1;
+    qreal _grid_h_gap = 0.2;  //10%
 
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
 };

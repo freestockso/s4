@@ -1,8 +1,11 @@
 #include "qt_Kviewer/s4Kinstrument_scene.h"
+#include "qt_Kviewer/s4KlogicCurve.h"
+#include "qt_Kviewer/s4KlogicBar.h"
+#include "qt_Kviewer/s4KlogicRect.h"
+
 #include <QGraphicsLineItem>
 #include <QtCore/qmath.h>
 #include <QDebug>
-
 
 namespace S4 {
 namespace QT {
@@ -25,7 +28,7 @@ void Kinstrument_scene::initSceneCanvas()
 	_ctx.set_val_w_max( _ctx.val_w_max()+0.5);
 	_ctx.set_val_w_min( _ctx.val_w_min()-0.5);
 
-	qreal height = _ctx.val_h_10percent_pxl() * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.1);
+	qreal height = _ctx.val_h_10percent_pxl() * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.0 + _grid_h_gap);
 
 	qreal width = _ctx.val_w_max() - _ctx.val_w_min() + 10;	// 10 for margin
 	width *= _ctx.val_w_pxl();
@@ -34,8 +37,8 @@ void Kinstrument_scene::initSceneCanvas()
 
 	_h_val_pxl = (_ctx.val_h_max() - _ctx.val_h_min()) / (this->height());
 
-	_h_log_max = qLn(_ctx.val_h_max()) / qLn(1.1);
-	_h_log_min = qLn(_ctx.val_h_min()) / qLn(1.1);
+	_h_log_max = qLn(_ctx.val_h_max()) / qLn(1.0 + _grid_h_gap);
+	_h_log_min = qLn(_ctx.val_h_min()) / qLn(1.0 + _grid_h_gap);
 	_h_log_pxl = (_h_log_max - _h_log_min) / (this->height());
 
 	_w_val_pxl = (_ctx.val_w_max() - _ctx.val_w_min()) / (this->width() - 1);
@@ -49,7 +52,7 @@ qreal Kinstrument_scene::val_h_to_y(qreal val) const
 		y_o = height() - (val - _ctx.val_h_min()) / _h_val_pxl;	//
 	}
 	else {
-		y_o = qLn(_ctx.val_h_max() / val) / qLn(1.1) / _h_log_pxl;
+		y_o = qLn(_ctx.val_h_max() / val) / qLn(1.0 + _grid_h_gap) / _h_log_pxl;
 	}
 	return y_o;
 }
@@ -62,7 +65,7 @@ qreal Kinstrument_scene::y_to_val_h(qreal y) const
 	else
 	{
 		qreal log_coor = _h_log_max - y * _h_log_pxl;
-		qreal ex = qExp(log_coor * qLn(1.1));
+		qreal ex = qExp(log_coor * qLn(1.0 + _grid_h_gap));
 		return ex;
 	}
 }
@@ -78,14 +81,14 @@ qreal Kinstrument_scene::x_to_val_w(qreal x) const
 {
 	return (x - sceneRect().x()) * _w_val_pxl + _ctx.val_w_min();
 }
-QString Kinstrument_scene::y_to_val_label(qreal y) const
+QString Kinstrument_scene::y_to_label_h(qreal y) const
 {
 	qreal val_h = y_to_val_h(y);
 	QString txt;
 	txt.sprintf("%0.2f", val_h);
 	return txt;
 }
-QString Kinstrument_scene::x_to_val_label(qreal x) const
+QString Kinstrument_scene::x_to_label_w(qreal x) const
 {
 	int val_w = int(x_to_val_w(x) + 0.5);
 	QString txt;
@@ -95,7 +98,10 @@ QString Kinstrument_scene::x_to_val_label(qreal x) const
 
 void Kinstrument_scene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-
+	QGraphicsScene::mousePressEvent(event);
+	if (event->button() == Qt::LeftButton) {
+		qDebug() << "scene selected";
+	}
 }
 
 void Kinstrument_scene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -135,7 +141,7 @@ void Kinstrument_scene::drawTest()
 	qreal y_v_min = height();//val_h_to_y(v_m);
 	qreal y_v_max = 0;//val_h_to_y(v_M);
 	//V
-	for (qreal v = v_m; v < v_M*1.1; v *=1.1) {
+	for (qreal v = v_m; v < v_M*(1.0 + _grid_h_gap); v *=(1.0 + _grid_h_gap)) {
 		qreal y = val_h_to_y(v);
 		QGraphicsLineItem* line = new QGraphicsLineItem(x_w_min, y, x_w_max, y);
 		line->setPen(pen);
@@ -206,6 +212,8 @@ void Kinstrument_scene::drawTest()
 	//		addItem(box);
 	//	}
 	//}
+	drawTest_curve();
+	drawTest_bar();
 
 	qDebug() << "---------";
 	qDebug() << x_w_min << x_w_max;
@@ -217,5 +225,67 @@ void Kinstrument_scene::drawTest()
 	qDebug() << w_M << sceneRect().x() + sceneRect().width() << val_w_to_x(w_M) << x_to_val_w(val_w_to_x(w_M));
 }
 
+void Kinstrument_scene::drawTest_curve()
+{
+	QList<QPointF> dot = {
+		{0, 2},
+		{10, 2},
+		{20, 3},
+		{30, 8},
+		{40, 12},
+		{50, 15},
+		{60, 20},
+	};
+	KlogicCurve_t* curve = new KlogicCurve_t(this);
+	curve->setLineStyle(Qt::PenStyle::DashLine);
+	curve->setColor(_colorpalette->curve[0]);
+	curve->setLineWidth(2);
+	curve->setVal(dot);
+	curve->mkGroupItems();
+	curve->setZValue(SCENE_Z + 2);
+	this->addItem(curve);
+
 }
+
+void Kinstrument_scene::drawTest_bar()
+{
+	QList<logicBarData_t> dayBar = {
+		{10, 12, 13, 14, 12, 12},
+		{11, 13, 12, 15, 11, 13}
+	};
+	KlogicBarGroup_t* bar = new KlogicBarGroup_t(this);
+	bar->setColor(_colorpalette->positive_boxes[0], _colorpalette->negtive_boxes[0]);
+	bar->setType(KlogicBar_t::barType_t::BAR_JPN);
+	bar->setLineWidth(2);
+	bar->setVal(dayBar);
+	bar->mkGroupItems();
+	bar->setZValue(SCENE_Z + 1);
+	this->addItem(bar);
+
+	QList<logicRectData_h_t> dayVol = {
+		{10, 6, _ctx.val_h_min(), true},
+		{11, 9.2, _ctx.val_h_min(), false},
+	};
+	KlogicRectGroup_h_t* Rect = new KlogicRectGroup_h_t(this);
+	Rect->setColor(_colorpalette->positive_boxes[1], _colorpalette->negtive_boxes[1]);
+	Rect->setVal(dayVol);
+	Rect->mkGroupItems();
+	Rect->setZValue(SCENE_Z + 1);
+	this->addItem(Rect);
+
+
+	QList<logicRectData_w_t> dayCyc = {
+		{12, 1, 60, _ctx.val_w_max(), true},
+		{11, 1, 80, _ctx.val_w_max(), false},
+	};
+	KlogicRectGroup_w_t* RectW = new KlogicRectGroup_w_t(this);
+	RectW->setColor(_colorpalette->positive_boxes[2], _colorpalette->negtive_boxes[2]);
+	RectW->setVal(dayCyc);
+	RectW->mkGroupItems();
+	RectW->setZValue(SCENE_Z + 1);
+	this->addItem(RectW);
+
+
 }
+}//QT
+}//S4
