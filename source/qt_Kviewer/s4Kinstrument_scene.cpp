@@ -99,9 +99,13 @@ QString Kinstrument_scene::x_to_label_w(qreal x) const
 void Kinstrument_scene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	QGraphicsScene::mousePressEvent(event);
-	if (event->button() == Qt::LeftButton) {
-		qDebug() << "scene selected";
-	}
+	//if (event->button() == Qt::LeftButton) {
+	//	qDebug() << "scene selected";
+	//}
+}
+void Kinstrument_scene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+	QGraphicsScene::mouseReleaseEvent(event);
 }
 
 void Kinstrument_scene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

@@ -26,7 +26,7 @@ public:
     inline virtual void setLogicPos(qreal w, qreal h)
     {
         qreal x = _scene->val_w_to_x(w);
-        qreal y = _scene->val_w_to_x(h);
+        qreal y = _scene->val_h_to_y(h);
         QGraphicsItemGroup::setPos(x, y);
     }
     
@@ -43,6 +43,14 @@ protected:
     inline void setPos(qreal x, qreal y) { QGraphicsItemGroup::setPos(x, y); };
     inline void moveBy(qreal dx, qreal dy) { setPos(pos().x() + dx, pos().y() + dy); }
     
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE
+    {
+        QGraphicsItemGroup::mousePressEvent(event);
+    }
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE
+    {
+        QGraphicsItemGroup::mouseReleaseEvent(event);
+    }
 protected:
     Kinstrument_scene *_scene;
 };

@@ -68,13 +68,14 @@ void Kinstrument_view::mousePressEvent(QMouseEvent* event)
 		//	qDebug() << _mouse_item->pos() << _mouse_item->boundingRect();
 		//}
 
-		qDebug() << "There are" << items(event->pos()).size()
-			<< "items at position" << mapToScene(event->pos());
-		for (auto& i : items(event->pos())) {
-			i->setSelected(true);
-			qDebug() << i->pos() << i->boundingRect();
-		}	
+		//qDebug() << "There are" << items(event->pos()).size()
+		//	<< "items at position" << mapToScene(event->pos());
+		//for (auto& i : items(event->pos())) {
+		//	i->setSelected(true);
+		//	qDebug() << i->pos() << i->boundingRect();
+		//}	
 	}
+	QGraphicsView::mousePressEvent(event);
 
 }
 
@@ -85,6 +86,7 @@ void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
 		//	_mouse_item->setSelected(false);
 		//}
 	}
+	QGraphicsView::mouseReleaseEvent(event);
 }
 
 void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)

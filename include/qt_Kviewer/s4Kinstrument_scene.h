@@ -68,7 +68,7 @@ public:
         qreal _val_w_pxl = 16;           //1 of val_w  map to pixel
     };
 
-    void setCtx(ctx_t& ctx) {
+    void setCtx(const ctx_t& ctx) {
         _ctx = ctx;
         initSceneCanvas();
     }
@@ -110,8 +110,9 @@ public:
 //    void cursorPosition(QPointF);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
     
 protected:
     void initSceneCanvas();

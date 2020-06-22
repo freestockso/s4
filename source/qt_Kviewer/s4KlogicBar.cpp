@@ -55,19 +55,21 @@ void KlogicBar_t::mkGroupItems(void)
 
 }
     
-void KlogicBar_t::setSelected(bool selected)
+void KlogicBar_t::showLabel()
 {
-    if (selected) {
+    if (isSelected() && !_selected_label) {
         _selected_label = new KlogicLabel_t(_scene);
         _selected_label->setText("test");
         _selected_label->setColor(_value.C >= _value.lastC ? 
             color_pair_t{_color_positive.body, _color_negtive.body} : 
             color_pair_t{_color_negtive.body, _color_positive.body});
         _selected_label->setLogicPos(_value.seq, _value.L);
-        addToGroup(_selected_label);
+        _scene->addItem(_selected_label);
     }
-    else {
-        removeFromGroup(_selected_label);
+    else if (!isSelected() && _selected_label) {
+        _scene->removeItem(_selected_label);
+        delete _selected_label;
+        _selected_label = nullptr;
     }
 }
 
@@ -84,7 +86,8 @@ void KlogicBarGroup_t::mkGroupItems(void)
         bar->setLineWidth(_line_width);
         bar->setVal(v);
         bar->mkGroupItems();
-        addToGroup(bar);
+        _scene->addItem(bar);
+        //addToGroup(bar);
     }
 }
 

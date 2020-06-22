@@ -55,14 +55,26 @@ public:
 
     virtual void mkGroupItems();
 
-    virtual void mousePressEvent(QMouseEvent* event)
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE
     {
         if (event->button() == Qt::LeftButton) {
-            setSelected(true);
+            if (isSelected()) {
+                setSelected(false);
+            }
+            else {
+                setSelected(true);
+            }
+            showLabel();
+        }
+    }
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE
+    {
+        if (event->button() == Qt::LeftButton) {
         }
     }
 
-    void setSelected(bool selected);
+    void showLabel();
 
 private:
     barType_t _type = BAR_USA;
@@ -80,6 +92,7 @@ private:
 
 };
 
+//TODO: not a itemGroup, but list of item, use for add/del items quickly.
 class KlogicBarGroup_t : public KlogicItem_t
 {
 public:
@@ -108,12 +121,15 @@ public:
         _color_negtive = color_negtive;
     }
 
-    virtual void mkGroupItems();
-    virtual void mousePressEvent(QMouseEvent* event)
+    virtual void mkGroupItems() override;
+
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE
     {
         if (event->button() == Qt::LeftButton) {
             setSelected(true);
         }
+        QGraphicsItemGroup::mousePressEvent(event);
     }
 private:
     KlogicBar_t::barType_t _type = KlogicBar_t::barType_t::BAR_USA;
