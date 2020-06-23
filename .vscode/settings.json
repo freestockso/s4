@@ -92,6 +92,9 @@
         "qcolor": "cpp",
         "qwidget": "cpp",
         "qgraphicsscene": "cpp",
-        "qbrush": "cpp"
+        "qbrush": "cpp",
+        "qsetiterator": "cpp",
+        "qtabwidget": "cpp",
+        "qscrollbar": "cpp"
     }
 }

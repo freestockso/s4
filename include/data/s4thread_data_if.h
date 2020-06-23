@@ -192,6 +192,8 @@ public:
 	lastClk_t reportClk(void) const;
 
 	/* analyze tools */
+	void newAtBack(void);
+	void newAtFront(void);
 
 };
 

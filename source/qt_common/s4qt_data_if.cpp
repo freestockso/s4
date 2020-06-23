@@ -23,7 +23,8 @@ void s4qt_data_if::getInfo(const std::string & stkName, const struct S4::stkInfo
 	}
 
 	info = _th_data_if.getNowLib()->get(stkName);
-	LCL_INFO("getInfo {:} successd: {:} ~ {:} = {:}", stkName, info->pDayKQ->front()->_date, info->pDayKQ->back()->_date, info->pDayKQ->size())
+	LCL_INFO("getInfo {:} successd: {:} ~ {:} = {:}", stkName, info->pDayKQ->front()->_date, info->pDayKQ->back()->_date, info->pDayKQ->size());
+	info->newAtBack();
 }
 
 void s4qt_data_if::loadOrdres(const std::string & stkName, const std::string & stgName, const std::string & table_name, std::vector<s4_history_trade_t>& history_trade_data)

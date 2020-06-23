@@ -2,6 +2,7 @@
 #include "qt_Kviewer/s4KlogicCurve.h"
 #include "qt_Kviewer/s4KlogicBar.h"
 #include "qt_Kviewer/s4KlogicRect.h"
+#include "qt_Kviewer/s4KlogicTriangle.h"
 
 #include <QGraphicsLineItem>
 #include <QtCore/qmath.h>
@@ -17,7 +18,7 @@ Kinstrument_scene::Kinstrument_scene(QWidget* parent):
 {
     _colorpalette = std::make_shared<qt_colorpalette_t>();
     drawBK();
-	drawTest();
+	// drawTest();
 }
 
 void Kinstrument_scene::initSceneCanvas()
@@ -289,7 +290,22 @@ void Kinstrument_scene::drawTest_bar()
 	RectW->setZValue(SCENE_Z + 1);
 	this->addItem(RectW);
 
+	KlogicTriangle_t* bi = new KlogicTriangle_t(this);
+	bi->setDirect(KlogicTriangle_t::dirMode_t::Tri_RT);
+	bi->setValue(10, 12.5);
+	bi->setColor(_colorpalette->positive_boxes[1]);
+	bi->mkGroupItems();
+	bi->setZValue(SCENE_Z + 2);
+	this->addItem(bi);
 
+
+	KlogicTriangle_t* bo = new KlogicTriangle_t(this);
+	bo->setDirect(KlogicTriangle_t::dirMode_t::Tri_LF);
+	bo->setValue(11, 14);
+	bo->setColor(_colorpalette->negtive_boxes[1]);
+	bo->mkGroupItems();
+	bo->setZValue(SCENE_Z + 2);
+	this->addItem(bo);
 }
 }//QT
 }//S4

@@ -4,6 +4,7 @@
 #include "qt_Kviewer/s4Kinstrument_scene.h"
 
 #include <QWidget>
+#include <QDebug>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -28,34 +29,57 @@ public:
         _isLogCoor = log;
     }
 
-    void setTransform(const QTransform& matrix, bool combine = false);
-    void resetTransform();
-
     struct ctx_t
     {
         qreal sc_val_h_min = -1;    // h_min is at bottum, but y=0 is at top
         qreal sc_val_h_max = -1;
         qreal sc_val_w_min = -1;    // w_min at x=0
         qreal sc_val_w_max = -1;
+
+        qreal val_h_min() const { return sc_val_h_min; }    // h_min is at bottum, but y=0 is at top
+        qreal val_h_max() const { return sc_val_h_max; }
+        qreal val_w_min() const { return sc_val_w_min; }    // w_min at x=0
+        qreal val_w_max() const { return sc_val_w_max; }
+        void set_val_h_min(qreal v) { sc_val_h_min = v; }    // h_min is at bottum, but y=0 is at top
+        void set_val_h_max(qreal v) { sc_val_h_max = v; }
+        void set_val_w_min(qreal v) { sc_val_w_min = v; }    // w_min at x=0
+        void set_val_w_max(qreal v) { sc_val_w_max = v; }
     };
 
     void setCtx(const ctx_t& ctx)
     {
         _ctx = ctx;
-        paintGridLines();
+        // paintGridLines();   //TODO:need a new interface for painting at first.
     }
+        
+    void paintGridLines();
 
     inline void setGridGap(qreal gap_h, qreal gap_w) {
         _grid_h_gap = gap_h;
         _grid_w_gap = gap_w;
     }
 
-protected:
-    void mousePressEvent(QMouseEvent* event);
-    void mouseReleaseEvent(QMouseEvent* event);
-    void mouseMoveEvent(QMouseEvent* event);
-    void wheelEvent(QWheelEvent* event);
+public slots:
+    void verticalScrollvalueChanged();
+    void horizontalScrollvalueChanged();
 
+protected:
+    virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+    virtual void mouseMoveEvent(QMouseEvent* event) override;
+    virtual void wheelEvent(QWheelEvent* event) override;
+
+    virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
+    virtual void dragEnterEvent(QDragEnterEvent* event) override;
+    virtual void dragLeaveEvent(QDragLeaveEvent* event) override;
+    virtual void dragMoveEvent(QDragMoveEvent* event) override;
+    
+    //bool viewportEvent(QEvent *e) override;
+    //virtual void paintEvent(QPaintEvent*) override;
+
+
+    void setTransform(const QTransform& matrix, bool combine = false);
+    void resetTransform();
 
 protected:
     Kinstrument_scene* _scene;
@@ -69,11 +93,17 @@ protected:
 
     QPointF _view_pos;
 
+    bool _drag_to_move = false;
+    QPointF _mouse_press_bgn_center;
+    QPointF _mouse_press_bgn_pos;
+    QPointF _mouse_press_end_pos;
+
     QTransform _antiT;
     QPointF _XYantiScale;
+    QPointF _zoom_pos_fix = { 0,0 };
 
     bool _isLogCoor = true;
-    qreal _grid_h_gap = 0.2;  //10%
+    qreal _grid_h_gap = 0.1;  //10%
     qreal _grid_w_gap = 20;
     ctx_t _ctx;
 protected:
@@ -90,6 +120,8 @@ protected:
         pGroup = _scene->createItemGroup(QList<QGraphicsItem*>{});
     }
 
+    void onViewChange(void);
+
     void zoomIn();
     void zoomOut();
 
@@ -99,7 +131,7 @@ protected:
     QGraphicsItemGroup* _crossLine = nullptr;
     void paintCrosshair();
     QGraphicsItemGroup* _gridLines = nullptr;
-    void paintGridLines();
+
     QGraphicsItemGroup* _gridLabels = nullptr;
     void paintGridLabels();
 

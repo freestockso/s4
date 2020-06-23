@@ -43,6 +43,17 @@ std::string utc_to_str(time_utcSec_t utc)
 	return std::move(s);
 }
 
+std::string date_to_str(time_date_t date)
+{
+	char s[64];
+	int year = date / 10000;
+	int month = date % 10000;
+	int day = month % 100;
+	month = month / 100;
+	sprintf_s(s, 64, "%d_%02d_%02d", year, month, day);
+	return std::move(s);
+}
+
 //date:YYYYMMDD  minuSec=HHMMSS
 time_utcSec_t date_to_utc(time_date_t date, time_minuSec_t minuSec)
 {

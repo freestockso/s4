@@ -86,8 +86,8 @@ void KlogicBarGroup_t::mkGroupItems(void)
         bar->setLineWidth(_line_width);
         bar->setVal(v);
         bar->mkGroupItems();
-        _scene->addItem(bar);
-        //addToGroup(bar);
+        // _scene->addItem(bar);
+        addToGroup(bar);
     }
 }
 

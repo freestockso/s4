@@ -19,6 +19,9 @@ time_date_t utc_to_date(time_utcSec_t t, time_minuSec_t* minuSec = nullptr);
 //%Y_%m_%d__%H_%M_%S
 std::string utc_to_str(time_utcSec_t utc);
 
+//%Y_%m_%d
+std::string date_to_str(time_date_t date);
+
 //date:YYYYMMDD  minuSec=HHMMSS
 time_utcSec_t date_to_utc(time_date_t date, time_minuSec_t minuSec = 0);
 

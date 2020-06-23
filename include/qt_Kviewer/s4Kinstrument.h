@@ -1,7 +1,7 @@
 #pragma once
 
-#include "qt_Kviewer/s4Kinstrument_view.h"
-#include "qt_Kviewer/s4Kinstrument_scene.h"
+#include "qt_common/s4qt_data_if.h"
+#include "qt_Kviewer/s4Kinstrument_Kline_tab.h"
 
 #include <QWidget>
 #include <QKeyEvent>
@@ -25,15 +25,24 @@ public:
     {
         //qDebug() << "Kinstrument " << hasMouseTracking() << " " << event->pos().x() << ", " << event->pos().y();
     }
+
+    void setInstrument(const data_panel_t& data_panel){
+        _data_panel = data_panel;
+
+        _K_tab->setInstrument(data_panel);
+    }
 private:
-    // K_view
-    QTabWidget* _K_tab;
+    // K line tab
+    Kinstrument_Kline_tab* _K_tab;
     // vol/indicator tab
     QTabWidget* _indicator_tab;
     // cyc/... tab
     QTabWidget* _cyc_tab;
     // basic tab
     QTabWidget* _basic_tab;
+
+private:
+    data_panel_t _data_panel;
 
 };
 

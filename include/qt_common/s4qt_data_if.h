@@ -8,6 +8,12 @@
 namespace S4 {
 namespace QT{
 
+struct data_panel_t{
+	S4::stkInfoReq_t infoReq;
+	S4::stkInfo_t info;
+	std::vector<S4::s4_history_trade_t> history;
+};
+
 class s4qt_data_if : public QWidget
 {
 	Q_OBJECT

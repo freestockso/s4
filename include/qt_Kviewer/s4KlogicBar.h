@@ -93,11 +93,11 @@ private:
 };
 
 //TODO: not a itemGroup, but list of item, use for add/del items quickly.
-class KlogicBarGroup_t : public KlogicItem_t
+class KlogicBarGroup_t : public KlogicItemGroup_t
 {
 public:
     explicit KlogicBarGroup_t(Kinstrument_scene *scene):
-        KlogicItem_t(scene)
+        KlogicItemGroup_t(scene)
     {
     }
 

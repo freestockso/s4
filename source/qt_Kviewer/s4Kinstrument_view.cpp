@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QGraphicsLineItem>
 #include <QtCore/qmath.h>
+#include <QScrollBar>
 #include "qt_Kviewer/s4Klabel.h"
 
 namespace S4 {
@@ -22,11 +23,16 @@ Kinstrument_view::Kinstrument_view(Kinstrument_scene*scene, QWidget *parent):
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
+	connect(this->verticalScrollBar(), SIGNAL(sliderReleased()),
+		this, SLOT(verticalScrollvalueChanged()));
+	connect(this->horizontalScrollBar(), SIGNAL(sliderReleased()),
+		this, SLOT(horizontalScrollvalueChanged()));
+
     _colorpalette = std::make_shared<qt_colorpalette_t>();
 
 	this->setMouseTracking(true);
 
-	setCtx_test();
+	// setCtx_test();
 }
 
 //Kinstrument_view::void cursorPosition(QPointF);
@@ -59,6 +65,31 @@ qreal Kinstrument_view::sceneh_to_val(qreal h)
 	}
 }
 
+void Kinstrument_view::mouseDoubleClickEvent(QMouseEvent* event)
+{
+	//switch drag mode
+	if (dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
+		setDragMode(QGraphicsView::DragMode::NoDrag);
+	}
+	else {
+		setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
+	}
+}
+
+void Kinstrument_view::dragEnterEvent(QDragEnterEvent* event)
+{
+	qDebug() << event;
+}
+void Kinstrument_view::dragLeaveEvent(QDragLeaveEvent* event)
+{
+	qDebug() << event;
+}
+void Kinstrument_view::dragMoveEvent(QDragMoveEvent* event)
+{
+	qDebug() << event;
+}
+
+
 void Kinstrument_view::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton) {
@@ -73,7 +104,12 @@ void Kinstrument_view::mousePressEvent(QMouseEvent* event)
 		//for (auto& i : items(event->pos())) {
 		//	i->setSelected(true);
 		//	qDebug() << i->pos() << i->boundingRect();
-		//}	
+		//}
+		if (dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
+			_mouse_press_bgn_pos = QGraphicsView::mapToScene(event->pos());
+			_mouse_press_bgn_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
+			_drag_to_move = true;
+		}
 	}
 	QGraphicsView::mousePressEvent(event);
 
@@ -85,6 +121,9 @@ void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
 		//if (_mouse_item) {
 		//	_mouse_item->setSelected(false);
 		//}
+		if (dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
+			_drag_to_move = false;
+		}
 	}
 	QGraphicsView::mouseReleaseEvent(event);
 }
@@ -94,16 +133,28 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 	_view_pos = event->pos();
 	_scene_mouse = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
 
-	//TODO: move to resize?
+	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
+	if (_drag_to_move && dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
+		_mouse_press_end_pos = QGraphicsView::mapToScene(event->pos());
+		QPointF now_center = QPointF(_mouse_press_bgn_center.x() - (_mouse_press_end_pos.x() - _mouse_press_bgn_pos.x()) * 0.8,
+			_mouse_press_bgn_center.y() - (_mouse_press_end_pos.y() - _mouse_press_bgn_pos.y()) * 0.8);
+		//QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
+		now_center += _zoom_pos_fix;
+		centerOn(now_center);
+		onViewChange();
+	}
+
+	paintCrosshair();
+
+}
+
+//resize, scrollBar slid
+void Kinstrument_view::onViewChange(void)
+{
 	qreal w = width();
 	qreal h = height();
 	_scene_lu = QGraphicsView::mapToScene(0, 0);
 	_scene_rd = QGraphicsView::mapToScene(w - 1, h - 1);
-	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
-
-	paintCrosshair();
-
-	//TODO: test here
 	paintGridLabels();
 }
 
@@ -120,7 +171,35 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 	else
 		zoomIn();
 
+	onViewChange();
 	paintCrosshair();
+}
+
+//bool Kinstrument_view::viewportEvent(QEvent* e)
+//{
+//
+//	qDebug() << "-" << e->type();
+//	return QGraphicsView::viewportEvent(e);
+//}
+//
+//void Kinstrument_view::paintEvent(QPaintEvent*e)
+//{
+//	QGraphicsView::paintEvent(e);
+//	qDebug() << "--" << e->type();
+//}
+
+
+void Kinstrument_view::verticalScrollvalueChanged()
+{
+	//int value = this->verticalScrollBar()->value();
+	//qDebug() <<"verticalScrollvalueChanged"<< value;
+	onViewChange();
+}
+void Kinstrument_view::horizontalScrollvalueChanged()
+{
+	//int value = this->horizontalScrollBar()->value();
+	//qDebug() << "horizontalScrollvalueChanged" << value;
+	onViewChange();
 }
 
 void Kinstrument_view::grabTransInfo()
@@ -131,6 +210,8 @@ void Kinstrument_view::grabTransInfo()
 
 	_XYantiScale.setX(abs(_antiT.m11()));
 	_XYantiScale.setY(abs(_antiT.m22()));
+
+	_zoom_pos_fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
 }
 
 
@@ -160,8 +241,8 @@ void Kinstrument_view::zoomIn()
 	QPointF scene_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
 	QPointF pre_pos_dlt = scene_center - _scene_mouse;
 	QPointF now_center = pre_pos_dlt / zoom_rate + _scene_mouse;// +QPointF(this->transform().m11() * zoom_fix.x(), this->transform().m22() * zoom_fix.y());
-	QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
-	now_center += fix;
+	//QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
+	now_center += _zoom_pos_fix;
 	//qDebug() << "+";
 	//qDebug() << "_scene_mouse " << _scene_mouse;
 	//qDebug() << "scene_center " << scene_center;
@@ -200,8 +281,8 @@ void Kinstrument_view::zoomOut()
 	QPointF scene_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
 	QPointF pre_pos_dlt = scene_center - _scene_mouse;
 	QPointF now_center = pre_pos_dlt * zoom_rate + _scene_mouse;
-	QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
-	now_center += fix;
+	//QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
+	now_center += _zoom_pos_fix;
 	//qDebug() << "-";
 	//qDebug() << "_scene_mouse " << _scene_mouse;
 	//qDebug() << "scene_center " << scene_center;

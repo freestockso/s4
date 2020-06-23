@@ -33,8 +33,7 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 	connect(ui->actionOpen, &QAction::triggered, this, &s4Kviewer::onOpen);
 
 	this->setMouseTracking(true);
-	_instrument_tab = new QTabWidget(this);
-	_instrument_tab->setMouseTracking(true);
+	_instrument_tab = new Kviewer_instrumentTab(this);
 	// _instrument_tab2 = new QTabWidget(this);
 	// _instrument_tab3 = new QTabWidget(this);
 
@@ -221,19 +220,20 @@ void s4Kviewer::onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ)
 
 void s4Kviewer::showData()
 {
-	Kinstrument* K = new Kinstrument(_instrument_tab);
-	
-	int i = _instrument_tab->addTab(K, _data_panel.info.name().c_str());
-	_instrument_tab->setCurrentIndex(i);
-	if (!hasMouseTracking()) {
-		setMouseTracking(true);
-	}
-	if (!_instrument_tab->hasMouseTracking()) {
-		_instrument_tab->setMouseTracking(true);
-	}
-	if (!K->hasMouseTracking()) {
-		K->setMouseTracking(true);
-	}
+	_instrument_tab->addInstrument(_data_panel);
+
+	// Kinstrument* K = new Kinstrument(_instrument_tab);
+	// int i = _instrument_tab->addTab(K, _data_panel.info.name().c_str());
+	// _instrument_tab->setCurrentIndex(i);
+	// if (!hasMouseTracking()) {
+	// 	setMouseTracking(true);
+	// }
+	// if (!_instrument_tab->hasMouseTracking()) {
+	// 	_instrument_tab->setMouseTracking(true);
+	// }
+	// if (!K->hasMouseTracking()) {
+	// 	K->setMouseTracking(true);
+	// }
 }
 
 

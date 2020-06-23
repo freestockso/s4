@@ -51,11 +51,11 @@ private:
 
 };
 
-class KlogicRectGroup_h_t : public KlogicItem_t
+class KlogicRectGroup_h_t : public KlogicItemGroup_t
 {
 public:
     explicit KlogicRectGroup_h_t(Kinstrument_scene *scene):
-        KlogicItem_t(scene)
+        KlogicItemGroup_t(scene)
     {
     }
 
@@ -127,11 +127,11 @@ private:
 
 };
 
-class KlogicRectGroup_w_t : public KlogicItem_t
+class KlogicRectGroup_w_t : public KlogicItemGroup_t
 {
 public:
     explicit KlogicRectGroup_w_t(Kinstrument_scene *scene):
-        KlogicItem_t(scene)
+        KlogicItemGroup_t(scene)
     {
     }
 

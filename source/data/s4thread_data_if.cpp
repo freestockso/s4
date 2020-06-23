@@ -449,6 +449,52 @@ stkInfo_t::lastClk_t stkInfo_t::reportClk(void) const
 	return move(lastClk);
 }
 
+void stkInfo_t::newAtBack(void)
+{
+	if (this->pDayKQ != NULL && this->pDayKQ->size() != 0) {
+		this->pDayKQ->newAtBack(); //share_ptr
+	}
+
+	if (this->pMinuKQ != NULL && this->pMinuKQ->size() != 0) {
+		this->pMinuKQ->newAtBack(); //share_ptr
+	}
+
+	// if (this->pSnanpQ != NULL && this->pSnanpQ->size()==0) {
+	// 	this->pSnanpQ->newAtBack();
+	// }
+
+
+	// 	for (auto& p : *this->pCycQlib) {
+	// 		p.second->newAtBack();
+	// 	}
+
+	for (auto& p : *this->pMAlib) {
+		p.second->newAtBack();
+	}
+}
+void stkInfo_t::newAtFront(void)
+{
+	if (this->pDayKQ != NULL && this->pDayKQ->size() != 0) {
+		this->pDayKQ->newAtFront(); //share_ptr
+	}
+
+	if (this->pMinuKQ != NULL && this->pMinuKQ->size() != 0) {
+		this->pMinuKQ->newAtFront(); //share_ptr
+	}
+
+	// if (this->pSnanpQ != NULL && this->pSnanpQ->size()!=0) {
+	// 	this->pSnanpQ->newAtFront();
+	// }
+
+
+	// 	for (auto& p : *this->pCycQlib) {
+	// 		p.second->newAtFront();
+	// 	}
+
+	for (auto& p : *this->pMAlib) {
+		p.second->newAtFront();
+	}
+}
 
 /************************************************************************/
 /* stkInfo_lib_t                                                        */

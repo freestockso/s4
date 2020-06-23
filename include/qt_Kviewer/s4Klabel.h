@@ -2,7 +2,7 @@
 
 #include <QPen>
 #include <QBrush>
-#include <QGraphicsItem>
+#include <QGraphicsItemGroup>
 #include "qt_common/s4qt_colorpalette.h"
 #include "qt_Kviewer/s4KlogicItem.h"
 
@@ -13,7 +13,7 @@ class Klabel_t : public QObject,public QGraphicsItemGroup
 {
 	Q_INTERFACES(QGraphicsItemGroup)
 public:
-    explicit Klabel_t(QObject *parent = 0)
+    explicit Klabel_t()
     {
         text = new QGraphicsSimpleTextItem;
         box = new QGraphicsRectItem;

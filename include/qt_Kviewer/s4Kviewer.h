@@ -7,6 +7,7 @@
 #include "qt_common/s4qt_data_if.h"
 //#include "network/tcp_client.h"
 #include "qt_common/s4qt_tcp.h"
+#include "qt_Kviewer/s4Kviewer_instrumentTab.h"
 #include <QDebug>
 #include <QMouseEvent>
 
@@ -16,12 +17,6 @@ class s4Kviewer;
 
 namespace S4{
 namespace QT{
-
-struct data_panel_t{
-	S4::stkInfoReq_t infoReq;
-	S4::stkInfo_t info;
-	std::vector<S4::s4_history_trade_t> history;
-};
 
 
 
@@ -44,7 +39,7 @@ private:
     Ui::s4Kviewer *ui;
 
 	//s3qt::myKwin* pmyKwin;
-	QTabWidget* _instrument_tab;
+	Kviewer_instrumentTab* _instrument_tab;
 	// QTabWidget* _instrument_tab2;
 	// QTabWidget* _instrument_tab3;
 

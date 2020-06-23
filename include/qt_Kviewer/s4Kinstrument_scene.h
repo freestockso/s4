@@ -64,13 +64,12 @@ public:
         qreal _val_w_min = -1;    // w_min at x=0
         qreal _val_w_max = -1;
 
-        qreal _val_h_10percent_pxl = 20; //10% of (val_h_max - val_h_min) map to pixel
+        qreal _val_h_10percent_pxl = 120; //10% of (val_h_max - val_h_min) map to pixel
         qreal _val_w_pxl = 16;           //1 of val_w  map to pixel
     };
 
     void setCtx(const ctx_t& ctx) {
         _ctx = ctx;
-        initSceneCanvas();
     }
 
     inline const ctx_t& getCtx(void) const {
@@ -81,7 +80,7 @@ public:
     {
         _isLogCoor = log;
     }
-    inline void setGridGap(qreal gap_h) {
+    inline void setGridGap_h(qreal gap_h) {
         _grid_h_gap = gap_h;
     }
 
@@ -94,13 +93,13 @@ public:
 
     //default: label = logic value
     //for K-bar: lable is datetime_t or time_t, logic value is date_sequence, x/y is scene-coordinate.
-    virtual qreal label_w_to_x(uint64_t w) const{
-        return val_w_to_x(w);
+    virtual qreal label_w_to_x(uint64_t l) const{
+        return val_w_to_x(label_w_to_val_w(l));
     };
 
     //datetime_t or time_t -> date_seq
-    virtual qreal label_w_to_val_w(uint64_t w) const{
-        return w;
+    virtual qreal label_w_to_val_w(uint64_t l) const{
+        return l;
     };
 
     //for label-mark
@@ -120,8 +119,8 @@ protected:
     void drawBK();
 
     void drawTest();
-    void drawTest_curve();
     void drawTest_bar();
+    void drawTest_curve();
 protected:
     QPointF _pos;
     ctx_t _ctx;
