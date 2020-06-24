@@ -130,8 +130,7 @@ void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
 
 void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 {
-	_view_pos = event->pos();
-	_scene_mouse = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
+	onMouseChange(event->pos());
 
 	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
 	if (_drag_to_move && dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
@@ -158,11 +157,26 @@ void Kinstrument_view::onViewChange(void)
 	paintGridLabels();
 }
 
+void Kinstrument_view::onMouseChange(qreal view_mouse_x, qreal view_mouse_y)
+{
+	_view_mouse_pos.setX(view_mouse_x);
+	_view_mouse_pos.setY(view_mouse_y);
+	_scene_mouse = QGraphicsView::mapToScene(view_mouse_x, view_mouse_y);
+}
+void Kinstrument_view::onMouseChange(const QPointF& view_mouse)
+{
+	onMouseChange(view_mouse.x(), view_mouse.y());
+}
+
+void Kinstrument_view::resizeEvent(QResizeEvent* event)
+{
+	onViewChange();
+}
+
 void Kinstrument_view::wheelEvent(QWheelEvent* event)
 {
 	//qDebug() << "Delta: " << event->angleDelta();
-	_view_pos = event->pos();
-	_scene_mouse = QGraphicsView::mapToScene(_view_pos.x(), _view_pos.y());
+	onMouseChange(event->pos());
 
 	int angle = event->angleDelta().y();
 
@@ -202,6 +216,8 @@ void Kinstrument_view::horizontalScrollvalueChanged()
 	onViewChange();
 }
 
+
+
 void Kinstrument_view::grabTransInfo()
 {
 
@@ -215,9 +231,47 @@ void Kinstrument_view::grabTransInfo()
 }
 
 
+void Kinstrument_view::onScaleChanged(qreal x_scale, qreal y_scale)
+{
+	scale(x_scale, y_scale);
+	onViewChange();
+	
+}
+
+void Kinstrument_view::onLabelCenterChanged(qreal label_x, qreal label_y)
+{
+	if(!_scene)
+		return;
+
+	qreal x = _scene->label_w_to_x(label_x) + _zoom_pos_fix.x();
+	qreal y = _scene->label_h_to_y(label_y) + _zoom_pos_fix.y();
+	centerOn(x, y);
+	onViewChange();
+
+	QPointF view_mouse_pos = mapFromScene(x, y);
+	onMouseChange(view_mouse_pos);
+}
+
+void Kinstrument_view::onLabelMouseChanged(qreal label_x, qreal label_y)
+{
+	if(!_scene)
+		return;
+
+	qreal x = _scene->label_w_to_x(label_x);
+	qreal y = _scene->label_h_to_y(label_y);
+	QPointF view_mouse_pos = mapFromScene(x, y);
+	onMouseChange(view_mouse_pos);
+}
+
 void Kinstrument_view::resetTransform()
 {
 	QGraphicsView::resetTransform();
+	grabTransInfo();
+}
+
+void Kinstrument_view::scale(qreal x_scale, qreal y_scale)
+{
+	QGraphicsView::scale(x_scale, y_scale);
 	grabTransInfo();
 }
 
@@ -393,12 +447,12 @@ void Kinstrument_view::paintCrosshair()
 
 	{
 		QString txt_y = _scene->y_to_label_h(_scene_mouse.y());
-		paintLabel(_crossLine, _view_pos, txt_y, _colorpalette->labels[0], 100);
+		paintLabel(_crossLine, _view_mouse_pos, txt_y, _colorpalette->labels[0], 100);
 	}
 
 	{
 		QString txt_x = _scene->x_to_label_w(_scene_mouse.x());
-		paintLabel(_crossLine, {_view_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false, 0);
+		paintLabel(_crossLine, {_view_mouse_pos.x(), double(height()-40)}, txt_x, _colorpalette->labels[0], 100, false, 0);
 	}
 	_crossLine->setZValue(VIEW_Z + 1);
 

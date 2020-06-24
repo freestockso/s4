@@ -27,11 +27,12 @@ void KlogicCurve_t::mkGroupItems(void){
     }
 
     QPen pen(_line_color, _line_width, _style, Qt::RoundCap, Qt::MiterJoin);
+    pen.setCosmetic(true);
 
     qreal preX = paintList[0].x() - _x_min;
     qreal preY = paintList[0].y() - _y_min;
-    QGraphicsEllipseItem* point = new QGraphicsEllipseItem(preX - _line_width - 0.5, preY - _line_width - 0.5,
-        _line_width * 2 + 1, _line_width * 2 + 1);
+    QGraphicsEllipseItem* point = new QGraphicsEllipseItem(preX - 0.5, preY - 0.5,
+        1, 1);
     point->setPen(QPen(Qt::NoPen));
     point->setBrush(_dot_color);
     point->setZValue(1);

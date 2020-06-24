@@ -9,25 +9,29 @@ void KlogicBar_t::mkGroupItems(void)
     if(!_scene) return;
 
     qreal x = _scene->val_w_to_x(_value.seq);
-	_x_min  = x - _scene->getCtx().val_w_pxl() * 0.8/2;
-	_x_max  = x + _scene->getCtx().val_w_pxl() * 0.8/2;
+    qreal w = (_scene->getCtx().val_w_pxl() - _line_width) * 0.8;
+	_x_min  = x - w / 2;
+	_x_max  = x + w / 2;
     _y_o = _scene->val_h_to_y(_value.O);
     _y_h = _scene->val_h_to_y(_value.H);
     _y_l = _scene->val_h_to_y(_value.L);
     _y_c = _scene->val_h_to_y(_value.C);
 
-	QPen* pen;
+    QPen* pen;
+    QPen* pen_skin;
 	QBrush* brush;
 	qreal y_oc_max, y_oc_min;
     y_oc_max = std::max(_y_c, _y_o);
     y_oc_min = std::min(_y_c, _y_o);
 	if(_value.C>=_value.lastC){ //rise
-		pen = new QPen(_color_positive.skin, _line_width, Qt::SolidLine , Qt::SquareCap, Qt::MiterJoin);
+		pen = new QPen(_color_positive.body, _line_width, Qt::SolidLine , Qt::FlatCap, Qt::MiterJoin);
 		brush = new QBrush(_color_positive.body, Qt::SolidPattern);
+        pen_skin = new QPen(_color_positive.skin, _line_width, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
 	}else{
-		pen = new QPen(_color_negtive.skin, _line_width, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+		pen = new QPen(_color_negtive.body, _line_width, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
 		brush = new QBrush(_color_negtive.body, Qt::SolidPattern);
-	}
+        pen_skin = new QPen(_color_negtive.skin, _line_width, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+    }
 
     //up-donw, go through body
     QGraphicsLineItem* uline = new QGraphicsLineItem(x, _y_h, x, _y_l); // x/y in scene absolute coordinate 
@@ -37,12 +41,18 @@ void KlogicBar_t::mkGroupItems(void)
 
     if (_type == BAR_JPN){  //Rect body
         QGraphicsRectItem* body = new QGraphicsRectItem(_x_min, y_oc_min, _x_max - _x_min, y_oc_max - y_oc_min);
-        body->setPen(*pen);
+        pen_skin->setWidth(1);
+        pen->setCosmetic(true);
+        body->setPen(*pen_skin);
         body->setBrush(*brush);
         body->setZValue(1);
         addToGroup(body);
     }else{  //BAR_USA       //
         QGraphicsLineItem* lline = new QGraphicsLineItem(_x_min, _y_o, x, _y_o); // x/y in scene absolute coordinate 
+        // pen->setWidth(1);
+        //pen->setJoinStyle(Qt::RoundJoin);
+        pen->setCapStyle(Qt::RoundCap);
+
         lline->setPen(*pen);
         lline->setZValue(0);
         addToGroup(lline);

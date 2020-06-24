@@ -1,17 +1,17 @@
 -------------
 -- high
-窗口比例
 画图速度
-中心拖拽
+中心拖拽 - 双击进入 双击退出
 复权
 指数坐标
 
-键盘瞄准线 - 单击生成 双击取消
+键盘瞄准线 - 菜单进入
 
 添加标签
 调色板
 
-画图标 - save / load
+画图标 - 
+save / load
 
 -------------
 --mid
@@ -36,3 +36,18 @@ qt_console -> dump
 多reviewer窗口互动
 
 主图指标 ma / cyc
+
+------------
+-- req
+基本indication：vol，macd，rdi，成分股牛熊比
+console 基本命令 ld; 基本输出
+重画：坐标切换
+菜单：坐标切换
+order结果报告： label? console?
+Kview order 跳转
+indication反映回K线： macd多空点，成分股牛熊比
+y轴缩放：菜单 or 按钮
+日期+周期市场排行：sql窗口中list -> Kview展示+定位
+大盘/指数成分股数据
+K线匹配检索：菜单
+release 目录结构+环境

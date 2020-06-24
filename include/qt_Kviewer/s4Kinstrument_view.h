@@ -29,6 +29,7 @@ public:
         _isLogCoor = log;
     }
 
+    //only for grid line&label
     struct ctx_t
     {
         qreal sc_val_h_min = -1;    // h_min is at bottum, but y=0 is at top
@@ -46,7 +47,7 @@ public:
         void set_val_w_max(qreal v) { sc_val_w_max = v; }
     };
 
-    void setCtx(const ctx_t& ctx)
+    virtual void setCtx(const ctx_t& ctx)
     {
         _ctx = ctx;
         // paintGridLines();   //TODO:need a new interface for painting at first.
@@ -63,11 +64,16 @@ public slots:
     void verticalScrollvalueChanged();
     void horizontalScrollvalueChanged();
 
+    virtual void onScaleChanged(qreal x_scale, qreal y_scale);
+    virtual void onLabelCenterChanged(qreal label_x, qreal label_y);
+    virtual void onLabelMouseChanged(qreal label_x, qreal label_y);
+
 protected:
     virtual void mousePressEvent(QMouseEvent* event) override;
     virtual void mouseReleaseEvent(QMouseEvent* event) override;
     virtual void mouseMoveEvent(QMouseEvent* event) override;
     virtual void wheelEvent(QWheelEvent* event) override;
+    virtual void resizeEvent(QResizeEvent* event) override;
 
     virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
     virtual void dragEnterEvent(QDragEnterEvent* event) override;
@@ -77,7 +83,7 @@ protected:
     //bool viewportEvent(QEvent *e) override;
     //virtual void paintEvent(QPaintEvent*) override;
 
-
+    void scale(qreal x_scale, qreal y_scale);
     void setTransform(const QTransform& matrix, bool combine = false);
     void resetTransform();
 
@@ -91,7 +97,7 @@ protected:
     QPointF _scene_lu;
     QPointF _scene_rd;
 
-    QPointF _view_pos;
+    QPointF _view_mouse_pos;
 
     bool _drag_to_move = false;
     QPointF _mouse_press_bgn_center;
@@ -100,7 +106,7 @@ protected:
 
     QTransform _antiT;
     QPointF _XYantiScale;
-    QPointF _zoom_pos_fix = { 0,0 };
+    QPointF _zoom_pos_fix = {0, 0};
 
     bool _isLogCoor = true;
     qreal _grid_h_gap = 0.1;  //10%
@@ -121,6 +127,8 @@ protected:
     }
 
     void onViewChange(void);
+    void onMouseChange(qreal ax, qreal ay);
+    void onMouseChange(const QPointF& view_mouse);
 
     void zoomIn();
     void zoomOut();

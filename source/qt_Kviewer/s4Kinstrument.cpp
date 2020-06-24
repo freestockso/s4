@@ -47,5 +47,11 @@ Kinstrument::Kinstrument(QWidget *parent) :
 	setLayout(pLayout);
 }
 
+
+void Kinstrument::setInstrument(const data_panel_t& data_panel){
+	_data_panel = std::make_shared<data_panel_t>(data_panel);
+	_K_tab->setInstrument(_data_panel);
+}
+
 } // namespace QT
 } // namespace S4

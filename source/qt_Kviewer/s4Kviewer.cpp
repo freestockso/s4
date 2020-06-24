@@ -148,9 +148,9 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 	//	FATAL("loadOrdres fail");
 	//}
 
-	load("sz002810", "", "");
 #endif // !NDEBUG
 
+	load("sz002810", "", "");
 }
 
 void s4Kviewer::onOpen()

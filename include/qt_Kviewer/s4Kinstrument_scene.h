@@ -102,6 +102,15 @@ public:
         return l;
     };
 
+    //percent -> price
+    virtual qreal label_h_to_val_h(qreal l) const{
+        return l;
+    };
+    //percent -> scene.coordinate
+    virtual qreal label_h_to_y(qreal l) const{
+        return val_h_to_y(label_h_to_val_h(l));
+    };
+
     //for label-mark
     virtual QString y_to_label_h(qreal y) const;
     virtual QString x_to_label_w(qreal x) const;

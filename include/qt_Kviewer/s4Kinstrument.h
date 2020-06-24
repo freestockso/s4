@@ -26,11 +26,7 @@ public:
         //qDebug() << "Kinstrument " << hasMouseTracking() << " " << event->pos().x() << ", " << event->pos().y();
     }
 
-    void setInstrument(const data_panel_t& data_panel){
-        _data_panel = data_panel;
-
-        _K_tab->setInstrument(data_panel);
-    }
+    void setInstrument(const data_panel_t& data_panel);
 private:
     // K line tab
     Kinstrument_Kline_tab* _K_tab;
@@ -42,7 +38,7 @@ private:
     QTabWidget* _basic_tab;
 
 private:
-    data_panel_t _data_panel;
+    std::shared_ptr<data_panel_t> _data_panel;
 
 };
 

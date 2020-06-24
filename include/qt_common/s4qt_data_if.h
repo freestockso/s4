@@ -4,11 +4,14 @@
 #include "tdx/read_history.h"
 
 #include <QWidget>
+#include <memory>
 
 namespace S4 {
 namespace QT{
 
-struct data_panel_t{
+class data_panel_t: public std::enable_shared_from_this<data_panel_t>
+{
+public:
 	S4::stkInfoReq_t infoReq;
 	S4::stkInfo_t info;
 	std::vector<S4::s4_history_trade_t> history;
