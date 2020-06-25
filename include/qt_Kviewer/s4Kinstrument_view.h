@@ -55,16 +55,20 @@ public:
         
     void paintGridLines();
 
-    inline void setGridGap(qreal gap_h, qreal gap_w) {
+    inline void setGridGap_h(qreal gap_h) {
         _grid_h_gap = gap_h;
-        _grid_w_gap = gap_w;
-    }
+	}
+
+	inline void setGridGap_w(qreal gap_w) {
+		_grid_w_gap = gap_w;
+	}
 
 public slots:
     void verticalScrollvalueChanged();
     void horizontalScrollvalueChanged();
 
     virtual void onScaleChanged(qreal x_scale, qreal y_scale);
+	virtual void onSetTransform(const QTransform&, bool) { grabTransInfo(); };
     virtual void onLabelCenterChanged(qreal label_x, qreal label_y);
     virtual void onLabelMouseChanged(qreal label_x, qreal label_y);
 

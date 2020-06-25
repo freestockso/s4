@@ -11,11 +11,10 @@ Kinstrument::Kinstrument(QWidget *parent) :
 	int i;
 	_K_tab = new Kinstrument_Kline_tab(this);
 
-    _indicator_tab = new QTabWidget(this);
-	Kinstrument_scene* ind_scene = new Kinstrument_scene(this);
-	Kinstrument_view* ind_view = new Kinstrument_view(ind_scene, this);
-	i = _indicator_tab->addTab(ind_view, "ind");
-	_indicator_tab->setCurrentIndex(i);
+	_indicator_tab = new Kinstrument_indicator_tab(this);
+
+	connect(_K_tab, SIGNAL(paint_indicator(Kinstrument_indicator_scene::ind_type, timeMode_t)),
+		_indicator_tab, SLOT(paint(Kinstrument_indicator_scene::ind_type, timeMode_t)));
 
     _cyc_tab = new QTabWidget(this);
 	Kinstrument_scene* cyc_scene = new Kinstrument_scene(this);
@@ -50,7 +49,11 @@ Kinstrument::Kinstrument(QWidget *parent) :
 
 void Kinstrument::setInstrument(const data_panel_t& data_panel){
 	_data_panel = std::make_shared<data_panel_t>(data_panel);
+	_indicator_tab->setInstrument(_data_panel);
+
 	_K_tab->setInstrument(_data_panel);
+
+
 }
 
 } // namespace QT

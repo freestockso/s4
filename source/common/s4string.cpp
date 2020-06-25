@@ -1,5 +1,15 @@
 ﻿#include "common/s4string.h"
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4244 )
+#endif
+
 #include <algorithm>
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 void string_replace(const std::string& oldValue, const std::string& newValue,
 	std::string& str)
@@ -21,19 +31,12 @@ std::string string_replace(const std::string& oldValue, const std::string& newVa
     return std::move(rslt);
 }
 
-#if defined(_MSC_VER)
-#pragma warning( push )
-#pragma warning( disable : 4244 )
-#endif
 std::string string_toUpper(const std::string& value)
 {
 	std::string copy(value);
 	std::transform(copy.begin(), copy.end(), copy.begin(), toupper);
 	return copy;
 }
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif
 
 std::string string_toLower(const std::string& value)
 {

@@ -2,6 +2,7 @@
 
 #include "qt_Kviewer/s4Kinstrument_Kline_view.h"
 #include "qt_Kviewer/s4Kinstrument_Kline_scene.h"
+#include "qt_Kviewer/s4Kinstrument_indicator_scene.h"
 #include "qt_common/s4qt_data_if.h"
 
 #include <QTabWidget>
@@ -17,6 +18,9 @@ public:
     explicit Kinstrument_Kline_tab(QWidget *parent = nullptr);
 
     void setInstrument(std::shared_ptr<data_panel_t> data_panel);
+
+signals:
+    void paint_indicator(Kinstrument_indicator_scene::ind_type , timeMode_t );
 
 protected:
     std::shared_ptr<data_panel_t> _data_panel;

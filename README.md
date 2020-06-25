@@ -28,6 +28,7 @@ cd s4
 # 
 cd build
 cmake -A x64 -D_QT_PATH="E:\Qt\5.11.1\msvc2017_64" ..
+# cmake -A x64 -D_QT_PATH="d:\Qt\5.11.2\msvc2017_64" ..
 #cmake -A x64 -D_QT_PATH="G:\Qt\5.11.1\msvc2017_64" ..
 make
 make install

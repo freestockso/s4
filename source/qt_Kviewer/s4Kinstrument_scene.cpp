@@ -29,8 +29,19 @@ void Kinstrument_scene::initSceneCanvas()
 	_ctx.set_val_w_max( _ctx.val_w_max()+0.5);
 	_ctx.set_val_w_min( _ctx.val_w_min()-0.5);
 
-	qreal height = _ctx.val_h_10percent_pxl() * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.0 + _grid_h_gap);
-
+	qreal height;
+	if (_isLogCoor) {
+		height = _ctx.val_h_10percent_pxl() * qLn(_ctx.val_h_max() / _ctx.val_h_min()) / qLn(1.0 + _grid_h_gap);
+	}
+	else {
+		height = (_ctx.val_h_max() - _ctx.val_h_min());
+		if (height > 960) {
+			height = 960;
+		}
+		else if (height < 100) {
+			height = 100;
+		}
+	}
 	qreal width = _ctx.val_w_max() - _ctx.val_w_min() + 10;	// 10 for margin
 	width *= _ctx.val_w_pxl();
 	

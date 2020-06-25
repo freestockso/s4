@@ -103,7 +103,8 @@ void Kinstrument_indicator_scene::calcCtx_volumn()
 
     ctx_t ctx;
     ctx.set_val_h_max((*pInfoKQ)[0]->volume);
-    ctx.set_val_h_min((*pInfoKQ)[0]->volume);
+    //ctx.set_val_h_min((*pInfoKQ)[0]->volume);
+	ctx.set_val_h_min(0);
     ctx.set_val_w_max(0);
     ctx.set_val_w_min(0);
 
@@ -115,16 +116,20 @@ void Kinstrument_indicator_scene::calcCtx_volumn()
         if (d->volume > ctx.val_h_max()){
             ctx.set_val_h_max(d->volume);
         }
-        if (d->volume < ctx.val_h_min()){
-            ctx.set_val_h_min(d->volume);
-        }
+        //if (d->volume < ctx.val_h_min()){
+        //    ctx.set_val_h_min(d->volume);
+        //}
         ctx.set_val_w_max(n);
         _label_map_w[d->_time] = n;
         _w_map_label[n] = d->_time;
         n++;
     }
 
+	
+
     setCtx(ctx);
+
+	initSceneCanvas();
 }
 
 void Kinstrument_indicator_scene::paint_volumn()
