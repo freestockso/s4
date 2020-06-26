@@ -130,6 +130,7 @@ void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
 void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 {
 	onMouseChange(event->pos());
+	emit signalMouseChanged(_scene_mouse.x(), _scene_mouse.y());
 
 	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
 	if (_drag_to_move && dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
@@ -138,7 +139,10 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 		//qDebug() << _mouse_press_end_pos - _mouse_press_bgn_pos;
 		QPointF movement = _mouse_press_end_pos - _mouse_press_bgn_pos;
 		QPointF now_center = _mouse_press_bgn_center - movement;
+		
 		centerOn(now_center);
+		emit signalCenterChanged(now_center.x(), now_center.y());
+
 		_mouse_press_bgn_pos = _scene_mouse - movement;
 		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2 - movement;
 		onViewChange();
@@ -182,6 +186,7 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 {
 	//qDebug() << "Delta: " << event->angleDelta();
 	onMouseChange(event->pos());
+	emit signalMouseChanged(_scene_mouse.x(), _scene_mouse.y());
 
 	int angle = event->angleDelta().y();
 
@@ -235,35 +240,50 @@ void Kinstrument_view::grabTransInfo()
 }
 
 
-void Kinstrument_view::onScaleChanged(qreal x_scale, qreal y_scale)
+void Kinstrument_view::slotScaleChanged(qreal x_scale, qreal y_scale)
 {
 	scale(x_scale, y_scale);
 	onViewChange();
 	
 }
 
-void Kinstrument_view::onLabelCenterChanged(qreal label_x, qreal label_y)
+void Kinstrument_view::slotLabelCenterChanged(qreal label_x, qreal label_y)
 {
 	if(!_scene)
 		return;
 
 	qreal x = _scene->label_w_to_x(label_x);
 	qreal y = _scene->label_h_to_y(label_y);
-	centerOn(x, y);
-	onViewChange();
-
-	QPointF view_mouse_pos = mapFromScene(x, y);
-	onMouseChange(view_mouse_pos);
+	slotCenterChanged(x, y);
 }
 
-void Kinstrument_view::onLabelMouseChanged(qreal label_x, qreal label_y)
+void Kinstrument_view::slotLabelMouseChanged(qreal label_x, qreal label_y)
 {
 	if(!_scene)
 		return;
 
 	qreal x = _scene->label_w_to_x(label_x);
 	qreal y = _scene->label_h_to_y(label_y);
-	QPointF view_mouse_pos = mapFromScene(x, y);
+	slotMouseChanged(x, y);
+}
+
+void Kinstrument_view::slotCenterChanged(qreal scene_x, qreal scene_y)
+{
+	if (!_scene)
+		return;
+
+	centerOn(scene_x, scene_y);
+	onViewChange();
+
+	//onMouseChanged(scene_x, scene_y);
+}
+
+void Kinstrument_view::slotMouseChanged(qreal scene_x, qreal scene_y)
+{
+	if (!_scene)
+		return;
+
+	QPointF view_mouse_pos = mapFromScene(scene_x, scene_y);
 	onMouseChange(view_mouse_pos);
 }
 
@@ -313,8 +333,10 @@ void Kinstrument_view::zoomIn()
 	QTransform transform = this->transform();
 	transform *= T;
 	setTransform(transform);
+	emit signalSetTransform(this->transform(), false);
 
 	centerOn(now_center);
+	emit signalCenterChanged(now_center.x(), now_center.y());
 	//qDebug() << "now_0 " << QGraphicsView::mapToScene(0, 0);
 	//qDebug() << "now_center " << QGraphicsView::mapToScene(width() / 2, height() / 2);
 	//QPointF um = QGraphicsView::mapToScene(width() / 2, height() / 2) - now_center;
@@ -352,8 +374,10 @@ void Kinstrument_view::zoomOut()
 	QTransform transform = this->transform();
 	transform *= T;
 	setTransform(transform);
+	emit signalSetTransform(this->transform(), false);
 
 	centerOn(now_center);
+	emit signalCenterChanged(now_center.x(), now_center.y());
 	//qDebug() << "now_0 " << QGraphicsView::mapToScene(0, 0);
 	//qDebug() << "now_center " << QGraphicsView::mapToScene(width() / 2, height() / 2);
 	//QPointF um = QGraphicsView::mapToScene(width() / 2, height() / 2) - now_center;

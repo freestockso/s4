@@ -91,7 +91,7 @@ void Kinstrument_Kline_scene::calcCtx(void)
     ctx.set_val_h_max((*_pInfoKQ)[0]->high_fq());
     ctx.set_val_h_min((*_pInfoKQ)[0]->low_fq());
     ctx.set_val_w_max(0);
-    ctx.set_val_w_min(0);
+	ctx.set_val_w_min(0);
 
     int n = 0;
     _label_map_w.clear();

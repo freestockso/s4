@@ -30,6 +30,35 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
 }
 
 
+void Kinstrument_Kline_tab::slotScaleChanged_day(qreal x_scale, qreal y_scale)
+{
+	emit signalScaleChanged(x_scale, y_scale, timeMode_t::tDAY);
+}
+
+void Kinstrument_Kline_tab::slotSetTransform_day(const QTransform& T, bool c)
+{
+	emit signalSetTransform(T, c, timeMode_t::tDAY);
+}
+
+void Kinstrument_Kline_tab::slotLabelCenterChanged_day(qreal label_x, qreal label_y)
+{
+	emit signalLabelCenterChanged(label_x, label_y, timeMode_t::tDAY);
+}
+
+void Kinstrument_Kline_tab::slotLabelMouseChanged_day(qreal label_x, qreal label_y)
+{
+	emit signalLabelMouseChanged(label_x, label_y, timeMode_t::tDAY);
+}
+
+void Kinstrument_Kline_tab::slotCenterChanged_day(qreal scene_x, qreal scene_y)
+{
+	emit signalCenterChanged(scene_x, scene_y, timeMode_t::tDAY);
+}
+
+void Kinstrument_Kline_tab::slotMouseChanged_day(qreal scene_x, qreal scene_y)
+{
+	emit signalMouseChanged(scene_x, scene_y, timeMode_t::tDAY);
+}
 
 } // namespace QT
 } // namespace S4

@@ -11,9 +11,9 @@ Kinstrument_indicator_view::Kinstrument_indicator_view(Kinstrument_indicator_sce
 	//setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	ctx_t ctx;
 	ctx.sc_val_h_max = scene->getCtx().val_h_max();
-	ctx.sc_val_h_min = scene->getCtx().val_h_min();
+	ctx.sc_val_h_min = 0;//scene->getCtx().val_h_min();
 	ctx.sc_val_w_max = scene->getCtx().val_w_max();
-	ctx.sc_val_w_min = scene->getCtx().val_w_min();
+	ctx.sc_val_w_min = 0;// scene->getCtx().val_w_min();
 	setCtx(ctx);
 	setGridGap_h(0.25);
 }
@@ -34,7 +34,7 @@ void Kinstrument_indicator_view::paint(void){
 	qDebug() << this->transform();
 }
 
-void Kinstrument_indicator_view::onSetTransform(const QTransform& Ti, bool combine)
+void Kinstrument_indicator_view::slotSetTransform(const QTransform& Ti, bool combine)
 {
 	QTransform T;
 	qreal x_scale = Ti.m11();
@@ -50,7 +50,7 @@ void Kinstrument_indicator_view::onSetTransform(const QTransform& Ti, bool combi
 //	onViewChange();
 //}
 
-void Kinstrument_indicator_view::onLabelCenterChanged(qreal label_x, qreal label_y)
+void Kinstrument_indicator_view::slotLabelCenterChanged(qreal label_x, qreal label_y)
 {
 	if(!_scene)
 		return;

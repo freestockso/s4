@@ -24,10 +24,10 @@ Kinstrument_scene::Kinstrument_scene(QWidget* parent):
 void Kinstrument_scene::initSceneCanvas()
 {
 	//expand ctx
-	_ctx.set_val_h_max( _ctx.val_h_max()*1.1);
-	_ctx.set_val_h_min( _ctx.val_h_min()*0.9);
-	_ctx.set_val_w_max( _ctx.val_w_max()+0.5);
-	_ctx.set_val_w_min( _ctx.val_w_min()-0.5);
+	_ctx.set_val_h_max(_ctx.val_h_max()*(1.0 + _ctx.val_h_max_margin()));
+	_ctx.set_val_h_min(_ctx.val_h_min()*(1.0 - _ctx.val_h_min_margin()));
+	_ctx.set_val_w_max(_ctx.val_w_max() + _ctx.val_w_max_margin());
+	_ctx.set_val_w_min(_ctx.val_w_min() - _ctx.val_w_min_margin());
 
 	qreal height;
 	if (_isLogCoor) {
@@ -42,7 +42,7 @@ void Kinstrument_scene::initSceneCanvas()
 			height = 100;
 		}
 	}
-	qreal width = _ctx.val_w_max() - _ctx.val_w_min() + 10;	// 10 for margin
+	qreal width = _ctx.val_w_max() - _ctx.val_w_min();
 	width *= _ctx.val_w_pxl();
 	
 	setSceneRect(-_ctx.val_w_pxl() * 0.5, 0, width, height);

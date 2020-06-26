@@ -63,14 +63,25 @@ public:
 		_grid_w_gap = gap_w;
 	}
 
+signals:
+	void signalScaleChanged(qreal x_scale, qreal y_scale);
+	void signalSetTransform(const QTransform&, bool);
+	void signalLabelCenterChanged(qreal label_x, qreal label_y);
+	void signalLabelMouseChanged(qreal label_x, qreal label_y);
+	void signalCenterChanged(qreal scene_x, qreal scene_y);
+	void signalMouseChanged(qreal scene_x, qreal scene_y);
+
+
 public slots:
     void verticalScrollvalueChanged();
     void horizontalScrollvalueChanged();
 
-    virtual void onScaleChanged(qreal x_scale, qreal y_scale);
-	virtual void onSetTransform(const QTransform&, bool) { grabTransInfo(); };
-    virtual void onLabelCenterChanged(qreal label_x, qreal label_y);
-    virtual void onLabelMouseChanged(qreal label_x, qreal label_y);
+    virtual void slotScaleChanged(qreal x_scale, qreal y_scale);
+	virtual void slotSetTransform(const QTransform&, bool) { grabTransInfo(); };
+    virtual void slotLabelCenterChanged(qreal label_x, qreal label_y);
+	virtual void slotLabelMouseChanged(qreal label_x, qreal label_y);
+	virtual void slotCenterChanged(qreal scene_x, qreal scene_y);
+	virtual void slotMouseChanged(qreal scene_x, qreal scene_y);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* event) override;

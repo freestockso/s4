@@ -63,7 +63,7 @@ QString Kinstrument_indicator_scene::y_to_label_h(qreal y) const
     return txt;
 }
 
-//TODO: save for _view to make lable
+//TODO: save for _view to make label
 void Kinstrument_indicator_scene::paint(indCtx_t indCtx, std::shared_ptr<data_panel_t> data_panel)
 {
     clear();

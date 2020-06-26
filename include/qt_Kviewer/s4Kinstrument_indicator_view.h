@@ -21,8 +21,8 @@ public:
 
 public slots:
     //virtual void onScaleChanged(qreal x_scale, qreal y_scale) override;
-    virtual void onLabelCenterChanged(qreal label_x, qreal label_y) override;
-	virtual void onSetTransform(const QTransform&, bool) override;
+    virtual void slotLabelCenterChanged(qreal label_x, qreal label_y) override;
+	virtual void slotSetTransform(const QTransform&, bool) override;
 
 };
 

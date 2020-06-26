@@ -46,23 +46,37 @@ public:
             _val_w_pxl(i.val_w_pxl())
         {}
 
-        qreal val_h_min() const { return _val_h_min; }    // h_min is at bottum, but y=0 is at top
+        qreal val_h_min() const { return _val_h_min; }    // h_min is at bottom, but y=0 is at top
         qreal val_h_max() const { return _val_h_max; }
         qreal val_w_min() const { return _val_w_min; }    // w_min at x=0
         qreal val_w_max() const { return _val_w_max; }
-        void set_val_h_min(qreal v) { _val_h_min = v; }    // h_min is at bottum, but y=0 is at top
+        void set_val_h_min(qreal v) { _val_h_min = v; }    // h_min is at bottom, but y=0 is at top
         void set_val_h_max(qreal v) { _val_h_max = v; }
         void set_val_w_min(qreal v) { _val_w_min = v; }    // w_min at x=0
-        void set_val_w_max(qreal v) { _val_w_max = v; }
+		void set_val_w_max(qreal v) { _val_w_max = v; }
+
+		qreal val_h_min_margin() const { return _val_h_min_margin; }
+		qreal val_h_max_margin() const { return _val_h_max_margin; }
+		qreal val_w_min_margin() const { return _val_w_min_margin; }
+		qreal val_w_max_margin() const { return _val_w_max_margin; }
+		void set_val_h_min_margin(qreal v) { _val_h_min_margin = v; }
+		void set_val_h_max_margin(qreal v) { _val_h_max_margin = v; }
+		void set_val_w_min_margin(qreal v) { _val_w_min_margin = v; }
+		void set_val_w_max_margin(qreal v) { _val_w_max_margin = v; }
 
         qreal val_h_10percent_pxl() const { return _val_h_10percent_pxl; }    //
         qreal val_w_pxl() const { return _val_w_pxl; }
         
     private:
-        qreal _val_h_min = -1;    // h_min is at bottum, but y=0 is at top
+        qreal _val_h_min = -1;    // h_min is at bottom, but y=0 is at top
         qreal _val_h_max = -1;
         qreal _val_w_min = -1;    // w_min at x=0
         qreal _val_w_max = -1;
+
+		qreal _val_h_max_margin = 0.1;	// 10%*_val_h_max
+		qreal _val_h_min_margin = 0.1;	// 10%*_val_h_min
+		qreal _val_w_max_margin = 15;	// *w_pxl
+		qreal _val_w_min_margin = 5;	// *w_pxl
 
         qreal _val_h_10percent_pxl = 120; //10% of (val_h_max - val_h_min) map to pixel
         qreal _val_w_pxl = 16;           //1 of val_w  map to pixel
@@ -80,6 +94,8 @@ public:
     {
         _isLogCoor = log;
     }
+
+	//Only for log coordinate, must be the same as view, 0.1 = 10%, 0.2 = 20%
     inline void setGridGap_h(qreal gap_h) {
         _grid_h_gap = gap_h;
     }
@@ -92,7 +108,7 @@ public:
     virtual qreal x_to_val_w(qreal x) const;
 
     //default: label = logic value
-    //for K-bar: lable is datetime_t or time_t, logic value is date_sequence, x/y is scene-coordinate.
+    //for K-bar: label is datetime_t or time_t, logic value is date_sequence, x/y is scene-coordinate.
     virtual qreal label_w_to_x(uint64_t l) const{
         return val_w_to_x(label_w_to_val_w(l));
     };
@@ -140,7 +156,7 @@ protected:
     qreal _h_log_max = 1;
     qreal _h_log_min = 1;
     qreal _w_val_pxl = 1;
-    qreal _grid_h_gap = 0.2;  //10%
+    qreal _grid_h_gap = 0.1;  //10%
 
     std::shared_ptr<qt_colorpalette_t> _colorpalette;
 };
