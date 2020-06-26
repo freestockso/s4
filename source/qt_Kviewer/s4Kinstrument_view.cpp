@@ -10,8 +10,6 @@ namespace QT {
 
 #define VIEW_Z 100 //TODO:global configure
 
-#define SCROLLBAR_WIDTH 17 //TODO: get auto
-
 static const qreal zoom_rate = 1.08;
 static const QPointF zoom_fix = { -10, -9 };
 
@@ -106,8 +104,8 @@ void Kinstrument_view::mousePressEvent(QMouseEvent* event)
 		//	qDebug() << i->pos() << i->boundingRect();
 		//}
 		if (dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
-			_mouse_press_bgn_pos = QGraphicsView::mapToScene(event->pos());
-			_mouse_press_bgn_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
+			_mouse_press_bgn_pos = _scene_mouse;
+			_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2;
 			_drag_to_move = true;
 		}
 	}
@@ -123,6 +121,7 @@ void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
 		//}
 		if (dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
 			_drag_to_move = false;
+
 		}
 	}
 	QGraphicsView::mouseReleaseEvent(event);
@@ -134,12 +133,14 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 
 	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
 	if (_drag_to_move && dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
-		_mouse_press_end_pos = QGraphicsView::mapToScene(event->pos());
-		QPointF now_center = QPointF(_mouse_press_bgn_center.x() - (_mouse_press_end_pos.x() - _mouse_press_bgn_pos.x()) * 0.8,
-			_mouse_press_bgn_center.y() - (_mouse_press_end_pos.y() - _mouse_press_bgn_pos.y()) * 0.8);
-		//QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
-		now_center += _zoom_pos_fix;
+
+		_mouse_press_end_pos = _scene_mouse;
+		//qDebug() << _mouse_press_end_pos - _mouse_press_bgn_pos;
+		QPointF movement = _mouse_press_end_pos - _mouse_press_bgn_pos;
+		QPointF now_center = _mouse_press_bgn_center - movement;
 		centerOn(now_center);
+		_mouse_press_bgn_pos = _scene_mouse - movement;
+		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2 - movement;
 		onViewChange();
 	}
 
@@ -152,6 +153,10 @@ void Kinstrument_view::onViewChange(void)
 {
 	qreal w = width();
 	qreal h = height();
+	qreal vbw = verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0;
+	qreal hbw = horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0;
+	w -= vbw;
+	h -= hbw;
 	_scene_lu = QGraphicsView::mapToScene(0, 0);
 	_scene_rd = QGraphicsView::mapToScene(w - 1, h - 1);
 	paintGridLabels();
@@ -227,7 +232,6 @@ void Kinstrument_view::grabTransInfo()
 	_XYantiScale.setX(abs(_antiT.m11()));
 	_XYantiScale.setY(abs(_antiT.m22()));
 
-	_zoom_pos_fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
 }
 
 
@@ -243,8 +247,8 @@ void Kinstrument_view::onLabelCenterChanged(qreal label_x, qreal label_y)
 	if(!_scene)
 		return;
 
-	qreal x = _scene->label_w_to_x(label_x) + _zoom_pos_fix.x();
-	qreal y = _scene->label_h_to_y(label_y) + _zoom_pos_fix.y();
+	qreal x = _scene->label_w_to_x(label_x);
+	qreal y = _scene->label_h_to_y(label_y);
 	centerOn(x, y);
 	onViewChange();
 
@@ -292,11 +296,10 @@ void Kinstrument_view::zoomIn()
 		return;
 
 	setMouseTracking(false);
-	QPointF scene_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
+	QPointF scene_center = (_scene_lu + _scene_rd) / 2;
 	QPointF pre_pos_dlt = scene_center - _scene_mouse;
 	QPointF now_center = pre_pos_dlt / zoom_rate + _scene_mouse;// +QPointF(this->transform().m11() * zoom_fix.x(), this->transform().m22() * zoom_fix.y());
 	//QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
-	now_center += _zoom_pos_fix;
 	//qDebug() << "+";
 	//qDebug() << "_scene_mouse " << _scene_mouse;
 	//qDebug() << "scene_center " << scene_center;
@@ -332,11 +335,10 @@ void Kinstrument_view::zoomOut()
 		return;
 
 	setMouseTracking(false);
-	QPointF scene_center = QGraphicsView::mapToScene(width() / 2, height() / 2);
+	QPointF scene_center = (_scene_lu + _scene_rd) / 2;
 	QPointF pre_pos_dlt = scene_center - _scene_mouse;
 	QPointF now_center = pre_pos_dlt * zoom_rate + _scene_mouse;
 	//QPointF fix = QPointF(zoom_fix.x() / this->transform().m11(), zoom_fix.y() / this->transform().m22());	//unkown reson...
-	now_center += _zoom_pos_fix;
 	//qDebug() << "-";
 	//qDebug() << "_scene_mouse " << _scene_mouse;
 	//qDebug() << "scene_center " << scene_center;
@@ -408,11 +410,11 @@ void Kinstrument_view::paintLabel(QGraphicsItemGroup*& pGroup, const QPointF& vi
 	if (auto_fit) {
 		if (x < _scene_lu.x())
 			x = _scene_lu.x();
-		if (x >= _scene_rd.x() - (label_x->boundingRect().width() + SCROLLBAR_WIDTH) / rx)
-			x = _scene_rd.x() - (label_x->boundingRect().width() + SCROLLBAR_WIDTH) / rx;
+		if (x >= _scene_rd.x() - (label_x->boundingRect().width() + (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0)) / rx)
+			x = _scene_rd.x() - (label_x->boundingRect().width() + (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0)) / rx;
 		//y += 20 / ry;
-		if (y >= _scene_rd.y() - (label_x->boundingRect().height() + SCROLLBAR_WIDTH) / ry)
-			y -= (label_x->boundingRect().height() + SCROLLBAR_WIDTH) / ry;
+		if (y >= _scene_rd.y() - (label_x->boundingRect().height() + (horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0)) / ry)
+			y -= (label_x->boundingRect().height() + (horizontalScrollBar()->isVisible() ? horizontalScrollBar()->height() : 0)) / ry;
 	}
 
 	label_x->setTransform(_antiT);

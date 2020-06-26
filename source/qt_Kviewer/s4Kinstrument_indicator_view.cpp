@@ -55,7 +55,7 @@ void Kinstrument_indicator_view::onLabelCenterChanged(qreal label_x, qreal label
 	if(!_scene)
 		return;
 
-	qreal x = _scene->label_w_to_x(label_x) + _zoom_pos_fix.x();
+	qreal x = _scene->label_w_to_x(label_x);
 	qreal y = mapToScene(0, height()/2).y();
 	centerOn(x, y);
 	onViewChange();

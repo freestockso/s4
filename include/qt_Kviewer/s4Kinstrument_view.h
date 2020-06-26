@@ -110,7 +110,6 @@ protected:
 
     QTransform _antiT;
     QPointF _XYantiScale;
-    QPointF _zoom_pos_fix = {0, 0};
 
     bool _isLogCoor = true;
     qreal _grid_h_gap = 0.1;  //10%
