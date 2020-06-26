@@ -16,21 +16,25 @@ Kinstrument_Kline_scene::Kinstrument_Kline_scene(QWidget* parent):
 {
 }
 
-void Kinstrument_Kline_scene::setInfoKQ(const std::shared_ptr<infKQ_t>& pInfoKQ){
-    _pInfoKQ = pInfoKQ;
-}
+//void Kinstrument_Kline_scene::setInfoKQ(const std::shared_ptr<infKQ_t>& pInfoKQ){
+//    _pInfoKQ = pInfoKQ;
+//}
+//
+//void Kinstrument_Kline_scene::setMAmap(const std::shared_ptr<std::map<int, std::shared_ptr<maQ_t>>>& pMAmap){
+//    _pMAmap = pMAmap;
+//}
 
-void Kinstrument_Kline_scene::setMAmap(const std::shared_ptr<std::map<int, std::shared_ptr<maQ_t>>>& pMAmap){
-    _pMAmap = pMAmap;
-}
 
-
-void Kinstrument_Kline_scene::paint(void)
+void Kinstrument_Kline_scene::paint(const KCtx_t& ctx, std::shared_ptr<data_panel_t> data_panel)
 {
+	_KCtx = ctx;
+	_data_panel = data_panel;
+
     calcCtx();
     initSceneCanvas();
     paint_infoKQ();
     paint_MAmap();
+	paint_trade();
 }
 
 //datetime_t or time_t -> date_seq
@@ -60,7 +64,7 @@ QString Kinstrument_Kline_scene::x_to_label_w(qreal x) const
     int val_w = int(x_to_val_w(x) + 0.5);
     QString txt;
     if (_w_map_label.count(val_w)){
-        if (_timeMode == tDAY){
+        if (_KCtx.timeMode == tDAY){
             txt.sprintf("%s", date_to_str(utc_to_date(_w_map_label.at(val_w))).c_str());
         }else{
             txt.sprintf("%s", utc_to_str(_w_map_label.at(val_w)).c_str());
@@ -79,12 +83,32 @@ QString Kinstrument_Kline_scene::y_to_label_h(qreal y) const
     return txt;
 }
 
+
+std::shared_ptr<infKQ_t> Kinstrument_Kline_scene::check_data(void)
+{
+	std::shared_ptr<infKQ_t> pInfoKQ;
+	if (_KCtx.timeMode == tDAY) {
+		pInfoKQ = _data_panel->info.pDayKQ;
+	}
+	else if (_KCtx.timeMode == tMINU) {
+		pInfoKQ = _data_panel->info.pMinuKQ;
+	}
+	else {  //TODO
+		return pInfoKQ;
+	}
+
+	if (!pInfoKQ || !pInfoKQ->size())
+		return nullptr;
+	if (!pInfoKQ->isNewAtBack())
+		return nullptr;
+
+	return pInfoKQ;
+}
+
 void Kinstrument_Kline_scene::calcCtx(void)
 {
-    if (!_pInfoKQ || !_pInfoKQ->size())
-        return;
-
-    if (!_pInfoKQ->isNewAtBack())
+	std::shared_ptr<infKQ_t> _pInfoKQ = check_data();
+    if (!_pInfoKQ)
         return;
 
     ctx_t ctx;
@@ -113,13 +137,13 @@ void Kinstrument_Kline_scene::calcCtx(void)
     setCtx(ctx);
 }
 
-//TODO: save for _view to make lable
+//TODO: save for _view to make label
 void Kinstrument_Kline_scene::paint_infoKQ(void)
 {
-    if (!_pInfoKQ || !_pInfoKQ->size())
-        return;
+	std::shared_ptr<infKQ_t> _pInfoKQ = check_data();
 
-    _timeMode = _pInfoKQ->front()->_tMode;
+    if (!_pInfoKQ)
+        return;
 
     QList<logicBarData_t> bars;
     
@@ -152,13 +176,14 @@ void Kinstrument_Kline_scene::paint_infoKQ(void)
 
 void Kinstrument_Kline_scene::paint_MAmap(void){
     int n = 0;
-    for(auto& m : *_pMAmap){
+    for(auto& m : *_data_panel->info.pMAlib){
         paint_MA(n++, m.second);
     }
 }
 
 //TODO: save ind&scope&value&colors for _view to make label
-void Kinstrument_Kline_scene::paint_MA(int ind, const std::shared_ptr<maQ_t>& maQ){
+void Kinstrument_Kline_scene::paint_MA(int ind, const std::shared_ptr<maQ_t>& maQ)
+{
     if( !maQ || !maQ->size())
         return;
 
@@ -177,6 +202,11 @@ void Kinstrument_Kline_scene::paint_MA(int ind, const std::shared_ptr<maQ_t>& ma
 	curve->mkGroupItems();
 	curve->setZValue(MA_Z);
 	this->addItem(curve);
+}
+
+void Kinstrument_Kline_scene::paint_trade()
+{
+
 }
 
 } // namespace QT

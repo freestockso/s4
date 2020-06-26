@@ -15,9 +15,9 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
     //day
     if (data_panel->info.pDayKQ && data_panel->info.pDayKQ->size()){
         Kinstrument_Kline_scene* _K_scene = new Kinstrument_Kline_scene(this);
-        _K_scene->setInfoKQ(data_panel->info.pDayKQ);
-        _K_scene->setMAmap(data_panel->info.pMAlib);
-        _K_scene->paint();
+		Kinstrument_Kline_scene::KCtx_t KCtx;
+		KCtx.timeMode = tDAY;
+        _K_scene->paint(KCtx, data_panel);
         Kinstrument_Kline_view* _K_view = new Kinstrument_Kline_view(_K_scene, this);
         _K_view->setCtx(data_panel->info.pDayKQ);
         _K_view->paint();
