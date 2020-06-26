@@ -92,7 +92,7 @@ private:
 
 };
 
-//TODO: not a itemGroup, but list of item, use for add/del items quickly.
+//not a itemGroup, but list of item, use for add/del items quickly.
 class KlogicBarGroup_t : public KlogicItemGroup_t
 {
 public:

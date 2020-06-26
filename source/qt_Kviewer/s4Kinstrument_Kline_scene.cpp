@@ -3,7 +3,7 @@
 #include "common/s4time.h"
 #include "qt_Kviewer/s4KlogicBar.h"
 #include "qt_Kviewer/s4KlogicCurve.h"
-
+#include "qt_Kviewer/s4KlogicTrade.h"
 
 namespace S4{
 namespace QT{
