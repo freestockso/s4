@@ -23,23 +23,23 @@ void Kinstrument_indicator_view::paint(void){
     //paintGridLabels();
     //onViewChange();
 	//paintCrosshair();
-	qDebug() << this->transform();
+	//qDebug() << this->transform();
 	qreal x_scale = 1;
-	//qreal height = this->height();
-	//qreal scene_h = _scene->sceneRect().height();
-	qreal y_scale = 1;// scene_h / height;
+	qreal height = this->height();
+	qreal scene_h = _scene->sceneRect().height();
+	qreal y_scale =  height / scene_h;
 	QTransform T;
 	T.scale(x_scale, y_scale);
 	Kinstrument_view::setTransform(T, false);
-	qDebug() << this->transform();
+	//qDebug() << this->transform();
 }
 
 void Kinstrument_indicator_view::slotSetTransform(const QTransform& Ti, bool combine)
 {
 	QTransform T;
 	qreal x_scale = Ti.m11();
-	//qreal y_scale = this->height() / _scene->sceneRect().height();
-	T.scale(x_scale, 1.0);
+	qreal y_scale = this->height() / _scene->sceneRect().height();
+	T.scale(x_scale, y_scale);
 	Kinstrument_view::setTransform(T, combine);
 }
 
@@ -62,6 +62,14 @@ void Kinstrument_indicator_view::slotLabelCenterChanged(qreal label_x, qreal lab
 
 	QPointF view_mouse_pos = mapFromScene(x, y);
 	onMouseChange(view_mouse_pos);
+}
+
+void Kinstrument_indicator_view::slotViewEvent(std::shared_ptr<view_event> event)
+{
+	if (_timeMode != event->timeMode())
+		return;
+
+	Kinstrument_view::slotViewEvent(event);
 }
 
 } // namespace QT

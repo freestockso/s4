@@ -26,6 +26,7 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
         _timeMode = tDAY;
 
         emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_VOL , timeMode_t::tDAY );
+		connect(_K_view, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), this, SLOT(slotViewEvent_day(std::shared_ptr<view_event>)));
     }
 }
 
@@ -58,6 +59,12 @@ void Kinstrument_Kline_tab::slotCenterChanged_day(qreal scene_x, qreal scene_y)
 void Kinstrument_Kline_tab::slotMouseChanged_day(qreal scene_x, qreal scene_y)
 {
 	emit signalMouseChanged(scene_x, scene_y, timeMode_t::tDAY);
+}
+
+void Kinstrument_Kline_tab::slotViewEvent_day(std::shared_ptr<view_event> event)
+{
+	event->setTimeMode(timeMode_t::tDAY);
+	emit signalViewEvent(event);
 }
 
 } // namespace QT

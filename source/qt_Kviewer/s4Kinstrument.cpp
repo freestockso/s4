@@ -53,6 +53,8 @@ void Kinstrument::setInstrument(const data_panel_t& data_panel){
 
 	_K_tab->setInstrument(_data_panel);
 
+	connect(_K_tab, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), _indicator_tab, SLOT(slotViewEvent(std::shared_ptr<view_event>)));
+
 
 }
 

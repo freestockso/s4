@@ -287,6 +287,21 @@ void Kinstrument_view::slotMouseChanged(qreal scene_x, qreal scene_y)
 	onMouseChange(view_mouse_pos);
 }
 
+void Kinstrument_view::slotViewEvent(std::shared_ptr<view_event> event)
+{
+	switch (event->type())
+	{
+	case view_event::type_t::on_transform_change:
+	{
+		const view_event_transform_change* e = (view_event_transform_change*)event.get();
+		slotSetTransform(e->transform(), e->combine());
+	}
+		break;
+	default:
+		break;
+	}
+}
+
 void Kinstrument_view::resetTransform()
 {
 	QGraphicsView::resetTransform();
@@ -334,6 +349,8 @@ void Kinstrument_view::zoomIn()
 	transform *= T;
 	setTransform(transform);
 	emit signalSetTransform(this->transform(), false);
+	std::shared_ptr<view_event_transform_change> e = std::make_shared<view_event_transform_change>(this->transform(), false);
+	emit signalViewEvent(e);
 
 	centerOn(now_center);
 	emit signalCenterChanged(now_center.x(), now_center.y());
@@ -375,6 +392,8 @@ void Kinstrument_view::zoomOut()
 	transform *= T;
 	setTransform(transform);
 	emit signalSetTransform(this->transform(), false);
+	std::shared_ptr<view_event_transform_change> e = std::make_shared<view_event_transform_change>(this->transform(), false);
+	emit signalViewEvent(e);
 
 	centerOn(now_center);
 	emit signalCenterChanged(now_center.x(), now_center.y());

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qt_common/s4view_event.h"
 #include "qt_common/s4qt_colorpalette.h"
 #include "qt_Kviewer/s4Kinstrument_scene.h"
 
@@ -71,6 +72,7 @@ signals:
 	void signalCenterChanged(qreal scene_x, qreal scene_y);
 	void signalMouseChanged(qreal scene_x, qreal scene_y);
 
+	void signalViewEvent(std::shared_ptr<view_event>);
 
 public slots:
     void verticalScrollvalueChanged();
@@ -82,6 +84,8 @@ public slots:
 	virtual void slotLabelMouseChanged(qreal label_x, qreal label_y);
 	virtual void slotCenterChanged(qreal scene_x, qreal scene_y);
 	virtual void slotMouseChanged(qreal scene_x, qreal scene_y);
+
+	virtual void slotViewEvent(std::shared_ptr<view_event>);
 
 protected:
     virtual void mousePressEvent(QMouseEvent* event) override;

@@ -3,6 +3,7 @@
 #include "qt_Kviewer/s4Kinstrument_indicator_view.h"
 #include "qt_Kviewer/s4Kinstrument_indicator_scene.h"
 #include "qt_common/s4qt_data_if.h"
+#include "qt_common/s4view_event.h"
 
 #include <QTabWidget>
 #include <QKeyEvent>
@@ -18,8 +19,12 @@ public:
 
     void setInstrument(std::shared_ptr<data_panel_t> data_panel);
 
+signals:
+	void signalViewEvent(std::shared_ptr<view_event>);
+
 public slots:
     void paint(Kinstrument_indicator_scene::ind_type type, timeMode_t timeMode);
+	virtual void slotViewEvent(std::shared_ptr<view_event>);
 
 protected:
     std::shared_ptr<data_panel_t> _data_panel;

@@ -31,6 +31,8 @@ signals:
 	void signalCenterChanged(qreal, qreal, timeMode_t);
 	void signalMouseChanged(qreal, qreal, timeMode_t);
 
+	void signalViewEvent(std::shared_ptr<view_event>);
+
 
 public slots:
 	virtual void slotScaleChanged_day(qreal x_scale, qreal y_scale);
@@ -39,6 +41,8 @@ public slots:
 	virtual void slotLabelMouseChanged_day(qreal label_x, qreal label_y);
 	virtual void slotCenterChanged_day(qreal scene_x, qreal scene_y);
 	virtual void slotMouseChanged_day(qreal scene_x, qreal scene_y);
+
+	virtual void slotViewEvent_day(std::shared_ptr<view_event>);
 
 protected:
     std::shared_ptr<data_panel_t> _data_panel;

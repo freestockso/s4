@@ -16,13 +16,24 @@ public:
 
     void paint(void);
 
-    
+
+	inline void setTimeMode(timeMode_t t) {
+		_timeMode = t;
+	}
+
+	inline timeMode_t timeMode(void) const {
+		return _timeMode;
+	}
 
 
 public slots:
     //virtual void onScaleChanged(qreal x_scale, qreal y_scale) override;
     virtual void slotLabelCenterChanged(qreal label_x, qreal label_y) override;
 	virtual void slotSetTransform(const QTransform&, bool) override;
+	virtual void slotViewEvent(std::shared_ptr<view_event>) override;
+
+protected:
+	timeMode_t _timeMode;
 
 };
 

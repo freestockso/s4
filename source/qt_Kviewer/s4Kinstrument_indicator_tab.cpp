@@ -35,12 +35,21 @@ void Kinstrument_indicator_tab::paint(Kinstrument_indicator_scene::ind_type type
 
     Kinstrument_indicator_view* view = new Kinstrument_indicator_view(scene, this);
 	view->setLogCoor(false);
+	view->setTimeMode(timeMode);
     view->paint();
     int i = addTab(view, indCtx.toString());
     setCurrentIndex(i);
     _tab_ctx[i] = indCtx;
 
+	connect(this, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), view, SLOT(slotViewEvent(std::shared_ptr<view_event>)));
+
 }
+
+void Kinstrument_indicator_tab::slotViewEvent(std::shared_ptr<view_event> event)
+{
+	emit signalViewEvent(event);
+}
+
 
 } // namespace QT
 } // namespace S4
