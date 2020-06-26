@@ -7,8 +7,9 @@ namespace QT{
 Kinstrument_indicator_view::Kinstrument_indicator_view(Kinstrument_indicator_scene * scene, QWidget *parent):
     Kinstrument_view(scene, parent)
 {
-	//setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	//setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
 	ctx_t ctx;
 	ctx.sc_val_h_max = scene->getCtx().val_h_max();
 	ctx.sc_val_h_min = 0;//scene->getCtx().val_h_min();

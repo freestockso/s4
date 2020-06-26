@@ -65,12 +65,12 @@ public:
 	}
 
 signals:
-	void signalScaleChanged(qreal x_scale, qreal y_scale);
-	void signalSetTransform(const QTransform&, bool);
-	void signalLabelCenterChanged(qreal label_x, qreal label_y);
-	void signalLabelMouseChanged(qreal label_x, qreal label_y);
-	void signalCenterChanged(qreal scene_x, qreal scene_y);
-	void signalMouseChanged(qreal scene_x, qreal scene_y);
+	//void signalScaleChanged(qreal x_scale, qreal y_scale);
+	//void signalSetTransform(const QTransform&, bool);
+	//void signalLabelCenterChanged(qreal label_x, qreal label_y);
+	//void signalLabelMouseChanged(qreal label_x, qreal label_y);
+	//void signalCenterChanged(qreal scene_x, qreal scene_y);
+	//void signalMouseChanged(qreal scene_x, qreal scene_y);
 
 	void signalViewEvent(std::shared_ptr<view_event>);
 

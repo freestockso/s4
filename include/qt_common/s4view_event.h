@@ -65,6 +65,59 @@ protected:
     bool _combine;
 };
 
+class view_event_scene_center_change : public view_event
+{
+public:
+    view_event_scene_center_change(qreal scene_x, qreal scene_y):
+        view_event(on_scene_center_change),
+        _scene_x(scene_x),
+        _scene_y(scene_y)
+	{}
+
+	explicit view_event_scene_center_change(QPointF scene_pos) :
+		view_event(on_scene_center_change),
+		_scene_x(scene_pos.x()),
+		_scene_y(scene_pos.y())
+	{}
+
+    inline qreal scene_x() const
+    {
+        return _scene_x;
+    }
+
+    inline qreal scene_y() const
+    {
+        return _scene_y;
+    }
+
+protected:
+    qreal _scene_x;
+    qreal _scene_y;
+};
+
+class view_event_scene_mouse_change : public view_event
+{
+public:
+	view_event_scene_mouse_change(qreal scene_x, qreal scene_y) :
+		view_event(on_scene_mouse_change),
+		_scene_x(scene_x),
+		_scene_y(scene_y)
+	{}
+
+	inline qreal scene_x() const
+	{
+		return _scene_x;
+	}
+
+	inline qreal scene_y() const
+	{
+		return _scene_y;
+	}
+
+protected:
+	qreal _scene_x;
+	qreal _scene_y;
+};
 
 
 

@@ -130,7 +130,8 @@ void Kinstrument_view::mouseReleaseEvent(QMouseEvent* event)
 void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 {
 	onMouseChange(event->pos());
-	emit signalMouseChanged(_scene_mouse.x(), _scene_mouse.y());
+	std::shared_ptr<view_event_scene_mouse_change> e_mouse = std::make_shared<view_event_scene_mouse_change>(_scene_mouse.x(), _scene_mouse.y());
+	emit signalViewEvent(e_mouse);
 
 	//_scene_rd -= QPointF(SCROLLBAR_WIDTH, SCROLLBAR_WIDTH);//scrollBar size
 	if (_drag_to_move && dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
@@ -141,11 +142,13 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 		QPointF now_center = _mouse_press_bgn_center - movement;
 		
 		centerOn(now_center);
-		emit signalCenterChanged(now_center.x(), now_center.y());
-
-		_mouse_press_bgn_pos = _scene_mouse - movement;
-		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2 - movement;
 		onViewChange();
+
+		_mouse_press_bgn_pos = _scene_mouse;
+		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2;
+
+		std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>(_mouse_press_bgn_center);
+		emit signalViewEvent(e_center);
 	}
 
 	paintCrosshair();
@@ -180,13 +183,16 @@ void Kinstrument_view::onMouseChange(const QPointF& view_mouse)
 void Kinstrument_view::resizeEvent(QResizeEvent* event)
 {
 	onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
+	emit signalViewEvent(e_center);
 }
 
 void Kinstrument_view::wheelEvent(QWheelEvent* event)
 {
 	//qDebug() << "Delta: " << event->angleDelta();
 	onMouseChange(event->pos());
-	emit signalMouseChanged(_scene_mouse.x(), _scene_mouse.y());
+	std::shared_ptr<view_event_scene_mouse_change> e_mouse = std::make_shared<view_event_scene_mouse_change>(_scene_mouse.x(), _scene_mouse.y());
+	emit signalViewEvent(e_mouse);
 
 	int angle = event->angleDelta().y();
 
@@ -196,6 +202,9 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 		zoomIn();
 
 	onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
+	emit signalViewEvent(e_center);
+
 	paintCrosshair();
 }
 
@@ -218,12 +227,16 @@ void Kinstrument_view::verticalScrollvalueChanged()
 	//int value = this->verticalScrollBar()->value();
 	//qDebug() <<"verticalScrollvalueChanged"<< value;
 	onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
+	emit signalViewEvent(e_center);
 }
 void Kinstrument_view::horizontalScrollvalueChanged()
 {
 	//int value = this->horizontalScrollBar()->value();
 	//qDebug() << "horizontalScrollvalueChanged" << value;
 	onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
+	emit signalViewEvent(e_center);
 }
 
 
@@ -285,6 +298,8 @@ void Kinstrument_view::slotMouseChanged(qreal scene_x, qreal scene_y)
 
 	QPointF view_mouse_pos = mapFromScene(scene_x, scene_y);
 	onMouseChange(view_mouse_pos);
+
+	paintCrosshair();
 }
 
 void Kinstrument_view::slotViewEvent(std::shared_ptr<view_event> event)
@@ -296,7 +311,19 @@ void Kinstrument_view::slotViewEvent(std::shared_ptr<view_event> event)
 		const view_event_transform_change* e = (view_event_transform_change*)event.get();
 		slotSetTransform(e->transform(), e->combine());
 	}
-		break;
+	break;
+	case view_event::type_t::on_scene_center_change:
+	{
+		const view_event_scene_center_change* e = (view_event_scene_center_change*)event.get();
+		slotCenterChanged(e->scene_x(), e->scene_y());
+	}
+	break;
+	case view_event::type_t::on_scene_mouse_change:
+	{
+		const view_event_scene_mouse_change* e = (view_event_scene_mouse_change*)event.get();
+		slotMouseChanged(e->scene_x(), e->scene_y());
+	}
+	break;
 	default:
 		break;
 	}
@@ -348,12 +375,12 @@ void Kinstrument_view::zoomIn()
 	QTransform transform = this->transform();
 	transform *= T;
 	setTransform(transform);
-	emit signalSetTransform(this->transform(), false);
-	std::shared_ptr<view_event_transform_change> e = std::make_shared<view_event_transform_change>(this->transform(), false);
-	emit signalViewEvent(e);
+	std::shared_ptr<view_event_transform_change> e_trans = std::make_shared<view_event_transform_change>(this->transform(), false);
+	emit signalViewEvent(e_trans);
 
 	centerOn(now_center);
-	emit signalCenterChanged(now_center.x(), now_center.y());
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>(now_center.x(), now_center.y());
+	emit signalViewEvent(e_center);
 	//qDebug() << "now_0 " << QGraphicsView::mapToScene(0, 0);
 	//qDebug() << "now_center " << QGraphicsView::mapToScene(width() / 2, height() / 2);
 	//QPointF um = QGraphicsView::mapToScene(width() / 2, height() / 2) - now_center;
@@ -391,12 +418,12 @@ void Kinstrument_view::zoomOut()
 	QTransform transform = this->transform();
 	transform *= T;
 	setTransform(transform);
-	emit signalSetTransform(this->transform(), false);
-	std::shared_ptr<view_event_transform_change> e = std::make_shared<view_event_transform_change>(this->transform(), false);
-	emit signalViewEvent(e);
+	std::shared_ptr<view_event_transform_change> e_trans = std::make_shared<view_event_transform_change>(this->transform(), false);
+	emit signalViewEvent(e_trans);
 
 	centerOn(now_center);
-	emit signalCenterChanged(now_center.x(), now_center.y());
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>(now_center.x(), now_center.y());
+	emit signalViewEvent(e_center);
 	//qDebug() << "now_0 " << QGraphicsView::mapToScene(0, 0);
 	//qDebug() << "now_center " << QGraphicsView::mapToScene(width() / 2, height() / 2);
 	//QPointF um = QGraphicsView::mapToScene(width() / 2, height() / 2) - now_center;
@@ -473,8 +500,10 @@ void Kinstrument_view::paintCrosshair()
 {
 	rebuildGroup(_crossLine);
 
-	QPen xPen = QPen(_colorpalette->crosshair, _XYantiScale.x()/*width*/, Qt::DashLine);
-	QPen yPen = QPen(_colorpalette->crosshair, _XYantiScale.y()/*width*/, Qt::DashLine);
+	QPen xPen = QPen(_colorpalette->crosshair, 1/*width*/, Qt::DashLine);
+	QPen yPen = QPen(_colorpalette->crosshair, 1/*width*/, Qt::DashLine);
+	xPen.setCosmetic(true);
+	yPen.setCosmetic(true);
 
 	if (_scene_mouse.y() >= _scene->sceneRect().y() && _scene_mouse.y() < _scene->sceneRect().y()+_scene->height()) {
 		QGraphicsLineItem* hline = new QGraphicsLineItem;
@@ -507,8 +536,11 @@ void Kinstrument_view::paintGridLines()
 {
 	rebuildGroup(_gridLines);
 
-	QPen xPen = QPen(_colorpalette->grid.front, _XYantiScale.x()/*width*/, Qt::DashLine);
-	QPen yPen = QPen(_colorpalette->grid.front, _XYantiScale.y()/*width*/, Qt::DashLine);
+	QPen xPen = QPen(_colorpalette->grid.front, 1/*width*/, Qt::DashLine);
+	QPen yPen = QPen(_colorpalette->grid.front, 1/*width*/, Qt::DashLine);
+	xPen.setCosmetic(true);
+	yPen.setCosmetic(true);
+
 
 	for (qreal i = _ctx.sc_val_h_min; i < _ctx.sc_val_h_max* (1.01 + _grid_h_gap); i = _isLogCoor? i*(1.0 + _grid_h_gap) : i+_ctx.sc_val_h_max * _grid_h_gap) {
 		qreal y = _scene->val_h_to_y(i);
