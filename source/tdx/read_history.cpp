@@ -240,20 +240,20 @@ void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders
 		data.mktCodeStr = pureCodeStr_to_mktCodeStr(order.stock_code);	//	sz000001
 		data.time_utcSec = order.time_utcSec;	//	123
 		data.datetime = utc_to_str(order.time_utcSec);	//	2018_04_26__00_00_00
-		//current option of id: open / change_take / change_stop / close / change_close / abort
-		//current status of id: new / opened / closed / open_aborting / close_abort_sent / aborted
+		//current option of id: send_open / abort_open / send_close / abort_clsoe
+		//current status of id: new / aborted / opened
 		if (order.opt_type == "买入") {
 			if (order.delegate_type == "撤单") {
-				data.optType = "abort";
+				data.optType = "abort_open";
 				if (order.status == "已成") {
 					data.status = "aborted";
 				}
 				else {
-					data.status = "open_aborting";
+					data.status = "new";
 				}
 			}
 			else {
-				data.optType = "open";
+				data.optType = "send_open";
 				data.status = "new";	//	new
 			}
 			data.order_open = fPrice_to_iPrice(order.order_price);	//	-1
@@ -262,18 +262,12 @@ void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders
 		}
 		else if (order.opt_type == "卖出") {
 			if (order.delegate_type == "撤单") {
-				data.optType = "close";
-				if (order.status == "已成") {
-					data.status = "opened";
-				}
-				else {
-					data.status = "close_aborting";
-				}
+				data.optType = "abort_close";
 			}
 			else {
-				data.optType = "close";
-				data.status = "opened";
+				data.optType = "send_close";
 			}
+			data.status = "opened";
 			data.order_open = -1;	//	-1
 			data.order_close = fPrice_to_iPrice(order.order_price);
 			data.order_vol = order.order_vol;	//	-1
@@ -316,8 +310,8 @@ void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd
 		data.mktCodeStr = pureCodeStr_to_mktCodeStr(deal.stock_code);	//	sz000001
 		data.time_utcSec = deal.time_utcSec;	//	123
 		data.datetime = utc_to_str(deal.time_utcSec);	//	2018_04_26__00_00_00
-		//current option of id: open / change_take / change_stop / close / change_close / abort
-		//current status of id: new / opened / closed / aborted
+		//current option of id: open / close
+		//current status of id: new->opened / opened->closed
 		if (deal.opt_type == "买入") {
 			data.optType = "open";
 			data.status = "opened";	//	new
