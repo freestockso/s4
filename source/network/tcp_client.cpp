@@ -201,6 +201,7 @@ bool tcp_json_client_t::main_run_loop_act(int *ec)
   }
   if (!_cc || (!_cc->connectiong() && !_cc->connected()))
   {
+    std::cout << "joined" << std::endl;
     _cc = std::make_shared<chat_client>(io_context, endpoints, shared_from_this());
   }
   io_context.run();

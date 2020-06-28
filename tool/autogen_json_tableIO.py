@@ -47,7 +47,18 @@ def get_func(value):
     elif value == "DOUBLE":
         return "getDouble"
 
+def get_type(value):
+    if value == "TEXT":
+        return "std::string"
+    elif value == "BOOLEAN":
+        return "bool"
+    elif value == "INTEGER":
+        return "int"
+    elif value == "DOUBLE":
+        return "double"
+
 # not support list or dict within dict
+# cols[key_name] = key_type
 def dict_to_cols(json_dict):
     cols = {}
 
@@ -57,13 +68,21 @@ def dict_to_cols(json_dict):
     else:
         __assign_type_fields__ = {}
         
+    if '__assign_enum_fields__' in json_dict:
+        __assign_enum_fields__ = json_dict['__assign_enum_fields__']
+        print("use __assign_enum_fields__ = {}".format(__assign_enum_fields__))
+    else:
+        __assign_enum_fields__ = {}
+
     for key_name in json_dict:
         if key_name in keep_words or key_name.find("__comment__")==0:
             continue
 
         key_value = json_dict[key_name]
 
-        if isinstance(key_value, (str, int, float, bool)):
+        if key_name in __assign_enum_fields__:
+            cols[key_name] = "TEXT"
+        elif isinstance(key_value, (str, int, float, bool)):
             key_type = determin_value_type_sqlite(key_value)
             cols[key_name] = key_type
         elif isinstance(key_value, dict):
@@ -84,11 +103,12 @@ def dict_to_cols(json_dict):
             print("unsupported type for {}:{}".format(key_name, key_value))
             exit(-1)
 
-    return cols, __assign_type_fields__
+    return cols, __assign_type_fields__, __assign_enum_fields__
 
 
 PRIMARY_KEY_in_order = [ 'id', 'date', 'mktCode', 'datetime', 'code']
 
+# cols[key_name] = key_type
 def get_K_COL(cols, primary = None):
     K_COL = \
 """
@@ -133,22 +153,39 @@ const std::string K_IN =
 
     return K_IN
 
+def get_bind(col_list, __assign_enum_fields__):
+    n = 1
+    ret = []
+    for col in cols:
+        if col in __assign_enum_fields__:
+            as_type = __assign_enum_fields__[col]
+            ret.append('query.bind({}, {}_toString(K_data.{}));'.format(n, as_type, col))
+        else:
+            ret.append('query.bind({}, K_data.{});'.format(n, col))
+        n += 1
+    return '\r\n\t\t'.join(ret)
 
-def get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fields__):
+def get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fields__, __assign_enum_fields__):
     n = 0
     col_list = []
     load = []
     for col in cols:
         col_list.append(col)
-        if col in __assign_type_fields__:
-            as_type = '({})'.format(__assign_type_fields__[col])
+        if col in __assign_enum_fields__:
+            as_type = __assign_enum_fields__[col]
+            l = "K_data.{} = {}_fromString(query.getColumn({}).{}());".format(col, as_type, n, get_func(cols[col]))
         else:
-            as_type = ''
-        l = "K_data.{} = {}query.getColumn({}).{}();".format(col, as_type, n, get_func(cols[col]))
+            if col in __assign_type_fields__:
+                as_type = '({})'.format(__assign_type_fields__[col])
+            else:
+                as_type = '({})'.format(get_type(cols[col]))
+            l = "K_data.{} = {}query.getColumn({}).{}();".format(col, as_type, n, get_func(cols[col]))
         n += 1
         load.append(l)
 
     load = "\n\t\t".join(load)
+
+    bindStr = get_bind(col_list, __assign_enum_fields__)
 
     class_str = \
 """
@@ -173,7 +210,7 @@ public:
     virtual void bind_query(SQLite::Statement& query, const std::vector<struct {0}>& data, size_t nb) override
     {{
         const struct {0} & K_data = data[nb];
-        SQLite::bind(query,\n\t\t\tK_data.{4});
+        {4}
     }}
 
     //warning: not clear data inside, but append DB.data to it
@@ -194,7 +231,7 @@ private:
 {3}
 
 }};
-""".format(data_type_name, io_class_name, K_COL, K_IN, ',\n\t\t\tK_data.'.join(col_list), load)
+""".format(data_type_name, io_class_name, K_COL, K_IN, bindStr, load)
     return class_str
 
 
@@ -242,10 +279,10 @@ if __name__ == "__main__":
         primary = json_instance["__sqlite_primary__"]
 
 
-    cols, __assign_type_fields__ = dict_to_cols(json_instance)
+    cols, __assign_type_fields__, __assign_enum_fields__ = dict_to_cols(json_instance)
     K_IN = get_K_IN(cols)
     K_COL = get_K_COL(cols, primary)
-    class_t = get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fields__)
+    class_t = get_class(data_type_name, io_class_name, K_COL, K_IN, cols, __assign_type_fields__, __assign_enum_fields__)
     # print(class_t)
 
     output_text = cpp_headers + json_cpp_headers.format(data_type_name) + namespace_head + class_t + namespace_tail

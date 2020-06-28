@@ -5,6 +5,6 @@ namespace S4{
 
 bool history_trade_to_DB(const std::vector<s4_history_trade_t>& history_trade_data, S4::sqlite::DB_t& history_db, const std::string& table_name);
 
-
+void sort_history_trade(std::vector<s4_history_trade_t>& history_trade_data);
     
 } // namespace S4

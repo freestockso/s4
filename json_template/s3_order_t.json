@@ -1,0 +1,23 @@
+{
+    "__sqlite_capable__" : true,
+    "__sqlite_primary__" : "ID, time, status",
+    "__assign_type_fields__": {
+        "time":"time_utcSec_t", 
+        "ID":"int64_t"
+    },
+
+    "StgName":"",
+	"ID":1,
+	"InsName":"",
+	"time":0,
+	"optType":"",
+	"status":"",
+	"open":-1,
+	"take":-1,
+	"stop":-1,
+	"close":-1,
+	"openA":-1,
+	"closeA":-1,
+	"datetime":""
+
+}

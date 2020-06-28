@@ -10,6 +10,7 @@ namespace QT{
 
 #define BAR_Z (51)
 #define MA_Z (52)
+#define TRADE_Z (60)
     
 Kinstrument_Kline_scene::Kinstrument_Kline_scene(QWidget* parent):
     Kinstrument_scene(parent)
@@ -40,24 +41,40 @@ void Kinstrument_Kline_scene::paint(const KCtx_t& ctx, std::shared_ptr<data_pane
 //datetime_t or time_t -> date_seq
 qreal Kinstrument_Kline_scene::label_w_to_val_w(uint64_t l) const 
 {
+    uint64_t _l = l;
+    if (_KCtx.timeMode == tDAY) {
+        _l = date_to_utc(utc_to_date(l));
+    }
+    else if (_KCtx.timeMode == tMINU) {
+        time_date_t date;
+        time_minuSec_t minu;
+        date = utc_to_date(l, &minu);
+        minu = minu / 100;
+        minu = minu * 100;
+        _l = date_to_utc(date, minu);
+    }
+    else {
+        throw TimerError("unsupport timeMode: not tDAY nor tMINU");
+    }
+
     if (!_label_map_w.size())
         return 0;
 
-    if (_label_map_w.count(l))
-        return _label_map_w.at(l);
+    if (_label_map_w.count(_l))
+        return _label_map_w.at(_l);
 
-    if (l<_label_map_w.begin()->first)
+    if (_l <_label_map_w.begin()->first)
         return _label_map_w.begin()->second;
 
-    if (l>_label_map_w.end()->first)
-        return _label_map_w.end()->second;
+    if (_l >_label_map_w.rbegin()->first)
+        return _label_map_w.rbegin()->second;
 
     for (auto& m : _label_map_w){
-        if (m.first > l)
+        if (m.first > _l)
             return m.second;
     }
     return _label_map_w.end()->second;
-};
+}
 
 QString Kinstrument_Kline_scene::x_to_label_w(qreal x) const 
 {
@@ -70,7 +87,12 @@ QString Kinstrument_Kline_scene::x_to_label_w(qreal x) const
             txt.sprintf("%s", utc_to_str(_w_map_label.at(val_w)).c_str());
         }
     }else{
-        txt.sprintf("N/A");
+		if (_label_map_w.rbegin()->second + 1 == val_w) {
+			txt.sprintf("Dummy Next");
+        }
+		else {
+			txt.sprintf("N/A");
+        }
     }
     return txt;
 }
@@ -168,10 +190,39 @@ void Kinstrument_Kline_scene::paint_infoKQ(void)
     barGroup->setColor(_colorpalette->positive_boxes[0], _colorpalette->negtive_boxes[0]);
     barGroup->setType(KlogicBar_t::barType_t::BAR_JPN);
     barGroup->setLineWidth(4);
-    barGroup->setVal(bars);
+    barGroup->setValue(bars);
     barGroup->mkGroupItems();
     barGroup->setZValue(BAR_Z);
-    this->addItem(barGroup);
+	this->addItem(barGroup);
+
+	/* paint next day */
+	logicBarData_t nextDay;
+	nextDay.seq = _label_map_w.rbegin()->second + 1;
+    
+	//up
+    nextDay.lastC = nextDay.L = nextDay.O = (*_pInfoKQ->rbegin())->close_fq();
+    nextDay.H = nextDay.C = UP_10p((*_pInfoKQ->rbegin())->close_fq());
+	KlogicBar_t* barU = new KlogicBar_t(this);
+	barU->setColor(_colorpalette->positive_boxes[2], _colorpalette->negtive_boxes[2]);
+	barU->setType(KlogicBar_t::barType_t::BAR_USA);
+	barU->setLineWidth(0);
+	barU->setAlpha(100);
+	barU->setValue(nextDay);
+	barU->mkGroupItems();
+    this->addItem(barU);
+
+	//dn
+	nextDay.H = nextDay.O = (*_pInfoKQ->rbegin())->close_fq();
+	nextDay.L = nextDay.C = DN_10p((*_pInfoKQ->rbegin())->close_fq());
+	KlogicBar_t* barD = new KlogicBar_t(this);
+	barD->setColor(_colorpalette->positive_boxes[2], _colorpalette->negtive_boxes[2]);
+	barD->setType(KlogicBar_t::barType_t::BAR_USA);
+	barD->setLineWidth(0);
+	barD->setAlpha(100);
+	barD->setValue(nextDay);
+	barD->mkGroupItems();
+	this->addItem(barD);
+
 }
 
 void Kinstrument_Kline_scene::paint_MAmap(void){
@@ -198,7 +249,7 @@ void Kinstrument_Kline_scene::paint_MA(int ind, const std::shared_ptr<maQ_t>& ma
 	curve->setLineStyle(Qt::PenStyle::SolidLine);
 	curve->setColor(_colorpalette->curve[ind % _colorpalette->curve.size()]);
 	curve->setLineWidth(1);
-	curve->setVal(dots);
+	curve->setValue(dots);
 	curve->mkGroupItems();
 	curve->setZValue(MA_Z);
 	this->addItem(curve);
@@ -206,6 +257,12 @@ void Kinstrument_Kline_scene::paint_MA(int ind, const std::shared_ptr<maQ_t>& ma
 
 void Kinstrument_Kline_scene::paint_trade()
 {
+    KlogicTrade_t* trade_group = new KlogicTrade_t(this);
+	trade_group->setValue(_data_panel->history);
+    trade_group->setColor(_colorpalette->positive_boxes[1], _colorpalette->negtive_boxes[1]);
+    trade_group->mkGroupItems();
+    trade_group->setZValue(TRADE_Z);
+	this->addItem(trade_group);
 
 }
 

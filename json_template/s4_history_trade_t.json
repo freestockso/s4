@@ -22,6 +22,9 @@
         "transfer_fee":"amount_t", 
         "other_fees":"amount_t"
     },
+    "__assign_enum_fields__": {
+        "optType" : "trade_opt_t"
+    },
 
     "__comment__1":"id through open-close",
     "id":0,
@@ -36,7 +39,7 @@
     "time_utcSec": 123,
     "datetime": "2018_04_26__00_00_00",
     "__comment__3":"current option of id: open / change_take / change_stop / close / change_close / abort",
-    "optType":"open",
+    "optType":"oUNKNOWN_OPT",
     "__comment__4":"long as stock only for now",
     "position": "long",
     "__comment__5":"current status of id: new / opened / closed / aborted",

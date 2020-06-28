@@ -9,7 +9,9 @@
 * Json keep-word: 
     "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
     "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
-    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default.
+    "__assign_enum_fields__": {{"field":"enum-type"}}, # Assign specal enum-type of field, but not infer automatically as default.
+                              enum-type need have implemented _toSting() & _fromString() functions.
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
@@ -49,22 +51,21 @@ public:
     virtual void bind_query(SQLite::Statement& query, const std::vector<struct tdx_xyzq_history_deal_t>& data, size_t nb) override
     {
         const struct tdx_xyzq_history_deal_t & K_data = data[nb];
-        SQLite::bind(query,
-			K_data.date,
-			K_data.time_format,
-			K_data.time_utcSec,
-			K_data.stock_code,
-			K_data.stock_name,
-			K_data.id,
-			K_data.opt_type,
-			K_data.deal_price,
-			K_data.deal_vol,
-			K_data.deal_amount,
-			K_data.commission,
-			K_data.stamp_duty,
-			K_data.transfer_fee,
-			K_data.other_fees,
-			K_data.remarks);
+        query.bind(1, K_data.date);
+		query.bind(2, K_data.time_format);
+		query.bind(3, K_data.time_utcSec);
+		query.bind(4, K_data.stock_code);
+		query.bind(5, K_data.stock_name);
+		query.bind(6, K_data.id);
+		query.bind(7, K_data.opt_type);
+		query.bind(8, K_data.deal_price);
+		query.bind(9, K_data.deal_vol);
+		query.bind(10, K_data.deal_amount);
+		query.bind(11, K_data.commission);
+		query.bind(12, K_data.stamp_duty);
+		query.bind(13, K_data.transfer_fee);
+		query.bind(14, K_data.other_fees);
+		query.bind(15, K_data.remarks);
     }
 
     //warning: not clear data inside, but append DB.data to it
@@ -72,12 +73,12 @@ public:
     {
         struct tdx_xyzq_history_deal_t K_data;
         K_data.date = (time_date_t)query.getColumn(0).getInt64();
-		K_data.time_format = query.getColumn(1).getString();
+		K_data.time_format = (std::string)query.getColumn(1).getString();
 		K_data.time_utcSec = (time_utcSec_t)query.getColumn(2).getInt64();
-		K_data.stock_code = query.getColumn(3).getString();
-		K_data.stock_name = query.getColumn(4).getString();
+		K_data.stock_code = (std::string)query.getColumn(3).getString();
+		K_data.stock_name = (std::string)query.getColumn(4).getString();
 		K_data.id = (int64_t)query.getColumn(5).getInt64();
-		K_data.opt_type = query.getColumn(6).getString();
+		K_data.opt_type = (std::string)query.getColumn(6).getString();
 		K_data.deal_price = (fprice_t)query.getColumn(7).getDouble();
 		K_data.deal_vol = (vol_share_t)query.getColumn(8).getInt64();
 		K_data.deal_amount = (amount_t)query.getColumn(9).getDouble();
@@ -85,7 +86,7 @@ public:
 		K_data.stamp_duty = (amount_t)query.getColumn(11).getDouble();
 		K_data.transfer_fee = (amount_t)query.getColumn(12).getDouble();
 		K_data.other_fees = (amount_t)query.getColumn(13).getDouble();
-		K_data.remarks = query.getColumn(14).getString();
+		K_data.remarks = (std::string)query.getColumn(14).getString();
         data.push_back(std::move(K_data));
     }
 

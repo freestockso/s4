@@ -21,17 +21,25 @@ public:
     {
     }
 
-    void setDirect(dirMode_t dir)
+    inline void setDirect(dirMode_t dir)
     {
         _dir = dir;
     }
 
-    void setAlpha(int alpha)
+    inline void setLineWidth(int w){
+        _line_width = w;
+    }
+
+    inline void setLineStyle(Qt::PenStyle s){
+        _pen_style = s;
+    }
+
+    inline void setAlpha(int alpha)
     {
         _alpha = alpha;
     }
 
-    void setValue(qreal peak_val_w, qreal peak_val_h, qreal radial_index=1.0, qreal axial_index=1.0)
+    inline void setValue(qreal peak_val_w, qreal peak_val_h, qreal radial_index=1.0, qreal axial_index=1.0)
     {
         _val_w = peak_val_w;
         _val_h = peak_val_h;
@@ -39,7 +47,7 @@ public:
         _axial_index = axial_index;
     }
     
-    void setColor(const color_box_t& color_box)
+    inline void setColor(const color_box_t& color_box)
     {
         _color_box = color_box;
     }
@@ -53,7 +61,9 @@ private:
     qreal _val_h;
     qreal _radial_index=1.0;
     qreal _axial_index=1.0;
-    int _alpha = 75;
+    int _alpha = 255 * 0.75;
+    int _line_width = 1;
+    Qt::PenStyle _pen_style = Qt::SolidLine;
 };
 
 

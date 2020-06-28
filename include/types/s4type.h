@@ -155,6 +155,26 @@ enum timeMode_t
 	tUNKNOWN,
 };
 
+////////////
+enum trade_opt_t
+{
+	oSEND_OPEN = 0,
+	oCHANGE_CTS,
+	oABORT_OPEN,
+	oOPEN,
+	oSEND_CLOSE,
+	oCHANGE_OTS,
+	oABORT_CLOSE,
+	oCLOSE,
+	oTAKE,
+	oSTOP,
+	oUNKNOWN_OPT
+};
+std::string trade_opt_t_toString(trade_opt_t t);
+trade_opt_t trade_opt_t_fromString(const std::string & str);
+
+
+////////////
 enum orderType_t {
 	UNKNOW = 0,
 	LIMITED_BUY,

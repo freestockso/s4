@@ -35,7 +35,9 @@
     "db":{
         "root" : "../db",
         "history_broker": "s4_history_tdx_xyzq.db",
-        "history_trade": "s4_history_trade.db"
+        "history_trade": "s4_history_trade.db",
+        "s3_root": "../../s3/db",
+        "s3_history" : "s3orders.db"
     },
     "tdx":{
         "root" : "..\\doc\\tdx_test"

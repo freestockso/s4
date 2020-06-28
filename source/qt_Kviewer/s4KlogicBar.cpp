@@ -7,6 +7,8 @@ namespace QT{
 void KlogicBar_t::mkGroupItems(void)
 {
     if(!_scene) return;
+	_color_positive.body.setAlpha(_alpha);
+	_color_negtive.body.setAlpha(_alpha);
 
     qreal x = _scene->val_w_to_x(_value.seq);
     qreal w = (_scene->getCtx().val_w_pxl() - _line_width) * 0.8;
@@ -94,7 +96,7 @@ void KlogicBarGroup_t::mkGroupItems(void)
         bar->setColor(_color_positive, _color_negtive);
         bar->setType(_type);
         bar->setLineWidth(_line_width);
-        bar->setVal(v);
+        bar->setValue(v);
         bar->mkGroupItems();
         // _scene->addItem(bar);
         addToGroup(bar);

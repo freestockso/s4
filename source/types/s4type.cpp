@@ -113,6 +113,44 @@ const vec_fhps_t* map_fhps_t::getStk(int icode) const
 		return NULL;
 }
 
+
+////////////////
+std::string trade_opt_t_toString(trade_opt_t t)
+{
+	std::string s( 
+		t == oSEND_OPEN ? "oSEND_OPEN" :
+		t == oOPEN ? "oOPEN" :
+		t == oABORT_OPEN ? "oABORT_OPEN" :
+		t == oSEND_CLOSE ? "oSEND_CLOSE" :
+		t == oCLOSE ? "oCLOSE" :
+		t == oABORT_CLOSE ? "oABORT_CLOSE" :
+		t == oTAKE ? "oTAKE" :
+		t == oSTOP ? "oSTOP" :
+		t == oCHANGE_OTS ? "oCHANGE_OTS" :
+		t == oCHANGE_CTS ? "oCHANGE_CTS" :
+		"oUNKNOWN_OPT"
+	);
+	return move(s);
+}
+
+trade_opt_t trade_opt_t_fromString(const std::string & str)
+{
+	if (str == "oSEND_OPEN") return oSEND_OPEN;
+	if (str == "oOPEN") return oOPEN;
+	if (str == "oABORT_OPEN") return oABORT_OPEN;
+	if (str == "oSEND_CLOSE") return oSEND_CLOSE;
+	if (str == "oCLOSE") return oCLOSE;
+	if (str == "oABORT_CLOSE") return oABORT_CLOSE;
+	if (str == "oTAKE") return oTAKE;
+	if (str == "oSTOP") return oSTOP;
+	if (str == "oCHANGE_OTS") return oCHANGE_OTS;
+	if (str == "oCHANGE_CTS") return oCHANGE_CTS;
+	if (str == "oUNKNOWN_OPT") return oUNKNOWN_OPT;
+
+	throw type_Error("trade_opt_t_fromString: illegal str=" + str);
+}
+
+////////////////
 std::string orderTypeStr(orderType_t t)
 {
 	std::string s( 

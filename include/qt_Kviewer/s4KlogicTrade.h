@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qt_Kviewer/s4KlogicItem.h"
+#include "qt_Kviewer/s4Kinstrument_Kline_scene.h"
 
 namespace S4{
 namespace QT{
@@ -9,7 +10,7 @@ namespace QT{
 class KlogicTrade_t : public KlogicItemGroup_t
 {
 public:
-    explicit KlogicTrade_t(Kinstrument_scene *scene):
+    explicit KlogicTrade_t(Kinstrument_Kline_scene* scene):
         KlogicItemGroup_t(scene)
     {
     }
@@ -19,12 +20,12 @@ public:
 
     inline void setLineWidth(int width) { _line_width = width; }
 
-    void setVal(const QList<logicBarData_t>& pointList)
+    inline void setValue(const std::vector<S4::s4_history_trade_t>& history)
     {
-        _valueList = pointList;
+        _history = history;
     }
 
-    void setColor(const color_box_t& color_positive, const color_box_t& color_negtive)
+    inline void setColor(const color_box_t& color_positive, const color_box_t& color_negtive)
     {
         _color_positive = color_positive;
         _color_negtive = color_negtive;
@@ -41,12 +42,24 @@ protected:
         QGraphicsItemGroup::mousePressEvent(event);
     }
 private:
-    KlogicBar_t::barType_t _type = KlogicBar_t::barType_t::BAR_USA;
+    //Kinstrument_Kline_scene* _scene;
 
-    QList<logicBarData_t> _valueList;
+    std::vector<S4::s4_history_trade_t> _history;
     color_box_t _color_positive;
     color_box_t _color_negtive;
-    int _line_width = 1;
+	int _line_width = 2;
+
+	std::set<size_t> _aborted_open;
+	std::set<size_t> _closed_open;
+private:
+	void paint_send_open(size_t trade_i);
+	void paint_abort_open(size_t trade_i);
+	void paint_open(size_t trade_i);
+	void paint_send_close(size_t trade_i);
+	void paint_abort_close(size_t trade_i);
+	void paint_close(size_t trade_i);
+
+    void paint_ts(const s4_history_trade_t& trade);
 };
 
 

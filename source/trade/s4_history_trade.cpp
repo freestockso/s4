@@ -34,4 +34,57 @@ bool history_trade_to_DB(const std::vector<s4_history_trade_t>& history_trade_da
 	return true;
 }
     
+//return false: cannot compare
+static
+bool history_trade_compare_early(const s4_history_trade_t& a, const s4_history_trade_t& b, bool& a_isEarly)
+{
+	if (a.mktCodeStr != b.mktCodeStr){
+		return false;
+	}
+	
+	if (a.time_utcSec < b.time_utcSec){
+		a_isEarly = true;
+		return true;
+	}
+	if (a.time_utcSec > b.time_utcSec){
+		a_isEarly = false;
+		return true;
+	}
+	
+	//time_utcSec == time_utcSec
+	if (a.optType < b.optType){
+		a_isEarly = true;
+		return true;
+	}
+	if (a.optType > b.optType){
+		a_isEarly = false;
+		return true;
+	}
+
+	return false;
+}
+
+//
+void sort_history_trade(std::vector<s4_history_trade_t>& history_trade_data)
+{
+	bool early;
+	for (size_t i=0; i+1< history_trade_data.size(); ++i){
+		for (size_t j=i+1; j< history_trade_data.size(); ++j){
+			if ( history_trade_compare_early(history_trade_data[i], history_trade_data[j], early)){
+				if (!early){
+					std::swap(history_trade_data[i], history_trade_data[j]);
+				}
+			}else{
+				json ji;
+				json jj;
+				s4_history_trade_t::to_json(ji, history_trade_data[i]);
+				s4_history_trade_t::to_json(jj, history_trade_data[j]);
+				LCL_WARN("cannot compare :{:}\nvs\n{:}", ji.dump(4), jj.dump(4));
+			}
+		}
+	}
+}
+
+
+
 } // namespace S4

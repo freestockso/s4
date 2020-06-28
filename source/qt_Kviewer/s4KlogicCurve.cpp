@@ -41,10 +41,10 @@ void KlogicCurve_t::mkGroupItems(void){
         x = paintList[i].x() - _x_min;
         y = paintList[i].y() - _y_min;
 
-        QGraphicsLineItem* uline = new QGraphicsLineItem(preX, preY, x, y);
-        uline->setPen(pen);
-        uline->setZValue(0);
-        addToGroup(uline);
+        QGraphicsLineItem* pLine = new QGraphicsLineItem(preX, preY, x, y);
+        pLine->setPen(pen);
+        pLine->setZValue(0);
+        addToGroup(pLine);
 
         //painter->drawPoint(QPointF(X, Y));
         //painter->drawEllipse(X, Y, 2, 2);

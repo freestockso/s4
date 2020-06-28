@@ -9,7 +9,9 @@
 * Json keep-word: 
     "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
     "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
-    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default.
+    "__assign_enum_fields__": {"field":"enum-type"}, # Assign specal enum-type of field, but not infer automatically as default.
+                              enum-type need have implemented _toSting() & _fromString() functions.
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
@@ -54,6 +56,8 @@ struct glb_conf_ctx_t {
 		std::string root;	//	../db
 		std::string history_broker;	//	s4_history_tdx_xyzq.db
 		std::string history_trade;	//	s4_history_trade.db
+		std::string s3_root;	//	../../s3/db
+		std::string s3_history;	//	s3orders.db
 	};
 	db_t db;
 	struct tdx_t {
@@ -146,6 +150,18 @@ struct glb_conf_ctx_t {
 				ERR("{:} not found in json! e={:}", "history_trade", e.what());
 				throw e;
 			}
+			try{
+				glb_conf_ctx_t_var.db.s3_root = json_var_db.at("s3_root").get<std::string>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "s3_root", e.what());
+				throw e;
+			}
+			try{
+				glb_conf_ctx_t_var.db.s3_history = json_var_db.at("s3_history").get<std::string>();
+			}catch(const std::exception& e){
+				ERR("{:} not found in json! e={:}", "s3_history", e.what());
+				throw e;
+			}
 			const nlohmann::json& json_var_tdx = json_var["tdx"];
 			try{
 				glb_conf_ctx_t_var.tdx.root = json_var_tdx.at("root").get<std::string>();
@@ -211,6 +227,8 @@ struct glb_conf_ctx_t {
 			json_var_db["root"] = glb_conf_ctx_t_var.db.root;
 			json_var_db["history_broker"] = glb_conf_ctx_t_var.db.history_broker;
 			json_var_db["history_trade"] = glb_conf_ctx_t_var.db.history_trade;
+			json_var_db["s3_root"] = glb_conf_ctx_t_var.db.s3_root;
+			json_var_db["s3_history"] = glb_conf_ctx_t_var.db.s3_history;
 			json_var["db"] = json_var_db;
 			nlohmann::json json_var_tdx;
 			json_var_tdx["root"] = glb_conf_ctx_t_var.tdx.root;
@@ -240,7 +258,7 @@ struct glb_conf_ctx_t {
         inline int glb_conf_ctx_t_tester() {
 
             //std::ifstream i("G:/E/work/999_s/s4/./json_template/glb_conf_ctx_t.json");
-            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"network\":{        \"db_viewer_ip\" : \"127.0.0.1\",        \"db_viewer_port\": \"8980\"    },    \"db\":{        \"root\" : \"../db\",        \"history_broker\": \"s4_history_tdx_xyzq.db\",        \"history_trade\": \"s4_history_trade.db\"    },    \"tdx\":{        \"root\" : \"..\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
+            std::string i("{    \"logger\":{        \"__assign_type_fields__\": {             \"level\" : \"spdlog::level::level_enum\",            \"max_file_size_MB\" : \"size_t\",            \"max_files\" : \"size_t\"        },        \"__default_value_fields__\": [            \"enable_console\",            \"enable_file_all\",            \"enable_file_all_pure\",            \"enable_file_err\",            \"enable_file_err_pure\",            \"level\",            \"max_file_size_MB\",            \"max_files\",            \"save_path\",            \"file_preamble\"        ],        \"enable_console\" : true,        \"enable_file_all\": false,        \"enable_file_all_pure\":true,        \"enable_file_err\": false,        \"enable_file_err_pure\":true,        \"level\" : 2,        \"max_file_size_MB\" : 9999,        \"max_files\":10,        \"save_path\":\"./logs\",        \"file_preamble\":\"S4\"    },    \"network\":{        \"db_viewer_ip\" : \"127.0.0.1\",        \"db_viewer_port\": \"8980\"    },    \"db\":{        \"root\" : \"../db\",        \"history_broker\": \"s4_history_tdx_xyzq.db\",        \"history_trade\": \"s4_history_trade.db\",        \"s3_root\": \"../../s3/db\",        \"s3_history\" : \"s3orders.db\"    },    \"tdx\":{        \"root\" : \"..\\doc\\tdx_test\"    },    \"snap\":{        \"DB_list\":[            {                \"bgnDate\":0,                \"endDate\":21000000,                \"path\":\"../db/snap/snap_test.db\"            }        ]    }}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

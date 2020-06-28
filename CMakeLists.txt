@@ -180,7 +180,7 @@ endforeach()
 # message(STATUS "ui_headers_auto = ${ui_headers_auto}")
 
 
-add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES} ${ui_h})
+add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/build;")
 

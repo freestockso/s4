@@ -6,6 +6,7 @@
 #include "common/s4logger.h"
 #include "qt_common/Utils.h"
 #include "qt_Kviewer/s4Kinstrument.h"
+#include "jsonTypes/nw_load_instrument_t.h"
 
 #include <QSplitter>
 #include <QScrollArea>
@@ -150,7 +151,7 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
 #endif // !NDEBUG
 
-	load("sz002810", "", "");
+	load("sz002810", "", "to20200531");
 }
 
 void s4Kviewer::onOpen()
@@ -206,6 +207,11 @@ void s4Kviewer::load(const std::string& stkName, const std::string& stgName, con
 		emit signal_loadOrdres(stkName, stgName, orderTblName, history_trade_data);
 	}
 
+	if (!pInfo) {
+		LCL_WARN("load nothing to show");
+		return;
+	}
+
 	_data_panel.infoReq = infoReq;
 	_data_panel.history = history_trade_data;
 	_data_panel.info = *pInfo;
@@ -215,6 +221,18 @@ void s4Kviewer::load(const std::string& stkName, const std::string& stgName, con
 void s4Kviewer::onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ)
 {
 	LCL_INFO("RecvJson: {:}", pJ->dump(4));
+
+	int command = pJ->at("command").get<int>();
+
+	if (command == 1) {
+		nw_load_instrument_t command_load;
+		nw_load_instrument_t::from_json(*pJ, command_load);
+		load(command_load.mktCode, command_load.stgName, command_load.tableName);
+	}
+	else {
+		LCL_ERR("unknown command = {:}", command);
+	}
+
 }
 
 

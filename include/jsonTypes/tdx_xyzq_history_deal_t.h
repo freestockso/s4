@@ -9,7 +9,9 @@
 * Json keep-word: 
     "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
     "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
-    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default.
+    "__assign_enum_fields__": {"field":"enum-type"}, # Assign specal enum-type of field, but not infer automatically as default.
+                              enum-type need have implemented _toSting() & _fromString() functions.
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen

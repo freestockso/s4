@@ -256,7 +256,7 @@ void Kinstrument_scene::drawTest_curve()
 	curve->setLineStyle(Qt::PenStyle::DashLine);
 	curve->setColor(_colorpalette->curve[0]);
 	curve->setLineWidth(2);
-	curve->setVal(dot);
+	curve->setValue(dot);
 	curve->mkGroupItems();
 	curve->setZValue(SCENE_Z + 2);
 	this->addItem(curve);
@@ -273,7 +273,7 @@ void Kinstrument_scene::drawTest_bar()
 	bar->setColor(_colorpalette->positive_boxes[0], _colorpalette->negtive_boxes[0]);
 	bar->setType(KlogicBar_t::barType_t::BAR_JPN);
 	bar->setLineWidth(2);
-	bar->setVal(dayBar);
+	bar->setValue(dayBar);
 	bar->mkGroupItems();
 	bar->setZValue(SCENE_Z + 1);
 	this->addItem(bar);
@@ -284,7 +284,7 @@ void Kinstrument_scene::drawTest_bar()
 	};
 	KlogicRectGroup_h_t* Rect = new KlogicRectGroup_h_t(this);
 	Rect->setColor(_colorpalette->positive_boxes[1], _colorpalette->negtive_boxes[1]);
-	Rect->setVal(dayVol);
+	Rect->setValue(dayVol);
 	Rect->mkGroupItems();
 	Rect->setZValue(SCENE_Z + 1);
 	this->addItem(Rect);
@@ -296,7 +296,7 @@ void Kinstrument_scene::drawTest_bar()
 	};
 	KlogicRectGroup_w_t* RectW = new KlogicRectGroup_w_t(this);
 	RectW->setColor(_colorpalette->positive_boxes[2], _colorpalette->negtive_boxes[2]);
-	RectW->setVal(dayCyc);
+	RectW->setValue(dayCyc);
 	RectW->mkGroupItems();
 	RectW->setZValue(SCENE_Z + 1);
 	this->addItem(RectW);

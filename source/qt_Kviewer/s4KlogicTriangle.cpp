@@ -56,11 +56,15 @@ void KlogicTriangle_t::mkGroupItems()
     trianglePoints.append(QPointF(x2, y2));
     triangle->setPolygon(trianglePoints);
 
-    QPen pen(_color_box.skin, 1, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 	_color_box.body.setAlpha(_alpha);
     QBrush brush(_color_box.body, Qt::SolidPattern);
     
-    triangle->setPen(pen);
+	if (_line_width > 0){
+   		QPen pen(_color_box.skin, _line_width, _pen_style, Qt::RoundCap, Qt::MiterJoin);
+    	triangle->setPen(pen);
+	}else{
+    	triangle->setPen(QPen(Qt::NoPen));
+	}
     triangle->setBrush(brush);
     addToGroup(triangle);
 }

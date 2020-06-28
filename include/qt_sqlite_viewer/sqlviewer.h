@@ -89,7 +89,7 @@ public:
         case 3: return order.mktCodeStr.c_str();
         case 4: return order.time_utcSec;
         case 5: return order.datetime.c_str();
-        case 6: return order.optType.c_str();
+        case 6: return trade_opt_t_toString((order.optType)).c_str();
         case 7: return order.position.c_str();
         case 8: return order.status.c_str();
         case 9: return order.order_open;

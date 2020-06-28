@@ -9,6 +9,8 @@ namespace QT{
 void KlogicRect_h_t::mkGroupItems(void)
 {
     if(!_scene) return;
+	_color_positive.body.setAlpha(_alpha);
+	_color_negtive.body.setAlpha(_alpha);
 
     qreal x = _scene->val_w_to_x(_value.seq);
 	_x_min  = x - _scene->getCtx().val_w_pxl() * 0.8/2;
@@ -38,7 +40,8 @@ void KlogicRectGroup_h_t::mkGroupItems(void)
     for(const auto& v : _valueList){
         KlogicRect_h_t* rect = new KlogicRect_h_t(_scene);
         rect->setColor(_color_positive, _color_negtive);
-        rect->setVal(v);
+        rect->setValue(v);
+        rect->setAlpha(_alpha);
         rect->mkGroupItems();
         addToGroup(rect);
     }
@@ -48,6 +51,8 @@ void KlogicRectGroup_h_t::mkGroupItems(void)
 void KlogicRect_w_t::mkGroupItems(void)
 {
     if(!_scene) return;
+	_color_positive.body.setAlpha(_alpha);
+	_color_negtive.body.setAlpha(_alpha);
 
     //qreal y = _scene->val_h_to_y(_value.val_h);
     qreal y_min = _scene->val_h_to_y(_value.val_h + _value.val_h_scope / 2);
@@ -78,7 +83,8 @@ void KlogicRectGroup_w_t::mkGroupItems(void)
     for(const auto& v : _valueList){
         KlogicRect_w_t* rect = new KlogicRect_w_t(_scene);
         rect->setColor(_color_positive, _color_negtive);
-        rect->setVal(v);
+        rect->setValue(v);
+        rect->setAlpha(_alpha);
         rect->mkGroupItems();
         addToGroup(rect);
     }

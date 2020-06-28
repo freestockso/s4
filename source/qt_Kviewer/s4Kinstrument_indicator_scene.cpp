@@ -160,7 +160,7 @@ void Kinstrument_indicator_scene::paint_volumn()
 
 	KlogicRectGroup_h_t* Rect = new KlogicRectGroup_h_t(this);
 	Rect->setColor(_colorpalette->positive_boxes[1], _colorpalette->negtive_boxes[1]);
-	Rect->setVal(vols);
+	Rect->setValue(vols);
 	Rect->mkGroupItems();
 	Rect->setZValue(BAR_Z);
 	this->addItem(Rect);

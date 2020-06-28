@@ -9,7 +9,9 @@
 * Json keep-word: 
     "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
     "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
-    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_type_fields__": {"field":"cpp-type"}, # Assign specal cpp-type of field, but not infer automatically as default.
+    "__assign_enum_fields__": {"field":"enum-type"}, # Assign specal enum-type of field, but not infer automatically as default.
+                              enum-type need have implemented _toSting() & _fromString() functions.
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
@@ -42,7 +44,7 @@ struct s4_history_trade_t {
 	time_utcSec_t time_utcSec;	//	123
 	std::string datetime;	//	2018_04_26__00_00_00
 	//current option of id: open / change_take / change_stop / close / change_close / abort
-	std::string optType;	//	open
+	trade_opt_t optType = trade_opt_t_fromString("oUNKNOWN_OPT");
 	//long as stock only for now
 	std::string position;	//	long
 	//current status of id: new / opened / closed / aborted
@@ -103,7 +105,7 @@ struct s4_history_trade_t {
 				throw e;
 			}
 			try{
-				s4_history_trade_t_var.optType = json_var.at("optType").get<std::string>();
+				s4_history_trade_t_var.optType = trade_opt_t_fromString(json_var.at("optType").get<std::string>());
 			}catch(const std::exception& e){
 				ERR("{:} not found in json! e={:}", "optType", e.what());
 				throw e;
@@ -219,7 +221,7 @@ struct s4_history_trade_t {
 			json_var["mktCodeStr"] = s4_history_trade_t_var.mktCodeStr;
 			json_var["time_utcSec"] = s4_history_trade_t_var.time_utcSec;
 			json_var["datetime"] = s4_history_trade_t_var.datetime;
-			json_var["optType"] = s4_history_trade_t_var.optType;
+			json_var["optType"] = trade_opt_t_toString(s4_history_trade_t_var.optType);
 			json_var["position"] = s4_history_trade_t_var.position;
 			json_var["status"] = s4_history_trade_t_var.status;
 			json_var["order_open"] = s4_history_trade_t_var.order_open;
@@ -287,7 +289,7 @@ struct s4_history_trade_t {
         inline int s4_history_trade_t_tester() {
 
             //std::ifstream i("G:/E/work/999_s/s4/./json_template/s4_history_trade_t.json");
-            std::string i("{    \"__sqlite_capable__\" : true,    \"__sqlite_primary__\" : \"id, time_utcSec, status\",    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"id\":\"int64_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"order_open\":\"price_t\",         \"order_take\":\"price_t\",         \"order_stop\":\"price_t\",         \"order_close\":\"price_t\",         \"order_vol\":\"vol_share_t\",                 \"deal_open\":\"price_t\",         \"deal_close\":\"price_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amt\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"date\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"mktCodeStr\":\"sz000001\",    \"__comment__2\":\"/// name, 平安银行 is not good for sqliteDB\",    \"time_utcSec\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"open\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"order_open\":-1,    \"order_take\":-1,    \"order_stop\":-1,    \"order_close\":-1,    \"order_vol\":-1,    \"deal_open\": -1,     \"deal_close\": -1,         \"__comment__6\":\"not in use for now\",    \"deal_vol\": -1,     \"deal_amt\": -1.0,     \"commission\":0.0,    \"stamp_duty\":0.0,    \"transfer_fee\":0.0,    \"other_fees\":0.0,    \"remarks\":\"起始配号:226168906\"}");
+            std::string i("{    \"__sqlite_capable__\" : true,    \"__sqlite_primary__\" : \"id, time_utcSec, status\",    \"__assign_type_fields__\": {        \"date\":\"time_date_t\",         \"id\":\"int64_t\",         \"time_utcSec\":\"time_utcSec_t\",         \"order_open\":\"price_t\",         \"order_take\":\"price_t\",         \"order_stop\":\"price_t\",         \"order_close\":\"price_t\",         \"order_vol\":\"vol_share_t\",                 \"deal_open\":\"price_t\",         \"deal_close\":\"price_t\",         \"deal_vol\":\"vol_share_t\",         \"deal_amt\":\"amount_t\",         \"commission\":\"amount_t\",         \"stamp_duty\":\"amount_t\",         \"transfer_fee\":\"amount_t\",         \"other_fees\":\"amount_t\"    },    \"__assign_enum_fields__\": {        \"optType\" : \"trade_opt_t\"    },    \"__comment__1\":\"id through open-close\",    \"id\":0,    \"date\":0,    \"__comment__0\":\"strategy name\",    \"stgName\": \"tdx_xyzq\",    \"mktCodeStr\":\"sz000001\",    \"__comment__2\":\"/// name, 平安银行 is not good for sqliteDB\",    \"time_utcSec\": 123,    \"datetime\": \"2018_04_26__00_00_00\",    \"__comment__3\":\"current option of id: open / change_take / change_stop / close / change_close / abort\",    \"optType\":\"oUNKNOWN_OPT\",    \"__comment__4\":\"long as stock only for now\",    \"position\": \"long\",    \"__comment__5\":\"current status of id: new / opened / closed / aborted\",    \"status\":\"new\",    \"order_open\":-1,    \"order_take\":-1,    \"order_stop\":-1,    \"order_close\":-1,    \"order_vol\":-1,    \"deal_open\": -1,     \"deal_close\": -1,         \"__comment__6\":\"not in use for now\",    \"deal_vol\": -1,     \"deal_amt\": -1.0,     \"commission\":0.0,    \"stamp_duty\":0.0,    \"transfer_fee\":0.0,    \"other_fees\":0.0,    \"remarks\":\"起始配号:226168906\"}");
             nlohmann::json json_var;
             //i >> json_var; //from file
             json_var = nlohmann::json::parse(i);  //from string

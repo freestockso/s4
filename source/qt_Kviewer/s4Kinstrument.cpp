@@ -30,7 +30,7 @@ Kinstrument::Kinstrument(QWidget *parent) :
     
 	//网格分割
 	QGridLayout *pLayout = new QGridLayout();
-	pLayout->addWidget(_K_tab, 0, 0, 4, 6);		//3x6 row x col
+	pLayout->addWidget(_K_tab, 0, 0, 4, 6);			//3x6 row x col
 	pLayout->addWidget(_cyc_tab, 0, 6, 4, 1);		//3x1
 	pLayout->addWidget(_indicator_tab, 4, 0, 2, 6);	//1x6
 	pLayout->addWidget(_basic_tab, 4, 6, 2, 1);		//1x1

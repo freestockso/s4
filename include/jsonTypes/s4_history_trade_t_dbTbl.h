@@ -9,7 +9,9 @@
 * Json keep-word: 
     "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
     "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
-    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default.
+    "__assign_enum_fields__": {{"field":"enum-type"}}, # Assign specal enum-type of field, but not infer automatically as default.
+                              enum-type need have implemented _toSting() & _fromString() functions.
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
@@ -49,30 +51,29 @@ public:
     virtual void bind_query(SQLite::Statement& query, const std::vector<struct s4_history_trade_t>& data, size_t nb) override
     {
         const struct s4_history_trade_t & K_data = data[nb];
-        SQLite::bind(query,
-			K_data.id,
-			K_data.date,
-			K_data.stgName,
-			K_data.mktCodeStr,
-			K_data.time_utcSec,
-			K_data.datetime,
-			K_data.optType,
-			K_data.position,
-			K_data.status,
-			K_data.order_open,
-			K_data.order_take,
-			K_data.order_stop,
-			K_data.order_close,
-			K_data.order_vol,
-			K_data.deal_open,
-			K_data.deal_close,
-			K_data.deal_vol,
-			K_data.deal_amt,
-			K_data.commission,
-			K_data.stamp_duty,
-			K_data.transfer_fee,
-			K_data.other_fees,
-			K_data.remarks);
+        query.bind(1, K_data.id);
+		query.bind(2, K_data.date);
+		query.bind(3, K_data.stgName);
+		query.bind(4, K_data.mktCodeStr);
+		query.bind(5, K_data.time_utcSec);
+		query.bind(6, K_data.datetime);
+		query.bind(7, trade_opt_t_toString(K_data.optType));
+		query.bind(8, K_data.position);
+		query.bind(9, K_data.status);
+		query.bind(10, K_data.order_open);
+		query.bind(11, K_data.order_take);
+		query.bind(12, K_data.order_stop);
+		query.bind(13, K_data.order_close);
+		query.bind(14, K_data.order_vol);
+		query.bind(15, K_data.deal_open);
+		query.bind(16, K_data.deal_close);
+		query.bind(17, K_data.deal_vol);
+		query.bind(18, K_data.deal_amt);
+		query.bind(19, K_data.commission);
+		query.bind(20, K_data.stamp_duty);
+		query.bind(21, K_data.transfer_fee);
+		query.bind(22, K_data.other_fees);
+		query.bind(23, K_data.remarks);
     }
 
     //warning: not clear data inside, but append DB.data to it
@@ -81,13 +82,13 @@ public:
         struct s4_history_trade_t K_data;
         K_data.id = (int64_t)query.getColumn(0).getInt64();
 		K_data.date = (time_date_t)query.getColumn(1).getInt64();
-		K_data.stgName = query.getColumn(2).getString();
-		K_data.mktCodeStr = query.getColumn(3).getString();
+		K_data.stgName = (std::string)query.getColumn(2).getString();
+		K_data.mktCodeStr = (std::string)query.getColumn(3).getString();
 		K_data.time_utcSec = (time_utcSec_t)query.getColumn(4).getInt64();
-		K_data.datetime = query.getColumn(5).getString();
-		K_data.optType = query.getColumn(6).getString();
-		K_data.position = query.getColumn(7).getString();
-		K_data.status = query.getColumn(8).getString();
+		K_data.datetime = (std::string)query.getColumn(5).getString();
+		K_data.optType = trade_opt_t_fromString(query.getColumn(6).getString());
+		K_data.position = (std::string)query.getColumn(7).getString();
+		K_data.status = (std::string)query.getColumn(8).getString();
 		K_data.order_open = (price_t)query.getColumn(9).getInt64();
 		K_data.order_take = (price_t)query.getColumn(10).getInt64();
 		K_data.order_stop = (price_t)query.getColumn(11).getInt64();
@@ -101,7 +102,7 @@ public:
 		K_data.stamp_duty = (amount_t)query.getColumn(19).getDouble();
 		K_data.transfer_fee = (amount_t)query.getColumn(20).getDouble();
 		K_data.other_fees = (amount_t)query.getColumn(21).getDouble();
-		K_data.remarks = query.getColumn(22).getString();
+		K_data.remarks = (std::string)query.getColumn(22).getString();
         data.push_back(std::move(K_data));
     }
 

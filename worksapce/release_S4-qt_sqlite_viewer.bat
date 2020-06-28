@@ -1,0 +1,1 @@
+..\build\Release\S4-qt_sqlite_viewer.exe

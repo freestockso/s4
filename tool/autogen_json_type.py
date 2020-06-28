@@ -15,7 +15,9 @@ cpp_headers = \
 * Json keep-word: 
     "__default_value_fields__": [], # Take value in .json file as the default value of cpp variable
     "__optional_fields__": [], # Not require to present to .json file, but always in cpp struct
-    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default
+    "__assign_type_fields__": {{"field":"cpp-type"}}, # Assign specal cpp-type of field, but not infer automatically as default.
+    "__assign_enum_fields__": {{"field":"enum-type"}}, # Assign specal enum-type of field, but not infer automatically as default.
+                              enum-type need have implemented _toSting() & _fromString() functions.
     "__assign_set_lists__": [], # Take list in .json file as std::set<>, but not std::vector<> as default
     "__comment__xxx":"", # Add comment line
     "__sqlite_capable__":"", # enable sqlite tableIO autogen
@@ -42,6 +44,7 @@ keep_words = [
     '__default_value_fields__', 
     '__optional_fields__', 
     '__assign_type_fields__', 
+    '__assign_enum_fields__',
     '__assign_set_lists__', 
     '__sqlite_capable__', 
     '__sqlite_primary__'
@@ -87,6 +90,12 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
     else:
         __assign_type_fields__ = {}
 
+    if '__assign_enum_fields__' in json_dict:
+        __assign_enum_fields__ = json_dict['__assign_enum_fields__']
+        print("use __assign_enum_fields__ = {}".format(__assign_enum_fields__))
+    else:
+        __assign_enum_fields__ = {}
+
     if '__assign_set_lists__' in json_dict:
         __assign_set_lists__ = json_dict['__assign_set_lists__']
         print("use __assign_set_lists__ = {}".format(__assign_set_lists__))
@@ -115,16 +124,25 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
             if key_name in __assign_type_fields__:
                 key_type = __assign_type_fields__[key_name]
                 print("use assigned type %s = %s" % (key_name, key_type) )
+            elif key_name in __assign_enum_fields__:
+                key_type = __assign_enum_fields__[key_name]
+                print("use assigned enum %s = %s" % (key_name, key_type) )
             else:
                 key_type = determin_value_type(key_value)
             
             if key_name in __default_value_fields__:
                 main_str.append("\t{} {} = ({}){};".format(key_type, key_name, key_type, determin_default_value(key_value)))
+            elif key_name in __assign_enum_fields__:
+                main_str.append("\t{} {} = {}_fromString({});".format(key_type, key_name, key_type, determin_default_value(key_value)))
             else:
                 main_str.append("\t{} {};\t//\t{}".format(key_type, key_name, key_value))
 
             from_str.append('try{')
-            from_str.append('\t{0}.{2} = {1}{4}.at("{2}").get<{3}>();'.format(cpp_vari, json_vari, key_name, key_type, json_vari_suffix))
+            if key_name in __assign_enum_fields__:
+                from_str.append('\t{0}.{2} = {3}_fromString({1}{4}.at("{2}").get<std::string>());'.format(cpp_vari, json_vari, key_name, key_type, json_vari_suffix))
+            else:
+                from_str.append('\t{0}.{2} = {1}{4}.at("{2}").get<{3}>();'.format(cpp_vari, json_vari, key_name, key_type, json_vari_suffix))
+
             if key_name not in __optional_fields__:
                 from_str.append("}catch(const std::exception& e){")
                 from_str.append('\tERR("{{:}} not found in json! e={{:}}", "{}", e.what());'.format(key_name))
@@ -133,7 +151,10 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
                 from_str.append("}catch(...){")
             from_str.append("}")
 
-            to_str.append('{}["{}"] = {}.{};'.format(json_vari, key_name, cpp_vari, key_name))
+            if key_name in __assign_enum_fields__:
+                to_str.append('{}["{}"] = {}_toString({}.{});'.format(json_vari, key_name, key_type, cpp_vari, key_name))
+            else:
+                to_str.append('{}["{}"] = {}.{};'.format(json_vari, key_name, cpp_vari, key_name))
         elif isinstance(key_value, dict):
             sub_json_vari = json_vari+"_"+key_name
             sub_type = key_name+"_t"
@@ -160,6 +181,9 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
                     if key_name in __assign_type_fields__:
                         key_type = __assign_type_fields__[key_name]
                         print("use assigned type %s = std::vector<%s>" % (key_name, key_type) )
+                    elif key_name in __assign_enum_fields__:
+                        key_type = __assign_enum_fields__[key_name]
+                        print("use assigned enum %s = %s" % (key_name, key_type) )
                     else:
                         key_type = determin_value_type(key_value)
 
@@ -172,10 +196,16 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
                     sub_str.append('try{')
                     sub_str.append('\tconst nlohmann::json& {} = {}{}.at("{}");'.format(sub_json_vari, json_vari, json_vari_suffix, key_name))
                     sub_str.append('\tfor(auto& {0}_x: {0}.items()){{'.format(sub_json_vari))
-                    if key_name in __assign_set_lists__:
-                        sub_str.append('\t\t{}.{}.insert({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
+                    if key_name in __assign_enum_fields__:
+                        if key_name in __assign_set_lists__:
+                            sub_str.append('\t\t{}.{}.insert({}_fromString({}_x.value().get<std::string>()));'.format(cpp_vari, key_name, key_type, sub_json_vari))
+                        else:
+                            sub_str.append('\t\t{}.{}.push_back({}_fromString({}_x.value().get<std::string>()));'.format(cpp_vari, key_name, key_type, sub_json_vari))
                     else:
-                        sub_str.append('\t\t{}.{}.push_back({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
+                        if key_name in __assign_set_lists__:
+                            sub_str.append('\t\t{}.{}.insert({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
+                        else:
+                            sub_str.append('\t\t{}.{}.push_back({}_x.value().get<{}>());'.format(cpp_vari, key_name, sub_json_vari, key_type))
                     sub_str.append('\t}')
                     if key_name not in __optional_fields__:
                         sub_str.append("}catch(const std::exception& e){")
@@ -242,11 +272,6 @@ def dict_to_struct(cpp_vari, json_vari, type_name, json_dict, namespace_list = [
 
 def get_eq(type_name, json_dict):
     cols_list = []
-    if '__assign_type_fields__' in json_dict:
-        __assign_type_fields__ = json_dict['__assign_type_fields__']
-        print("use __assign_type_fields__ = {}".format(__assign_type_fields__))
-    else:
-        __assign_type_fields__ = {}
         
     for key_name in json_dict:
         if key_name in keep_words or key_name.find("__comment__")==0:

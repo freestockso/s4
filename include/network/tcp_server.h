@@ -280,6 +280,7 @@ private:
         {
           if (!ec)
           {
+            std::cout << "accept" << std::endl;
             std::make_shared<chat_session>(std::move(socket), room_)->start();
           }
 

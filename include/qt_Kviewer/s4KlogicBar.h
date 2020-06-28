@@ -42,7 +42,7 @@ public:
 
     inline void setLineWidth(int width) { _line_width = width; }
 
-    void setVal(const logicBarData_t& pointList)
+    void setValue(const logicBarData_t& pointList)
     {
         _value = pointList;
     }
@@ -51,6 +51,11 @@ public:
     {
         _color_positive = color_positive;
         _color_negtive = color_negtive;
+    }
+
+    inline void setAlpha(int alpha)
+    {
+        _alpha = alpha;
     }
 
     virtual void mkGroupItems();
@@ -83,6 +88,7 @@ private:
     color_box_t _color_positive;
     color_box_t _color_negtive;
     int _line_width = 1;
+    int _alpha = 255;
 
     qreal _x_max, _x_min;   //in scene
 	qreal _y_o, _y_h, _y_l, _y_c;
@@ -110,7 +116,7 @@ public:
 
     inline void setLineWidth(int width) { _line_width = width; }
 
-    void setVal(const QList<logicBarData_t>& pointList)
+    void setValue(const QList<logicBarData_t>& pointList)
     {
         _valueList = pointList;
     }

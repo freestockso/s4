@@ -28,7 +28,7 @@ public:
     inline void setLineWidth(int width) { _line_width = width; }
 
     //point.x: logic value in w; point.y: logic value in h
-    void setVal(const QList<QPointF>& pointList, bool replace = true)
+    inline void setValue(const QList<QPointF>& pointList, bool replace = true)
     {
         if (replace){
             _valueList = pointList;
@@ -38,7 +38,7 @@ public:
     }
 
     //hlist: logic value in h
-    void setVal(const QList<qreal>& hlist, bool replace = true) 
+    void setValue(const QList<qreal>& hlist, bool replace = true) 
     {
         if (replace){
             _valueList.clear();
