@@ -112,10 +112,12 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
 	resize(1200, 800);
 
+	_data_if = std::make_shared<S4::QT::s4qt_data_if>();
+
 	connect(this, SIGNAL(signal_getInfo(const std::string &, const struct S4::stkInfoReq_t&, class S4::stkInfo_t*&)),
-		&_data_if, SLOT(getInfo(const std::string &, const struct S4::stkInfoReq_t&, class S4::stkInfo_t*&)));
+		_data_if.get(), SLOT(getInfo(const std::string &, const struct S4::stkInfoReq_t&, class S4::stkInfo_t*&)));
 	connect(this, SIGNAL(signal_loadOrdres(const std::string &, const std::string &, const std::string &, std::vector<S4::s4_history_trade_t>&)),
-		&_data_if, SLOT(loadOrdres(const std::string &, const std::string &, const std::string &, std::vector<S4::s4_history_trade_t>&)));
+		_data_if.get(), SLOT(loadOrdres(const std::string &, const std::string &, const std::string &, std::vector<S4::s4_history_trade_t>&)));
 
 
 #ifndef NDEBUG
@@ -169,6 +171,13 @@ void s4Kviewer::onOpen()
 		return;
 	}
 	ui->statusbar->showMessage(path);
+
+	_data_if = std::make_shared<S4::QT::s4qt_data_if>();
+
+	connect(this, SIGNAL(signal_getInfo(const std::string&, const struct S4::stkInfoReq_t&, class S4::stkInfo_t*&)),
+		_data_if.get(), SLOT(getInfo(const std::string&, const struct S4::stkInfoReq_t&, class S4::stkInfo_t*&)));
+	connect(this, SIGNAL(signal_loadOrdres(const std::string&, const std::string&, const std::string&, std::vector<S4::s4_history_trade_t>&)),
+		_data_if.get(), SLOT(loadOrdres(const std::string&, const std::string&, const std::string&, std::vector<S4::s4_history_trade_t>&)));
 
 	onTcpSetup();
 

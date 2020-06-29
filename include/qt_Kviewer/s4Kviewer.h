@@ -45,7 +45,7 @@ private:
 
 	//cliparser* pCLI;
 	data_panel_t _data_panel;
-	S4::QT::s4qt_data_if _data_if;
+	std::shared_ptr<S4::QT::s4qt_data_if> _data_if;
 
 	std::shared_ptr<qt_tcp_json_client> _pTcp_json_client;
 
