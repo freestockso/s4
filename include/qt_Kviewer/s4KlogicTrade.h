@@ -51,15 +51,19 @@ private:
 
 	std::set<size_t> _aborted_open;
 	std::set<size_t> _closed_open;
+    bool _found_open;
+    bool _found_close;
 private:
 	void paint_send_open(size_t trade_i);
 	void paint_abort_open(size_t trade_i);
 	void paint_open(size_t trade_i);
 	void paint_send_close(size_t trade_i);
 	void paint_abort_close(size_t trade_i);
-	void paint_close(size_t trade_i);
+	void paint_close(size_t trade_i, trade_opt_t type);
 
     void paint_ts(const s4_history_trade_t& trade);
+
+    void paint_oc_link(qreal open_val_w, qreal deal_open, qreal close_val_w, qreal deal_close);
 };
 
 
