@@ -16,6 +16,8 @@ Kinstrument::Kinstrument(QWidget *parent) :
 	connect(_K_tab, SIGNAL(paint_indicator(Kinstrument_indicator_scene::ind_type, timeMode_t)),
 		_indicator_tab, SLOT(paint(Kinstrument_indicator_scene::ind_type, timeMode_t)));
 
+	connect(this, SIGNAL(signal_next_trade(int)), _K_tab, SLOT(slot_next_trade(int)));
+
     _cyc_tab = new QTabWidget(this);
 	Kinstrument_scene* cyc_scene = new Kinstrument_scene(this);
 	Kinstrument_view* cyc_view = new Kinstrument_view(cyc_scene, this);

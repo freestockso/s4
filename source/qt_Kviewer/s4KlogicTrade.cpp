@@ -63,7 +63,9 @@ void KlogicTrade_t::mkGroupItems(void)
 		case trade_opt_t::oABORT_CLOSE:
 			paint_abort_close(i);
 			break;
-		case trade_opt_t::oCLOSE || trade_opt_t::oTAKE || trade_opt_t::oSTOP:
+		case trade_opt_t::oTAKE:	/**/
+		case trade_opt_t::oSTOP:
+		case trade_opt_t::oCLOSE:
 			paint_close(i, _history[i].optType);
 			break;
         default:

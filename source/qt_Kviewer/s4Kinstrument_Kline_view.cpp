@@ -4,7 +4,7 @@
 namespace S4{
 namespace QT{
 
-Kinstrument_Kline_view::Kinstrument_Kline_view(Kinstrument_scene*scene, QWidget *parent):
+Kinstrument_Kline_view::Kinstrument_Kline_view(Kinstrument_Kline_scene* scene, QWidget *parent):
     Kinstrument_view(scene, parent)
 {
 
@@ -44,6 +44,32 @@ void Kinstrument_Kline_view::paint(void){
     //paintGridLabels();
     //onViewChange();
     //paintCrosshair();
+}
+
+void Kinstrument_Kline_view::slot_next_trade(int next)
+{
+    static int _seq = 0;
+
+    QPointF trad_valPos;
+    if (!_scene || !((Kinstrument_Kline_scene*)_scene)->get_trade_valPos(_seq, trad_valPos))
+        return;
+
+	qreal scene_x = _scene->val_w_to_x(trad_valPos.x());
+	qreal scene_y = _scene->val_h_to_y(trad_valPos.y());
+
+	centerOn(scene_x, scene_y);
+    onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>(scene_x, scene_y);
+	emit signalViewEvent(e_center);
+
+    //TODO: jump more scope?
+    if (next >= 0) {
+        _seq++;
+    }
+    else {
+        _seq--;
+    }
+    
 }
 
 

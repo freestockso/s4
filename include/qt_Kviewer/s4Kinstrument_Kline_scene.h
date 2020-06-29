@@ -28,6 +28,10 @@ public:
     virtual QString x_to_label_w(qreal x) const override;
 
     virtual QString y_to_label_h(qreal y) const override;
+
+    virtual bool get_trade_valPos(int seq, QPointF& val) const;
+
+	virtual qreal label_w_to_best_val_h(uint64_t l) const;
 private:
     std::map<uint64_t, int> _label_map_w;
     std::map<int, uint64_t> _w_map_label;
@@ -37,7 +41,7 @@ private:
 	KCtx_t _KCtx;
 	std::shared_ptr<data_panel_t> _data_panel;
 private:
-	std::shared_ptr<infKQ_t> check_data(void);
+	std::shared_ptr<infKQ_t> check_data(void) const;
 
     void calcCtx(void);
 

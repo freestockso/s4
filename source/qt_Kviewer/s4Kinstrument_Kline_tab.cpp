@@ -11,7 +11,8 @@ Kinstrument_Kline_tab::Kinstrument_Kline_tab(QWidget *parent):
 
 
 void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_panel){
-    _data_panel = data_panel;
+	_data_panel = data_panel;
+	_timeMode = tDAY;	//TODO: use to switch tab
     //day
     if (data_panel->info.pDayKQ && data_panel->info.pDayKQ->size()){
         Kinstrument_Kline_scene* _K_scene = new Kinstrument_Kline_scene(this);
@@ -22,11 +23,15 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
         _K_view->setCtx(data_panel->info.pDayKQ);
         _K_view->paint();
         int i = addTab(_K_view, "day");
-        setCurrentIndex(i);
-        _timeMode = tDAY;
+		setCurrentIndex(i);
+
+		//TODO:connet when day is active-tab only.
+		connect(this, SIGNAL(signal_next_trade(int)), _K_view, SLOT(slot_next_trade(int)));
+
 
         emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_VOL , timeMode_t::tDAY );
 		connect(_K_view, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), this, SLOT(slotViewEvent_day(std::shared_ptr<view_event>)));
+
     }
 }
 

@@ -76,6 +76,15 @@ qreal Kinstrument_Kline_scene::label_w_to_val_w(uint64_t l) const
     return _label_map_w.end()->second;
 }
 
+qreal Kinstrument_Kline_scene::label_w_to_best_val_h(uint64_t l) const
+{
+	const std::shared_ptr<infKQ_t> _pInfoKQ = check_data();
+	if (!_pInfoKQ)
+		return (_ctx.val_h_max() + _ctx.val_h_min()) / 2;
+
+    return _pInfoKQ->getLastInfo(l)->close_fq();
+}
+
 QString Kinstrument_Kline_scene::x_to_label_w(qreal x) const 
 {
     int val_w = int(x_to_val_w(x) + 0.5);
@@ -106,8 +115,11 @@ QString Kinstrument_Kline_scene::y_to_label_h(qreal y) const
 }
 
 
-std::shared_ptr<infKQ_t> Kinstrument_Kline_scene::check_data(void)
+std::shared_ptr<infKQ_t> Kinstrument_Kline_scene::check_data(void) const
 {
+    if (!_data_panel)
+        return nullptr;
+
 	std::shared_ptr<infKQ_t> pInfoKQ;
 	if (_KCtx.timeMode == tDAY) {
 		pInfoKQ = _data_panel->info.pDayKQ;
@@ -264,6 +276,28 @@ void Kinstrument_Kline_scene::paint_trade()
     trade_group->setZValue(TRADE_Z);
 	this->addItem(trade_group);
 
+}
+
+bool Kinstrument_Kline_scene::get_trade_valPos(int seq, QPointF& val) const
+{
+    if (!_data_panel->history.size())
+        return false;
+
+    size_t nb;
+    if (seq >= 0) {
+        nb = seq % _data_panel->history.size();
+    }
+    else {
+        nb = (-seq) % _data_panel->history.size();
+        if (nb != 0)
+            nb = _data_panel->history.size() - nb;
+
+    }
+
+    val.setX(label_w_to_val_w(_data_panel->history[nb].time_utcSec));
+    val.setY(label_w_to_best_val_h(_data_panel->history[nb].time_utcSec));
+    
+    return true;
 }
 
 } // namespace QT

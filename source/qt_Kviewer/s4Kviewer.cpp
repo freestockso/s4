@@ -98,9 +98,14 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
 	scrollArea->resize(1200, 800);
 
-	button = make_shared<QPushButton>(scrollArea);
-	button->setGeometry(QRect(50, 50, 25, 25));	// x, y, w, h
-	button->setText("+");
+	button_last_trade = new QPushButton(scrollArea);
+	button_last_trade->setGeometry(QRect(50, 50, 25, 25));	// x, y, w, h
+	button_last_trade->setText("<");
+	connect(button_last_trade, SIGNAL(pressed(void)), this, SLOT(on_button_last_trade(void)));
+	button_next_trade = new QPushButton(scrollArea);
+	button_next_trade->setGeometry(QRect(75, 50, 25, 25));	// x, y, w, h
+	button_next_trade->setText(">");
+	connect(button_next_trade, SIGNAL(pressed(void)), this, SLOT(on_button_next_trade(void)));
 
     //QHBoxLayout *layout = new QHBoxLayout(this);
     //layout->addWidget(scrollArea);
@@ -225,6 +230,16 @@ void s4Kviewer::load(const std::string& stkName, const std::string& stgName, con
 	_data_panel.history = history_trade_data;
 	_data_panel.info = *pInfo;
 	showData();
+}
+
+void s4Kviewer::on_button_next_trade(void)
+{
+	_instrument_tab->slot_next_trade(1);
+}
+
+void s4Kviewer::on_button_last_trade(void)
+{
+	_instrument_tab->slot_next_trade(-1);
 }
 
 void s4Kviewer::onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ)
