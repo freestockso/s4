@@ -25,16 +25,17 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
         int i = addTab(_K_view, "day");
 		setCurrentIndex(i);
 
-		//TODO:connet when day is active-tab only.
-		connect(this, SIGNAL(signal_next_trade(int)), _K_view, SLOT(slot_next_trade(int)));
-
-
         emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_VOL , timeMode_t::tDAY );
 		connect(_K_view, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), this, SLOT(slotViewEvent_day(std::shared_ptr<view_event>)));
 
     }
 }
 
+void Kinstrument_Kline_tab::slot_next_trade(int seq)
+{
+	Kinstrument_Kline_view* _K_view = (Kinstrument_Kline_view*)currentWidget();
+	_K_view->slot_next_trade(seq);
+}
 
 void Kinstrument_Kline_tab::slotScaleChanged_day(qreal x_scale, qreal y_scale)
 {

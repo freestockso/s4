@@ -25,18 +25,14 @@ public:
         K->setInstrument(data_panel);
         int i = addTab(K, data_panel.info.name().c_str());
         setCurrentIndex(i);
-
-		//TODO:connet when K is active-tab only.
-		connect(this, SIGNAL(signal_next_trade(int)), K, SLOT(slot_next_trade(int)));
 	}
-signals:
-	void signal_next_trade(int seq);
 
 public slots:
 	//seq >=0: next; <0: last
 	void slot_next_trade(int seq)
 	{
-		emit signal_next_trade(seq);
+		Kinstrument* K = (Kinstrument*)currentWidget();
+        K->slot_next_trade(seq);
 	}
 
 };

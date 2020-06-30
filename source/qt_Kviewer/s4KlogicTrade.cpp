@@ -294,6 +294,7 @@ void KlogicTrade_t::paint_oc_link(qreal open_val_w, qreal deal_open, qreal close
 	rec_scop.val_h_scope = _scene->getCtx().val_h_max() - _scene->getCtx().val_h_min();
 	rec_scop.val_lf = open_val_w;
 	rec_scop.val_rt = close_val_w;
+	rec_scop.positive = deal_open <= deal_close;
 	KlogicRect_w_t* rect = new KlogicRect_w_t(_scene);
 	rect->setValue(rec_scop);
 	rect->setColor(_color_positive, _color_negtive);

@@ -1,8 +1,11 @@
 #include "qt_Kviewer/s4KlogicBar.h"
 #include "qt_Kviewer/s4Kinstrument_scene.h"
+#include "types/s4type_precision.h"
 
 namespace S4{
 namespace QT{
+
+#define BAR_LABEL_Z 100
 
 void KlogicBar_t::mkGroupItems(void)
 {
@@ -21,11 +24,12 @@ void KlogicBar_t::mkGroupItems(void)
 
     QPen* pen;
     QPen* pen_skin;
+    QPen* pen_avg;
 	QBrush* brush;
 	qreal y_oc_max, y_oc_min;
     y_oc_max = std::max(_y_c, _y_o);
     y_oc_min = std::min(_y_c, _y_o);
-	if(_value.C>=_value.lastC){ //rise
+	if(_value.C>=_value.O){ //rise
 		pen = new QPen(_color_positive.body, _line_width, Qt::SolidLine , Qt::FlatCap, Qt::MiterJoin);
 		brush = new QBrush(_color_positive.body, Qt::SolidPattern);
         pen_skin = new QPen(_color_positive.skin, _line_width, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
@@ -65,17 +69,51 @@ void KlogicBar_t::mkGroupItems(void)
         addToGroup(rline);
     }
 
+    if (_value.Avg > 0) {
+		qreal y_avg = _scene->val_h_to_y(_value.Avg);
+		if (_value.C < _value.lastC) { //rise
+			pen_avg = new QPen(_color_positive.body, 0.75, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+		}
+		else {
+            pen_avg = new QPen(_color_negtive.body, 0.75, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+		}
+        pen_avg->setCosmetic(true);
+
+		QGraphicsLineItem* avg = new QGraphicsLineItem(_x_max+1, y_avg, _x_min-1, y_avg); // x/y in scene absolute coordinate 
+        avg->setPen(*pen_avg);
+        avg->setZValue(2);
+		addToGroup(avg);
+
+    }
+
+    mkLabelTxt();
+
 }
     
+void KlogicBar_t::mkLabelTxt(void)
+{
+
+    qreal rise = CALC_R_PERCENT(_value.C, _value.O);
+    qreal ul = CALC_R_PERCENT(_MAX_(_value.O, _value.C), _value.H);
+    qreal sk = CALC_R_PERCENT(_value.H, _value.L);
+    qreal ca = CALC_R_PERCENT(_value.C, _value.Avg);
+    _label_txt.sprintf("R=%.2f%\nU=%.2f%\nSk=%.2f%\nCA=%.2f", rise, ul, sk, ca);
+
+}
+
+
 void KlogicBar_t::showLabel()
 {
     if (isSelected() && !_selected_label) {
         _selected_label = new KlogicLabel_t(_scene);
-        _selected_label->setText("test");
+        _selected_label->setText(_label_txt);
         _selected_label->setColor(_value.C >= _value.lastC ? 
             color_pair_t{_color_positive.body, _color_negtive.body} : 
             color_pair_t{_color_negtive.body, _color_positive.body});
-        _selected_label->setLogicPos(_value.seq, _value.L);
+        _selected_label->setAlpha(100);
+		_selected_label->mkGroupItems();
+		_selected_label->setLogicPos(_value.seq, _value.L);
+        _selected_label->setZValue(BAR_LABEL_Z);
         _scene->addItem(_selected_label);
     }
     else if (!isSelected() && _selected_label) {

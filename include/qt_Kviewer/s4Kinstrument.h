@@ -28,16 +28,11 @@ public:
     }
 
     void setInstrument(const data_panel_t& data_panel);
-
-signals:
-    void signal_next_trade(int seq);
-
+    
 public slots:
 	//seq >=0: next; <0: last
-	void slot_next_trade(int seq)
-	{
-		emit signal_next_trade(seq);
-	}
+	void slot_next_trade(int seq);
+    
 private:
     // K line tab
     Kinstrument_Kline_tab* _K_tab;

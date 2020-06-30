@@ -55,27 +55,20 @@ public:
     explicit KlogicLabel_t(Kinstrument_scene *scene):
         KlogicItem_t(scene)
     {
-        text = new QGraphicsSimpleTextItem;
-        box = new QGraphicsRectItem;
-        text->setPos(0, 0);
-        box->setPos(0, 0);
-        text->setZValue(1);
-        box->setZValue(0);
-        addToGroup(text);
-        addToGroup(box);
     }
 
     void setText(const QString& txt)
     {
-        text->setText(txt);
-        box->setRect(text->boundingRect());
-        box->setPen(QPen(Qt::NoPen));
+        _text = txt;
     }
     
     void setColor(const color_pair_t& color_pair)
     {
-        text->setBrush(color_pair.front);
-        box->setBrush(color_pair.back);
+        _color = color_pair;
+    }
+
+    void setAlpha(int alpha) {
+        _alpha = alpha;
     }
 
     QRectF boundingRect() const
@@ -83,11 +76,29 @@ public:
         return text->boundingRect();
     }
 
-    virtual void mkGroupItems() {};
+	virtual void mkGroupItems() {
+        _color.back.setAlpha(_alpha);
+		text = new QGraphicsSimpleTextItem;
+		box = new QGraphicsRectItem;
+		text->setPos(0, 0);
+		box->setPos(0, 0);
+		text->setZValue(1);
+		box->setZValue(0);
+		text->setText(_text);
+		box->setRect(text->boundingRect());
+		box->setPen(QPen(Qt::NoPen));
+		text->setBrush(_color.front);
+		box->setBrush(_color.back);
+		addToGroup(text);
+		addToGroup(box);
+    };
 
 private:
     QGraphicsSimpleTextItem* text;
     QGraphicsRectItem* box;
+    QString _text;
+    color_pair_t _color;
+    int _alpha = 255;
 };
 
 

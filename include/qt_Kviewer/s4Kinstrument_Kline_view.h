@@ -22,6 +22,8 @@ public slots:
     //seq >=0: next; <0: last
 	void slot_next_trade(int seq);
 
+protected:
+    int _seq = 0;
 };
 
 } // namespace QT

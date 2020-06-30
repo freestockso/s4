@@ -32,8 +32,6 @@ signals:
 	void signalMouseChanged(qreal, qreal, timeMode_t);
 
 	void signalViewEvent(std::shared_ptr<view_event>);
-	void signal_next_trade(int seq);
-
 
 public slots:
 	virtual void slotScaleChanged_day(qreal x_scale, qreal y_scale);
@@ -47,10 +45,7 @@ public slots:
 
 public slots:
 	//seq >=0: next; <0: last
-	void slot_next_trade(int seq)
-	{
-		emit signal_next_trade(seq);
-	}
+	void slot_next_trade(int seq);
 
 protected:
     std::shared_ptr<data_panel_t> _data_panel;

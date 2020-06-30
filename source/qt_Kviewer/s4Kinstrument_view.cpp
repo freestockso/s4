@@ -142,10 +142,11 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 		QPointF now_center = _mouse_press_bgn_center - movement;
 		
 		centerOn(now_center);
+
+		_mouse_press_bgn_pos = _scene_mouse - movement;
+		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2 - movement;
 		onViewChange();
 
-		_mouse_press_bgn_pos = _scene_mouse;
-		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2;
 
 		std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>(_mouse_press_bgn_center);
 		emit signalViewEvent(e_center);

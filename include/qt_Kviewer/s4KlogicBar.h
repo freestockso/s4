@@ -14,6 +14,7 @@ struct logicBarData_t
     qreal C;
     qreal H;
     qreal L;
+    qreal Avg = -1;
     qreal lastC;
 };
 
@@ -94,8 +95,10 @@ private:
 	qreal _y_o, _y_h, _y_l, _y_c;
 
     KlogicLabel_t* _selected_label = nullptr;
-private:
 
+    QString _label_txt;
+private:
+    void mkLabelTxt(void);
 };
 
 //not a itemGroup, but list of item, use for add/del items quickly.

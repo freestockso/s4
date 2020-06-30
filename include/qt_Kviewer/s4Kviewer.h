@@ -32,8 +32,8 @@ public slots:
 	void load(const std::string& mktCode, const std::string& stgName, const std::string& orderTblName);
 	void onTcpRecvJson(const std::shared_ptr<nlohmann::json>& pJ);
 
-	void on_button_next_trade(void);
-	void on_button_last_trade(void);
+	void onButton_next_trade(void);
+	void onButton_last_trade(void);
 
 signals:
 	void signal_getInfo(const std::string & stkName, const struct S4::stkInfoReq_t& infoReq, class S4::stkInfo_t*& info);

@@ -189,6 +189,7 @@ void Kinstrument_Kline_scene::paint_infoKQ(void)
         bar.C = d->close_fq();
         bar.H = d->high_fq();
         bar.L = d->low_fq();
+        bar.Avg = d->prcAvg_fq();
 
         if (!bars.size()){
             bar.lastC = bar.O;

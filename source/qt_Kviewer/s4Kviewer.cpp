@@ -101,11 +101,11 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 	button_last_trade = new QPushButton(scrollArea);
 	button_last_trade->setGeometry(QRect(50, 50, 25, 25));	// x, y, w, h
 	button_last_trade->setText("<");
-	connect(button_last_trade, SIGNAL(pressed(void)), this, SLOT(on_button_last_trade(void)));
+	connect(button_last_trade, SIGNAL(pressed(void)), this, SLOT(onButton_last_trade(void)));
 	button_next_trade = new QPushButton(scrollArea);
 	button_next_trade->setGeometry(QRect(75, 50, 25, 25));	// x, y, w, h
 	button_next_trade->setText(">");
-	connect(button_next_trade, SIGNAL(pressed(void)), this, SLOT(on_button_next_trade(void)));
+	connect(button_next_trade, SIGNAL(pressed(void)), this, SLOT(onButton_next_trade(void)));
 
     //QHBoxLayout *layout = new QHBoxLayout(this);
     //layout->addWidget(scrollArea);
@@ -232,12 +232,12 @@ void s4Kviewer::load(const std::string& stkName, const std::string& stgName, con
 	showData();
 }
 
-void s4Kviewer::on_button_next_trade(void)
+void s4Kviewer::onButton_next_trade(void)
 {
 	_instrument_tab->slot_next_trade(1);
 }
 
-void s4Kviewer::on_button_last_trade(void)
+void s4Kviewer::onButton_last_trade(void)
 {
 	_instrument_tab->slot_next_trade(-1);
 }

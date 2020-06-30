@@ -48,7 +48,6 @@ void Kinstrument_Kline_view::paint(void){
 
 void Kinstrument_Kline_view::slot_next_trade(int next)
 {
-    static int _seq = 0;
 
     QPointF trad_valPos;
     if (!_scene || !((Kinstrument_Kline_scene*)_scene)->get_trade_valPos(_seq, trad_valPos))
