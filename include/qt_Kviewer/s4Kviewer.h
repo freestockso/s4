@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QPushButton>
 //#include "qt\console\cliparser.h"
+#include "qt_Kviewer/s4console.h"
 //#include "qt\s4qt_view_k.h"
 #include "qt_common/s4qt_data_if.h"
 //#include "network/tcp_client.h"
@@ -54,6 +55,8 @@ private:
 
 	QPushButton* button_last_trade;
 	QPushButton* button_next_trade;
+
+	s4console* _console;
 private:
 	void mouseMoveEvent(QMouseEvent* )
 	{
@@ -64,6 +67,7 @@ private:
 	void showData();
 
 	void onOpen();
+	void onCallConsole();
 	void onTcpSetup();
 
 

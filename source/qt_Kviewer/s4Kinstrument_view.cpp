@@ -605,6 +605,13 @@ void Kinstrument_view::setCtx_test()
 }
 
 
+void Kinstrument_view::fitView()
+{
+	centerOn(_scene->val_w_to_x(_scene->getCtx().val_w_max()), _scene->val_h_to_y((_scene->getCtx().val_h_max() + _scene->getCtx().val_h_min()) / 2));
+	onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
+	emit signalViewEvent(e_center);
+}
 
 
 

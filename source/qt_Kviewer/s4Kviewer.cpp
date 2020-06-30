@@ -32,6 +32,7 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
     ui->setupUi(this);
 	ui->centralwidget->setMouseTracking(true);
 	connect(ui->actionOpen, &QAction::triggered, this, &s4Kviewer::onOpen);
+	connect(ui->actionCallConsole, &QAction::triggered, this, &s4Kviewer::onCallConsole);
 
 	this->setMouseTracking(true);
 	_instrument_tab = new Kviewer_instrumentTab(this);
@@ -125,6 +126,7 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 		_data_if.get(), SLOT(loadOrdres(const std::string &, const std::string &, const std::string &, std::vector<S4::s4_history_trade_t>&)));
 
 
+
 #ifndef NDEBUG
 	//S4::stkInfoReq_t _infoReq;
 	//_infoReq.endDate = _DOOMSDAY_;
@@ -187,6 +189,13 @@ void s4Kviewer::onOpen()
 	onTcpSetup();
 
 	//onLoadConf();
+}
+
+void s4Kviewer::onCallConsole()
+{
+	_console = new s4console(this);
+	_console->setModal(false);
+	_console->show();
 }
 
 void s4Kviewer::onTcpSetup()

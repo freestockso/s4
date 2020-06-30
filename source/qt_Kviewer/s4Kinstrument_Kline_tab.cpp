@@ -28,6 +28,7 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
         emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_VOL , timeMode_t::tDAY );
 		connect(_K_view, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), this, SLOT(slotViewEvent_day(std::shared_ptr<view_event>)));
 
+		_K_view->fitView();
     }
 }
 

@@ -64,6 +64,8 @@ public:
 		_grid_w_gap = gap_w;
 	}
 
+    virtual void fitView();
+
 signals:
 	//void signalScaleChanged(qreal x_scale, qreal y_scale);
 	//void signalSetTransform(const QTransform&, bool);

@@ -30,7 +30,14 @@
     <addaction name="actionOpen"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuconsole">
+    <property name="title">
+     <string>console</string>
+    </property>
+    <addaction name="actionCallConsole"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuconsole"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
@@ -41,6 +48,11 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionCallConsole">
+   <property name="text">
+    <string>Call console</string>
    </property>
   </action>
  </widget>

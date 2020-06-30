@@ -158,31 +158,31 @@ foreach(auto_file ${qt_auto_list})
 endforeach()
 
 
-# set(ui_headers_auto "")
-# foreach(ui_h ${ui_headers})
-#   STRING(REGEX REPLACE ".+/(.+)\\..*" "\\1" ui_name ${ui_h})
-#   message(STATUS "ui_h = ${ui_h}")
-#   # message(STATUS "ui_name = ${ui_name}")
-#   IF(EXISTS "${ui_h}")
-#     file(REMOVE "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_h}")
-#     file(REMOVE "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Release/${ui_h}")
-#     file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/")
-#     file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Release/")
-#     # list(APPEND ui_headers_auto "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")
-#   else()
-#     message(STTUS "^^^^^^^^^^^^^^^^^^^^^ missing")
-#   endif()
-#   # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
-#   #     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
-#   #         "${ui_h}"      # <--this is in-file
-#   #         "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")                 # <--this is out-file path
-# endforeach()
-# message(STATUS "ui_headers_auto = ${ui_headers_auto}")
+set(ui_headers_auto "")
+foreach(ui_h ${ui_headers})
+  STRING(REGEX REPLACE ".+/(.+)\\..*" "\\1" ui_name ${ui_h})
+  message(STATUS "ui_h = ${ui_h}")
+  # message(STATUS "ui_name = ${ui_name}")
+  IF(EXISTS "${ui_h}")
+    file(REMOVE "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_h}")
+    file(REMOVE "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Release/${ui_h}")
+    file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/")
+    file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Release/")
+    # list(APPEND ui_headers_auto "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")
+  else()
+    message(STTUS "^^^^^^^^^^^^^^^^^^^^^ missing")
+  endif()
+  # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
+  #     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
+  #         "${ui_h}"      # <--this is in-file
+  #         "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")                 # <--this is out-file path
+endforeach()
+message(STATUS "ui_headers_auto = ${ui_headers_auto}")
 
 
 add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/build;")
+# target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/build;")
 
 ## collect GLOBAL_INCLUDE_LIST
 get_property(global_include GLOBAL PROPERTY GLOBAL_INCLUDE_LIST)
