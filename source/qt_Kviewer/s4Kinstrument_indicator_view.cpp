@@ -44,6 +44,25 @@ void Kinstrument_indicator_view::slotSetTransform(const QTransform& Ti, bool com
 	Kinstrument_view::setTransform(T, combine);
 }
 
+void Kinstrument_indicator_view::slotMouseChanged(qreal scene_x, qreal scene_y)
+{
+	if (!_scene)
+		return;
+
+	QPointF view_mouse_pos;
+	bool ret = _scene->get_valPos(_scene->x_to_val_w(scene_x)+0.5, view_mouse_pos);
+	if (ret){
+		view_mouse_pos.setX(_scene->val_w_to_x(view_mouse_pos.x()));
+		view_mouse_pos.setY(_scene->val_h_to_y(view_mouse_pos.y()));
+		view_mouse_pos = mapFromScene(view_mouse_pos);
+	}else{
+		view_mouse_pos = mapFromScene(scene_x, scene_y);
+	}
+	onMouseChange(view_mouse_pos);
+
+	paintCrosshair();
+}
+
 //void Kinstrument_indicator_view::onScaleChanged(qreal x_scale, qreal y_scale)
 //{
 //	qreal _y_scale = height() / _scene->sceneRect().height();

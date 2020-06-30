@@ -130,6 +130,18 @@ public:
     //for label-mark
     virtual QString y_to_label_h(qreal y) const;
     virtual QString x_to_label_w(qreal x) const;
+
+    virtual bool get_valPos(int w_seq, QPointF& val) const
+    {
+        qreal val_w = w_seq;
+        if (val_w < _ctx.val_w_min())
+            val_w = _ctx.val_w_min();
+        if (val_w > _ctx.val_w_max())
+            val_w = _ctx.val_w_max();
+        val.setX(val_w);
+        val.setY((_ctx.val_h_max() + _ctx.val_h_min())/2);
+        return true;
+    }
 //signals:
 //    void cursorPosition(QPointF);
 

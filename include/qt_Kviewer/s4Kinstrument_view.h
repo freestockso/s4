@@ -77,8 +77,8 @@ signals:
 	void signalViewEvent(std::shared_ptr<view_event>);
 
 public slots:
-    void verticalScrollvalueChanged();
-    void horizontalScrollvalueChanged();
+    void verticalScrollvalueChanged(int v = 0);
+    void horizontalScrollvalueChanged(int v = 0);
 
     virtual void slotScaleChanged(qreal x_scale, qreal y_scale);
 	virtual void slotSetTransform(const QTransform&, bool) { grabTransInfo(); };

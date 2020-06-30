@@ -301,6 +301,30 @@ bool Kinstrument_Kline_scene::get_trade_valPos(int seq, QPointF& val) const
     return true;
 }
 
+bool Kinstrument_Kline_scene::get_valPos(int w_seq, QPointF& val) const
+{
+	std::shared_ptr<infKQ_t> _pInfoKQ = check_data();
+
+    if (!_pInfoKQ)
+        return false;
+
+    size_t nb;
+    if (w_seq >= 0) {
+        nb = w_seq % _pInfoKQ->size();
+    }
+    else {
+        nb = (-w_seq) % _pInfoKQ->size();
+        if (nb != 0)
+            nb = _pInfoKQ->size() - nb;
+    }
+    
+    val.setX(label_w_to_val_w((*_pInfoKQ)[nb]->_time));
+    val.setY((*_pInfoKQ)[nb]->open_fq());
+
+    return true;
+}
+
+
 } // namespace QT
 } // namespace S4
 

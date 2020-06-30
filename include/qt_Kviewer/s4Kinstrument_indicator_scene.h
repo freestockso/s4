@@ -48,6 +48,8 @@ public:
 
     virtual QString y_to_label_h(qreal y) const override;
     
+    virtual bool get_valPos(int w_seq, QPointF& val) const override;
+    
 public slots:
     void paint(indCtx_t indCtx, std::shared_ptr<data_panel_t> data_panel);
 
@@ -59,7 +61,7 @@ protected:
     std::shared_ptr<data_panel_t> _data_panel;
 protected:
 
-    std::shared_ptr<infKQ_t> check_data_volumn(void);
+    virtual std::shared_ptr<infKQ_t> check_data_volumn(void) const;
     void calcCtx_volumn(void);
     void paint_volumn(void);
 

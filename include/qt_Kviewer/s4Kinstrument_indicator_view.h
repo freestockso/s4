@@ -30,6 +30,7 @@ public slots:
     //virtual void onScaleChanged(qreal x_scale, qreal y_scale) override;
     virtual void slotLabelCenterChanged(qreal label_x, qreal label_y) override;
 	virtual void slotSetTransform(const QTransform&, bool) override;
+	virtual void slotMouseChanged(qreal scene_x, qreal scene_y) override;
 	virtual void slotViewEvent(std::shared_ptr<view_event>) override;
 
 protected:

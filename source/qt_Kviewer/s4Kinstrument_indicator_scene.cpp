@@ -76,7 +76,7 @@ void Kinstrument_indicator_scene::paint(indCtx_t indCtx, std::shared_ptr<data_pa
     return;
 }
 
-std::shared_ptr<infKQ_t> Kinstrument_indicator_scene::check_data_volumn(void)
+std::shared_ptr<infKQ_t> Kinstrument_indicator_scene::check_data_volumn(void) const
 {
     std::shared_ptr<infKQ_t> pInfoKQ;
     if (_indCtx.timeMode == tDAY){
@@ -130,6 +130,29 @@ void Kinstrument_indicator_scene::calcCtx_volumn()
     setCtx(ctx);
 
 	initSceneCanvas();
+}
+
+bool Kinstrument_indicator_scene::get_valPos(int w_seq, QPointF& val) const
+{
+	std::shared_ptr<infKQ_t> _pInfoKQ = check_data_volumn();
+
+    if (!_pInfoKQ)
+        return false;
+
+    size_t nb;
+    if (w_seq >= 0) {
+        nb = w_seq % _pInfoKQ->size();
+    }
+    else {
+        nb = (-w_seq) % _pInfoKQ->size();
+        if (nb != 0)
+            nb = _pInfoKQ->size() - nb;
+    }
+    
+    val.setX(label_w_to_val_w((*_pInfoKQ)[nb]->_time));
+    val.setY((*_pInfoKQ)[nb]->volume);
+
+    return true;
 }
 
 void Kinstrument_indicator_scene::paint_volumn()

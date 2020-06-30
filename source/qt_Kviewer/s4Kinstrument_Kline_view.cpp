@@ -39,6 +39,26 @@ void Kinstrument_Kline_view::setCtx(const std::shared_ptr<infKQ_t>& pInfoKQ){
     Kinstrument_view::setCtx(ctx);
 }
 
+void Kinstrument_Kline_view::fitView(void)
+{
+    QPointF valPos;
+    bool valid = _scene->get_valPos(-1, valPos);
+    if (!valid){
+        Kinstrument_view::fitView();
+        return;
+    }
+    
+	centerOn(_scene->val_w_to_x(valPos.x()), _scene->val_h_to_y(valPos.y()));
+	onViewChange();
+	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
+	emit signalViewEvent(e_center);
+
+    //TODO: not useful ??
+	//std::shared_ptr<view_event_transform_change> e_trans = std::make_shared<view_event_transform_change>(this->transform(), false);
+	//emit signalViewEvent(e_trans);
+}
+
+
 void Kinstrument_Kline_view::paint(void){
     paintGridLines();
     //paintGridLabels();

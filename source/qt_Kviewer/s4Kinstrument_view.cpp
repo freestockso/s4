@@ -21,10 +21,15 @@ Kinstrument_view::Kinstrument_view(Kinstrument_scene*scene, QWidget *parent):
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-	connect(this->verticalScrollBar(), SIGNAL(sliderReleased()),
-		this, SLOT(verticalScrollvalueChanged()));
-	connect(this->horizontalScrollBar(), SIGNAL(sliderReleased()),
-		this, SLOT(horizontalScrollvalueChanged()));
+	//connect(this->verticalScrollBar(), SIGNAL(sliderReleased()),
+	//	this, SLOT(verticalScrollvalueChanged()));
+	//connect(this->horizontalScrollBar(), SIGNAL(sliderReleased()),
+	//	this, SLOT(horizontalScrollvalueChanged()));
+
+	connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)),
+		this, SLOT(verticalScrollvalueChanged(int)));
+	connect(this->horizontalScrollBar(), SIGNAL(valueChanged(int)),
+		this, SLOT(horizontalScrollvalueChanged(int)));
 
     _colorpalette = std::make_shared<qt_colorpalette_t>();
 
@@ -223,7 +228,7 @@ void Kinstrument_view::wheelEvent(QWheelEvent* event)
 //}
 
 
-void Kinstrument_view::verticalScrollvalueChanged()
+void Kinstrument_view::verticalScrollvalueChanged(int)
 {
 	//int value = this->verticalScrollBar()->value();
 	//qDebug() <<"verticalScrollvalueChanged"<< value;
@@ -231,7 +236,7 @@ void Kinstrument_view::verticalScrollvalueChanged()
 	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
 	emit signalViewEvent(e_center);
 }
-void Kinstrument_view::horizontalScrollvalueChanged()
+void Kinstrument_view::horizontalScrollvalueChanged(int)
 {
 	//int value = this->horizontalScrollBar()->value();
 	//qDebug() << "horizontalScrollvalueChanged" << value;
@@ -611,6 +616,8 @@ void Kinstrument_view::fitView()
 	onViewChange();
 	std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>((_scene_lu + _scene_rd) / 2);
 	emit signalViewEvent(e_center);
+	std::shared_ptr<view_event_transform_change> e_trans = std::make_shared<view_event_transform_change>(this->transform(), false);
+	emit signalViewEvent(e_trans);
 }
 
 

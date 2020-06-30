@@ -69,7 +69,7 @@ void KlogicBar_t::mkGroupItems(void)
         addToGroup(rline);
     }
 
-    if (_value.Avg > 0) {
+    if (_value.Avg > 0 && _value.H != _value.L) {
 		qreal y_avg = _scene->val_h_to_y(_value.Avg);
 		if (_value.C < _value.lastC) { //rise
 			pen_avg = new QPen(_color_positive.body, 0.75, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
