@@ -2,6 +2,7 @@
 #define S4CONSOLE_H
 
 #include <QDialog>
+#include "qt_console/cliparser.h"
 
 namespace Ui {
 class s4console;
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::s4console *ui;
+	cliparser* _cli;
+    QWidget *widget;
 };
 
 #endif // S4CONSOLE_H

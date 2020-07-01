@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 	std::vector<s3_order_t> s3data;
 	std::vector<s4_history_trade_t> s4data;
 
-	std::string tbl_name = "REG_2020_06_30__16_35_59";
+	std::string tbl_name = "REG_2020_07_01__17_09_24";
 
 	ret = S3c::read_s3history(s3_history_db, tbl_name, "", s3data);
 
