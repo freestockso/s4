@@ -24,7 +24,7 @@ std::string pureCodeStr_to_mktCodeStr(const std::string& pureCode)
 		}
 	}else{
 		mktCodeI_t code = pureCodeStr_to_mktCode(pureCode);	//may throw exception
-		return pureCodeInt_to_mktCodeStr(code);
+		return mktCodeInt_to_mktCodeStr(code);
 	}
 }
 //"600997" : 170600997, "000001": 330000001
