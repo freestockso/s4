@@ -113,7 +113,9 @@ public:
 	}
 
 	inline price_t prcAvg(int price_precise = 100) const { return static_cast<int>(amount * price_precise / volume); };
-	inline price_t prcAvg_fq(int price_precise = 100) const { return static_cast<int>(amount * price_precise * _factor / volume); };
+	inline price_t prcAvg_fq(int price_precise = 100) const { 
+		return static_cast<int>(amount * price_precise * _factor / volume); 
+	};
 	inline price_t prcAvg_fq(float factor, int price_precise = 100) const { 
 		return static_cast<int>(amount * price_precise * _factor / volume * _factor / factor);
 	};

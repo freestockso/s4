@@ -23,7 +23,12 @@ int main(int argc, char** argv)
 	std::vector<s3_order_t> s3data;
 	std::vector<s4_history_trade_t> s4data;
 
-	std::string tbl_name = "REG_2020_07_01__17_09_24";
+	std::string tbl_name = "REG_2020_07_01__18_55_04";
+	if (argc == 2) {
+		tbl_name = argv[1];
+	}
+
+	LCL_INFO("table name = {:}", tbl_name);
 
 	ret = S3c::read_s3history(s3_history_db, tbl_name, "", s3data);
 
@@ -33,6 +38,8 @@ int main(int argc, char** argv)
 	std::filesystem::path db_s4_history_path = db_s4_root_path / db.history_trade;
 	sqlite::DB_t s4_history_db(db_s4_history_path.string());
 	ret = history_trade_to_DB(s4data, s4_history_db, "s3_" + tbl_name);
+
+	LCL_INFO("s3 db -> s4 : done!");
 
 	return 0;
 }

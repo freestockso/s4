@@ -16,6 +16,15 @@ public:
     explicit s4console(QWidget *parent = nullptr);
     ~s4console();
 
+
+signals:
+    void signal_load(const std::string&, const std::string&, const std::string&);
+
+public slots:
+    void emit_load(const std::string& mktCode, const std::string& stgName, const std::string& orderTblName) {
+        emit signal_load(mktCode, stgName, orderTblName);
+    }
+
 private:
     Ui::s4console *ui;
 	cliparser* _cli;

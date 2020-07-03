@@ -93,11 +93,11 @@ int tdxLocal_t::readDayK_raw(mktCodeI_t mktCode, struct dayK_t *& rawData)
 	int size;
 	int dataCnt = 0;
 
-	pureCodeI_t code = mktCodeInt_to_pureCodeInt(mktCode);
+	std::string code = mktCodeInt_to_mktCodeStr(mktCode);
 	if (isSHmkt(mktCode)){
-		sprintf(path, "%s%ssh%d.day", m_tdxPath.c_str(), m_dayFolderSH.c_str(), code);
+		sprintf(path, "%s%s%s.day", m_tdxPath.c_str(), m_dayFolderSH.c_str(), code.c_str());
 	}else{
-		sprintf(path, "%s%ssz%06d.day", m_tdxPath.c_str(), m_dayFolderSZ.c_str(), code);
+		sprintf(path, "%s%s%s.day", m_tdxPath.c_str(), m_dayFolderSZ.c_str(), code.c_str());
 	}
 	
 	FILE *f = fopen(path, "rb");

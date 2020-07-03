@@ -13,6 +13,9 @@ s4console::s4console(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
 	_cli = new cliparser(this);
+    connect(_cli, SIGNAL(signal_load(const std::string &, const std::string &, const std::string &)),
+        this, SLOT(emit_load(const std::string &, const std::string &, const std::string &)));
+
     QWidget * widget = new QWidget(this);
 
     QVBoxLayout * layout = new QVBoxLayout(widget);//铺满布局

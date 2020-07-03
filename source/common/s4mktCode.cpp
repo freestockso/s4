@@ -15,11 +15,16 @@ namespace S4{
 //"600997" : "sh600997", "000001":"sz000001"
 std::string pureCodeStr_to_mktCodeStr(const std::string& pureCode)
 {
-	if (pureCode.c_str()[0] == '6') {
-		return move(std::string("sh").append(pureCode));
-	}
-	else {
-		return move(std::string("sz").append(pureCode));
+	if (pureCode.size() == 6){
+		if (pureCode.c_str()[0] == '6') {
+			return move(std::string("sh").append(pureCode));
+		}
+		else {
+			return move(std::string("sz").append(pureCode));
+		}
+	}else{
+		mktCodeI_t code = pureCodeStr_to_mktCode(pureCode);	//may throw exception
+		return pureCodeInt_to_mktCodeStr(code);
 	}
 }
 //"600997" : 170600997, "000001": 330000001
@@ -27,7 +32,7 @@ mktCodeI_t pureCodeStr_to_mktCode(const std::string& pureCode)
 {
 	int c = 0;
 	for (int i = 0; i < pureCode.size(); ++i) {
-		c = c * 10 + pureCode.c_str()[i] - '0';
+		c = c * 10 + pureCode.c_str()[i] - '0';	//no check format
 	}
 	return pureCodeInt_to_mktCodeInt(c);
 }
@@ -35,11 +40,13 @@ mktCodeI_t pureCodeStr_to_mktCode(const std::string& pureCode)
 std::string pureCodeInt_to_mktCodeStr(const int pureCode)
 {
 	char c[9];
-	if (pureCode >= SH_CODE_MIN) {
+	if (pureCode >= SH_CODE_MIN && pureCode <= SH_CODE_MAX) {
 		sprintf_s(c, "sh%06d", pureCode);
 	}
-	else {
+	else if (pureCode >= SZ_CODE_MIN && pureCode <= SZ_CODE_MAX) {
 		sprintf_s(c, "sz%06d", pureCode);
+	}else{
+		throw CodeNameConvertError("unknow market for pureCode:"+ std::to_string(pureCode));
 	}
 	return move(std::string(c));
 }
@@ -47,7 +54,12 @@ std::string pureCodeInt_to_mktCodeStr(const int pureCode)
 std::string pureCodeInt_to_pureCodeStr(const int pureCode)
 {
 	char c[9];
-	sprintf_s(c, "%06d", pureCode);
+	if ((pureCode >= SH_CODE_MIN && pureCode <= SH_CODE_MAX) ||
+	    (pureCode >= SZ_CODE_MIN && pureCode <= SZ_CODE_MAX)) {
+		sprintf_s(c, "%06d", pureCode);
+	}else{
+		throw CodeNameConvertError("unknow market for pureCode:"+ std::to_string(pureCode));
+	}
 	return move(std::string(c));
 }
 

@@ -10,13 +10,13 @@ public:
 	cliparser(QWidget *parent = NULL, const QString &welcomeText = "");
 
 signals:
-	void getData(const std::string& stkName, const std::string& stgName, const std::string& orderTblName);
+	void signal_load(const std::string& stkName, const std::string& stgName, const std::string& orderTblName);
 	
 public slots:
 	void handlCommand(const QString &command);
 
 private:
-	void handlCommand_getData(QStringList& split_cmd);
+	void handlCommand_load(QStringList& split_cmd);
 private:
 	QString _stkName = "";
 	QString _stgName = "";

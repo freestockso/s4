@@ -1,5 +1,5 @@
 #include "qt_console/cliparser.h"
-
+#include "common/s4mktCode.h"
 
 cliparser::cliparser(QWidget *parent, const QString &welcomeText)
 {
@@ -13,27 +13,50 @@ cliparser::cliparser(QWidget *parent, const QString &welcomeText)
 void cliparser::handlCommand(const QString &command)
 {
 	QStringList split_cmd = command.split(" ", QString::SkipEmptyParts);//.toLower()
+	if (!split_cmd.size()) {
+		printCommandExecutionResults("");
+		return;
+	}
 
-	if (split_cmd.size() && split_cmd[0] == "ld") {
-		handlCommand_getData(split_cmd);
+	if (split_cmd[0] == "ld") {
+		handlCommand_load(split_cmd);
+	}
+	else {
+		printCommandExecutionResults("Error: unknow command!");
 	}
 
 
-	printCommandExecutionResults(command+" done!");
+	//printCommandExecutionResults(command+" done!");
 }
 
 
-void cliparser::handlCommand_getData(QStringList& split_cmd)
+void cliparser::handlCommand_load(QStringList& split_cmd)
 {
-	bool stk_found = false;
 	bool stg_found = false;
 	bool tbl_found = false;
-	for (int i = 0; i < split_cmd.size(); ++i) {
-		if (split_cmd[i].startsWith("stk=")) {
-			stk_found = 1;
-			_stkName = split_cmd[i].section('=', 1, 1);
+
+	if (split_cmd.size() < 2) {
+		printCommandExecutionResults("Error: ld command format error!");
+		return;
+	}
+
+	_stkName = split_cmd[1];
+	std::string mktCodeStr = _stkName.toStdString();
+	S4::mktCodeI_t mktCodeInt;
+	try{
+		mktCodeInt = S4::mktCodeStr_to_mktCodeInt(mktCodeStr);
+	}catch(...){
+		try{
+			mktCodeStr = S4::pureCodeStr_to_mktCodeStr(mktCodeStr);
+		}catch(...){
+			printCommandExecutionResults(_stkName + " : unsupported instrument code!");
+			return;
 		}
-		else if (split_cmd[i].startsWith("stg=")) {
+	}
+	_stkName.fromStdString(mktCodeStr);
+
+	for (int i = 1; i < split_cmd.size(); ++i) {
+		if (split_cmd[i].startsWith("stg=")) {
 			stg_found = 1;
 			_stgName = split_cmd[i].section('=', 1, 1);
 		}
@@ -48,15 +71,11 @@ void cliparser::handlCommand_getData(QStringList& split_cmd)
 	if (!tbl_found)
 		_orderTblName = "";
 
-	QString log = "getData(";
-	log += _stkName + ", " + _stgName + ", " + _orderTblName+")";
 
-	if (stk_found || stg_found || tbl_found) {
-		emit getData(_stkName.toStdString(), _stgName.toStdString(), _orderTblName.toStdString());
-		log += "emited!";
-	}
-	else {
-		log += "already emited, skip!";
-	}
+	emit signal_load(mktCodeStr, _stgName.toStdString(), _orderTblName.toStdString());
+
+	QString log = "load(";
+	log += _stkName + ", " + _stgName + ", " + _orderTblName+") emited";
+
 	printCommandExecutionResults(log);
 }

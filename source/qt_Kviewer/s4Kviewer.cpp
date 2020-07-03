@@ -194,6 +194,8 @@ void s4Kviewer::onOpen()
 void s4Kviewer::onCallConsole()
 {
 	_console = new s4console(this);
+	connect(_console, SIGNAL(signal_load(const std::string&, const std::string&, const std::string&)),
+		this, SLOT(load(const std::string&, const std::string&, const std::string&)));
 	_console->setModal(false);
 	_console->show();
 }
