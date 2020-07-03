@@ -70,7 +70,7 @@ void Kinstrument_indicator_scene::paint(indCtx_t indCtx, std::shared_ptr<data_pa
     _indCtx = indCtx; 
     _data_panel = data_panel;
 
-    if (indCtx.type == IND_VOL){
+    if (indCtx.type == IND_VOL || indCtx.type == IND_AMT){
         paint_volumn();
     }
     return;
@@ -102,9 +102,13 @@ void Kinstrument_indicator_scene::calcCtx_volumn()
         return;
 
     ctx_t ctx;
-    ctx.set_val_h_max((*pInfoKQ)[0]->volume);
-    //ctx.set_val_h_min((*pInfoKQ)[0]->volume);
-	ctx.set_val_h_min(0);
+    if (_indCtx.type == IND_VOL){
+        ctx.set_val_h_max((*pInfoKQ)[0]->volume);
+        ctx.set_val_h_min(0);
+    } else if (_indCtx.type == IND_AMT){
+        ctx.set_val_h_max((*pInfoKQ)[0]->amount);
+        ctx.set_val_h_min(0);
+    }
     ctx.set_val_w_max(0);
     ctx.set_val_w_min(0);
 
@@ -113,12 +117,11 @@ void Kinstrument_indicator_scene::calcCtx_volumn()
     _w_map_label.clear();
     for(const auto& d : *pInfoKQ)
     {
-        if (d->volume > ctx.val_h_max()){
-            ctx.set_val_h_max(d->volume);
+        if (_indCtx.type == IND_VOL){
+            if (d->volume > ctx.val_h_max())    ctx.set_val_h_max(d->volume);
+        } else if (_indCtx.type == IND_AMT){
+            if (d->amount > ctx.val_h_max())    ctx.set_val_h_max(d->amount);
         }
-        //if (d->volume < ctx.val_h_min()){
-        //    ctx.set_val_h_min(d->volume);
-        //}
         ctx.set_val_w_max(n);
         _label_map_w[d->_time] = n;
         _w_map_label[n] = d->_time;
@@ -150,7 +153,12 @@ bool Kinstrument_indicator_scene::get_valPos(int w_seq, QPointF& val) const
     }
     
     val.setX(label_w_to_val_w((*_pInfoKQ)[nb]->_time));
-    val.setY((*_pInfoKQ)[nb]->volume);
+
+    if (_indCtx.type == IND_VOL){
+        val.setY((*_pInfoKQ)[nb]->volume);
+    } else if (_indCtx.type == IND_AMT){
+        val.setY((*_pInfoKQ)[nb]->amount);
+    }
 
     return true;
 }
@@ -170,7 +178,11 @@ void Kinstrument_indicator_scene::paint_volumn()
         const auto& d = (*pInfoKQ)[i];
         logicRectData_h_t v;
         v.seq = label_w_to_val_w(d->_time);
-        v.val_top = d->volume;
+        if (_indCtx.type == IND_VOL){
+            v.val_top = d->volume;
+        } else if (_indCtx.type == IND_AMT){
+            v.val_top = d->amount;
+        }
         v.val_btm = 0;
 
         if (!vols.size()){

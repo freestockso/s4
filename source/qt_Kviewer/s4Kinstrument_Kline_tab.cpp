@@ -25,7 +25,10 @@ void Kinstrument_Kline_tab::setInstrument(std::shared_ptr<data_panel_t> data_pan
         int i = addTab(_K_view, "day");
 		setCurrentIndex(i);
 
-        emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_VOL , timeMode_t::tDAY );
+		if (!isIdx(data_panel->info.mkCode())){
+        	emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_VOL , timeMode_t::tDAY );
+		}
+        emit paint_indicator(Kinstrument_indicator_scene::ind_type::IND_AMT , timeMode_t::tDAY );
 		connect(_K_view, SIGNAL(signalViewEvent(std::shared_ptr<view_event>)), this, SLOT(slotViewEvent_day(std::shared_ptr<view_event>)));
 
 		_K_view->fitView();

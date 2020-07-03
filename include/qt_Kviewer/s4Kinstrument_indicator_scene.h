@@ -12,7 +12,8 @@ class Kinstrument_indicator_scene : public Kinstrument_scene
 public:
     //TODO: move to data_if
     enum ind_type{
-        IND_VOL = 0,
+		IND_VOL = 0,
+		IND_AMT,
         IND_MACD,
         //
         IND_SIZE
@@ -28,7 +29,9 @@ public:
             switch (type)
             {
             case IND_VOL:       ret += "VOLUMN";
-                break;
+				break;
+			case IND_AMT:       ret += "AMOUNT";
+				break;
             case IND_MACD:      ret += "MACD";
                 break;
             default:            ret += "N/A";

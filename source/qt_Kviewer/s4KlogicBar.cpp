@@ -7,6 +7,17 @@ namespace QT{
 
 #define BAR_LABEL_Z 100
 
+static
+bool avg_valid(const logicBarData_t& value)
+{
+    if (value.Avg > 0 && value.H != value.L
+        && value.Avg >= value.L && value.Avg <= value.H //patch for index, avg = amount / volume not useful for index.
+        ) {
+        return true;
+    }
+    return false;
+}
+
 void KlogicBar_t::mkGroupItems(void)
 {
     if(!_scene) return;
@@ -69,7 +80,7 @@ void KlogicBar_t::mkGroupItems(void)
         addToGroup(rline);
     }
 
-    if (_value.Avg > 0 && _value.H != _value.L) {
+    if (avg_valid(_value)) {
 		qreal y_avg = _scene->val_h_to_y(_value.Avg);
 		if (_value.C < _value.lastC) { //rise
 			pen_avg = new QPen(_color_positive.body, 0.75, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
@@ -95,9 +106,16 @@ void KlogicBar_t::mkLabelTxt(void)
 
     qreal rise = CALC_R_PERCENT(_value.C, _value.O);
     qreal ul = CALC_R_PERCENT(_MAX_(_value.O, _value.C), _value.H);
-    qreal sk = CALC_R_PERCENT(_value.H, _value.L);
-    qreal ca = CALC_R_PERCENT(_value.C, _value.Avg);
-    _label_txt.sprintf("R=%.2f%\nU=%.2f%\nSk=%.2f%\nCA=%.2f", rise, ul, sk, ca);
+	qreal sk = CALC_R_PERCENT(_value.H, _value.L);
+	_label_txt.sprintf("R=%.2f%\nU=%.2f%\nSk=%.2f%", rise, ul, sk);
+    
+    if (avg_valid(_value)) {
+		QString cs_s;
+		qreal ca = CALC_R_PERCENT(_value.C, _value.Avg);
+        cs_s.sprintf("\nCA=%.2f%", ca);
+        _label_txt += cs_s;
+    }
+
 
 }
 
