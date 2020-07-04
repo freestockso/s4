@@ -125,7 +125,7 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 	connect(this, SIGNAL(signal_loadOrdres(const std::string &, const std::string &, const std::string &, std::vector<S4::s4_history_trade_t>&)),
 		_data_if.get(), SLOT(loadOrdres(const std::string &, const std::string &, const std::string &, std::vector<S4::s4_history_trade_t>&)));
 
-
+	onCallConsole();
 
 #ifndef NDEBUG
 	//S4::stkInfoReq_t _infoReq;
@@ -198,6 +198,8 @@ void s4Kviewer::onCallConsole()
 		this, SLOT(load(const std::string&, const std::string&, const std::string&)));
 	_console->setModal(false);
 	_console->show();
+	_console->setGeometry(this->x() + this->width(),
+		this->y(), 200, this->height());
 }
 
 void s4Kviewer::onTcpSetup()

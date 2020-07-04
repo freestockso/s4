@@ -170,7 +170,7 @@ foreach(ui_h ${ui_headers})
     file(COPY "${ui_h}" DESTINATION "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Release/")
     # list(APPEND ui_headers_auto "${PROJECT_SOURCE_DIR}/build/S4_autogen/include_Debug/${ui_name}.h")
   else()
-    message(STTUS "^^^^^^^^^^^^^^^^^^^^^ missing")
+    message(STATUS "^^^^^^^^^^^^^^^^^^^^^ missing")
   endif()
   # add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD        # Adds a post-build event to MyTest
   #     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
@@ -180,9 +180,9 @@ endforeach()
 message(STATUS "ui_headers_auto = ${ui_headers_auto}")
 
 
-add_library(${PROJECT_NAME} STATIC ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES})
+add_library(${PROJECT_NAME} STATIC  ${LIB_HEADER_FILES} ${LIB_INLINE_FILES} ${LIB_SOURCE_FILES} ${UI_FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include;")
-# target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/build;")
+
 
 ## collect GLOBAL_INCLUDE_LIST
 get_property(global_include GLOBAL PROPERTY GLOBAL_INCLUDE_LIST)
@@ -195,6 +195,28 @@ message(STATUS "GLOBAL_LIBS_LIST = ${global_libs}")
 target_link_libraries(${PROJECT_NAME} ${LINKLIBS} ${global_libs})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER libraries)
+
+function(assign_source_group arg)
+  # message(STATUS "ARGN = ${ARGN}")
+    foreach(_source IN ITEMS ${ARGN})
+        if (IS_ABSOLUTE "${_source}")
+            file(RELATIVE_PATH _source_rel "${CMAKE_CURRENT_SOURCE_DIR}" "${_source}")
+        else()
+            set(_source_rel "${_source}")
+        endif()
+        get_filename_component(_source_path "${_source_rel}" PATH)
+        string(REPLACE "/" "\\" _source_path_msvc "${_source_path}")
+        string(REPLACE "${ARGV0}/" "" _source_path_msvc "${_source_path}")
+        source_group("${_source_path_msvc}" FILES "${CMAKE_CURRENT_SOURCE_DIR}/${_source_rel}")
+        # message(STATUS "${_source_path_msvc} / ${CMAKE_CURRENT_SOURCE_DIR}/${_source_rel}")
+    endforeach()
+endfunction(assign_source_group)
+file(GLOB_RECURSE source_list RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "include/*.h")
+assign_source_group("include" ${source_list})
+file(GLOB_RECURSE source_list RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "source/*.cpp")
+assign_source_group("source" ${source_list})
+
+
 
 list(APPEND INSTALL_TARGETS ${PROJECT_NAME})
 list(APPEND LINKLIBS ${PROJECT_NAME})
