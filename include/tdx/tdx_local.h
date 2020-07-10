@@ -11,7 +11,7 @@ namespace TDX{
 
 class tdxLocal_t {
 public:
-	tdxLocal_t(const std::string& tdxPath);
+	tdxLocal_t(const std::string& tdxRootPath);
 
 	//clear Kque inside
 	//[0]=oldest; [-1]=newest

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "jsonTypes/glb_conf_ctx_t.h"
-#include "s4json_util.h"
-#include "s4thread.h"
+#include "common/s4json_util.h"
+#include "common/s4thread.h"
+#include "common/s4calendar.h"
 
 namespace S4{
 
@@ -19,6 +20,10 @@ public:
 		else {
 			ERR("glb_conf load({:}) fail!", file_path);
 			return false;
+		}
+
+		if (_v.tdx.root.size()){
+			_tdxCalendar = std::make_shared<tdxCalendar_t>(_v.tdx.root);
 		}
 
 		return true;
@@ -63,6 +68,8 @@ private:
     glb_conf_ctx_t _v;
 
     Mutex _mux;
+
+	std::shared_ptr<tdxCalendar_t> _tdxCalendar;
 
 };
 

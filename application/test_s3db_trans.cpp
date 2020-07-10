@@ -24,8 +24,13 @@ int main(int argc, char** argv)
 	std::vector<s4_history_trade_t> s4data;
 
 	std::string tbl_name = "REG_2020_07_01__18_55_04";
-	if (argc == 2) {
+	if (argc >= 2) {
 		tbl_name = argv[1];
+	}
+
+	std::string comment = "";
+	if (argc >= 3) {
+		comment = argv[2];
 	}
 
 	LCL_INFO("table name = {:}", tbl_name);
@@ -37,7 +42,7 @@ int main(int argc, char** argv)
 	std::filesystem::path db_s4_root_path = db.root;
 	std::filesystem::path db_s4_history_path = db_s4_root_path / db.history_trade;
 	sqlite::DB_t s4_history_db(db_s4_history_path.string());
-	ret = history_trade_to_DB(s4data, s4_history_db, "s3_" + tbl_name);
+	ret = history_trade_to_DB(s4data, s4_history_db, "s3_" + tbl_name + "_" + comment);
 
 	LCL_INFO("s3 db -> s4 : done!");
 
