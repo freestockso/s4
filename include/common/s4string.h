@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+namespace S4{
+
 void string_replace(const std::string& oldValue, const std::string& newValue,
 	std::string& str);
 
@@ -21,3 +23,5 @@ std::string string_strip_atTail(const std::string& value, const char * dropChars
 std::vector<std::string> string_strip(const std::string& src, const std::string& splitor);
 
 bool write_string_to_file(const std::string & file_name, const std::string & str, bool newFile);
+
+}

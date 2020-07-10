@@ -47,6 +47,7 @@ include(SystemInformation)
 
 add_definitions(-D__STDC_CONSTANT_MACROS)#ffmepg or some libs require this
 add_definitions(-D__STDC_FORMAT_MACROS)
+add_definitions(-DWIN32_LEAN_AND_MEAN) #winsock2.h windows.h 
 
 message(STATUS "CMAKE_C_COMPILER=${CMAKE_C_COMPILER} CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
 

@@ -39,28 +39,32 @@ public:
         return _g_pConf;
     }
 
-	const glb_conf_ctx_t& v() const {
+	inline const glb_conf_ctx_t& v() const {
 		return _v;
 	}
 
-	const glb_conf_ctx_t::network_t& nw() const {
+	inline const glb_conf_ctx_t::network_t& nw() const {
 		return _v.network;
 	}
 
-	const glb_conf_ctx_t::db_t& db() const {
+	inline const glb_conf_ctx_t::db_t& db() const {
 		return _v.db;
 	}
 
-	const glb_conf_ctx_t::logger_t& logger() const {
+	inline const glb_conf_ctx_t::logger_t& logger() const {
 		return _v.logger;
 	}
 
-	const glb_conf_ctx_t::logger_t* pLogger() const {
+	inline const glb_conf_ctx_t::logger_t* pLogger() const {
 		return &_v.logger;
 	}
 
-	const glb_conf_ctx_t::tdx_t& tdx() const {
+	inline const glb_conf_ctx_t::tdx_t& tdx() const {
 		return _v.tdx;
+	}
+
+	std::shared_ptr<tdxCalendar_t> calendar(){
+		return _tdxCalendar;
 	}
 
 

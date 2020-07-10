@@ -1,4 +1,8 @@
 ﻿#include "common/s4string.h"
+#include "common/s4logger.h"
+#include <iostream>
+#include <fstream>
+
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -7,9 +11,7 @@
 
 #include <algorithm>
 
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif
+namespace S4{
 
 void string_replace(const std::string& oldValue, const std::string& newValue,
 	std::string& str)
@@ -91,3 +93,28 @@ std::vector<std::string> string_strip(const std::string& src, const std::string&
 
 	return std::move(v);
 }
+
+
+
+bool write_string_to_file(const std::string & file_name, const std::string & str, bool newFile) 
+{ 
+	try {
+		std::ofstream	OsWrite(file_name, newFile? (std::ofstream::out):(std::ofstream::app));
+		OsWrite << str;
+		OsWrite << std::endl;
+		OsWrite.close();
+		return true;
+	}
+	catch (std::exception& e) {
+		ERR("write string to file({}) fail:{}", file_name, e.what());
+		throw e;
+	}
+}
+
+}//namespace S4
+
+
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif

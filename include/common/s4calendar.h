@@ -13,6 +13,7 @@ public:
 	calendar_t(time_t bgn, time_t end) :
 		m_bgn_time(bgn), m_end_time(end) {};
 
+	//0=oldest, -1=newest
 	int getDate(int idx) const
 	{
 		if (idx >= 0) {
@@ -24,11 +25,11 @@ public:
 		}
 		else
 		{
-			if (-idx >= size()) {
+			if (-idx > size()) {
 				ERR("calendar getDate({:d}) - ovf!\n", idx);
 				return 0;
 			}
-			return m_trading_days[size() - idx - 1];
+			return m_trading_days[size() + idx];
 		}
 	};
 

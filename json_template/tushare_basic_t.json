@@ -1,0 +1,32 @@
+{
+    "__assign_type_fields__": {
+        "code": "pureCodeI_t",
+        "timeToMarket":"time_date_t"
+    },
+    "__sqlite_capable__" : true,
+    "__sqlite_primary__" : "code",
+
+    "code": 600001,
+    "name": "",
+    "industry": "",
+    "area": "",
+    "pe": 0.0,
+    "outstanding": 0.0,
+    "totals": 0.0,
+    "totalAssets": 0.0,
+    "liquidAssets": 0.0,
+    "fixedAssets": 0.0,
+    "reserved": 0.0,
+    "reservedPerShare": 0.0,
+    "esp": 0.0,
+    "bvps": 0.0,
+    "pb": 0.0,
+    "timeToMarket": 0,
+    "undp": 0.0,
+    "perundp": 0.0,
+    "rev": 0.0,
+    "profit": 0.0,
+    "gpr": 0.0,
+    "npr": 0.0,
+    "holders": 0
+}
