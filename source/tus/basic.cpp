@@ -1,12 +1,15 @@
 ﻿
 #include "tus/basic.h"
 #include "tus/cons.h"
-#include "tus/httplib.h"
 #include "common/s4logger.h"
 #include "common/s4string.h"
 #include "types/s4convertors.h"
 #include "common/s4conf.h"
 
+#ifdef max
+#undef max
+#endif
+#include "tus/httplib.h"
 using namespace std;
 
 CREATE_LOCAL_LOGGER("tus_basic")
@@ -31,6 +34,7 @@ bool downloadBasic(const std::string& date, std::vector<tushare_basic_t>& basicO
 	}
 
 	httplib::Client m_tushare("file.tushare.org", 80);
+	m_tushare.set_timeout_sec(20);
 
 	std::shared_ptr<httplib::Response> res =
 		m_tushare.Get(url, [](uint64_t len, uint64_t total) {
@@ -42,9 +46,14 @@ bool downloadBasic(const std::string& date, std::vector<tushare_basic_t>& basicO
 	);
 	printf("\n");
 
-
 	if (res==NULL || res->status != 200) {
-		LCL_ERR("downloaded {} ret={} failed!", url, res->status);
+		LCL_ERR("downloaded {} failed!", url);
+		if (res) {
+			LCL_ERR(" ret={} ", res->status);
+		}
+		else {
+			LCL_ERR(" res = NULL! ");
+		}
 		return false;
 	}
 	//std::cout << res->body << std::endl;
@@ -136,37 +145,44 @@ bool convCSVtoBasic(const std::string& csvStr, std::vector<tushare_basic_t>& bas
 		int lcnt(0);
 		size_t lbgn(0), lend(0);
 		tushare_basic_t basic;
-		do {
-			lend = line.find(',', lbgn);
-			switch (lcnt++) {
-			case 0: basic.code = (pureCodeI_t)IntConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		// 代码
-			case 1: basic.name = line.substr(lbgn, lend - lbgn); break;		//名称
-			case 2: basic.industry = line.substr(lbgn, lend - lbgn); break;	//细分行业
-			case 3: basic.area = line.substr(lbgn, lend - lbgn); break;		//地区
-			case 4: basic.pe = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//市盈率
-			case 5: basic.outstanding = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//流通股本(亿)
-			case 6: basic.totals = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//总股本(亿)
-			case 7: basic.totalAssets = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//总资产(万)
-			case 8: basic.liquidAssets = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//流动资产
-			case 9: basic.fixedAssets = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//固定资产
-			case 10: basic.reserved = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//公积金
-			case 11: basic.reservedPerShare = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;	//每股公积金
-			case 12: basic.esp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//每股收益
-			case 13: basic.bvps = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//每股净资
-			case 14: basic.pb = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//市净率
-			case 15: basic.timeToMarket = (time_date_t)IntConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//上市日期
-			case 16: basic.undp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//未分利润
-			case 17: basic.perundp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//每股未分配
-			case 18: basic.rev = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//收入同比(%)
-			case 19: basic.profit = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//利润同比(%)
-			case 20: basic.gpr = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//毛利率(%)
-			case 21: basic.npr = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//净利润率(%)
-			case 22: basic.holders = (int)DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//股东人数
-			default:break;
-			}
-			lbgn = lend + 1;
-		} while (lend < line.size());
+		try {
 
+			do {
+				lend = line.find(',', lbgn);
+				switch (lcnt++) {
+				case 0: basic.code = (pureCodeI_t)IntConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		// 代码
+				case 1: basic.name = line.substr(lbgn, lend - lbgn); break;		//名称
+				case 2: basic.industry = line.substr(lbgn, lend - lbgn); break;	//细分行业
+				case 3: basic.area = line.substr(lbgn, lend - lbgn); break;		//地区
+				case 4: basic.pe = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//市盈率
+				case 5: basic.outstanding = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//流通股本(亿)
+				case 6: basic.totals = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//总股本(亿)
+				case 7: basic.totalAssets = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//总资产(万)
+				case 8: basic.liquidAssets = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//流动资产
+				case 9: basic.fixedAssets = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;		//固定资产
+				case 10: basic.reserved = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//公积金
+				case 11: basic.reservedPerShare = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;	//每股公积金
+				case 12: basic.esp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//每股收益
+				case 13: basic.bvps = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//每股净资
+				case 14: basic.pb = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//市净率
+				case 15: basic.timeToMarket = (time_date_t)IntConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//上市日期
+				case 16: basic.undp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//未分利润
+				case 17: basic.perundp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//每股未分配
+				case 18: basic.rev = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//收入同比(%)
+				case 19: basic.profit = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//利润同比(%)
+				case 20: basic.gpr = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//毛利率(%)
+				case 21: basic.npr = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//净利润率(%)
+				case 22: basic.holders = (int)DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//股东人数
+				default:break;
+				}
+				lbgn = lend + 1;
+			} while (lend < line.size());
+
+		}
+		catch (exception& e) {
+			LCL_ERR("field decode error:{:}", e.what());
+			continue;
+		}
 		if (lcnt != 23) continue;
 
 		basicOfDay.emplace_back(move(basic));
