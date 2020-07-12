@@ -1,15 +1,20 @@
-﻿#include "common/s4string.h"
-#include "common/s4logger.h"
-#include <iostream>
-#include <fstream>
-
-
+﻿
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable : 4244 )
 #endif
 
+#include "common/s4string.h"
+#include "common/s4logger.h"
+#include <iostream>
+#include <fstream>
+
 #include <algorithm>
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
 
 namespace S4{
 
@@ -36,14 +41,18 @@ std::string string_replace(const std::string& oldValue, const std::string& newVa
 std::string string_toUpper(const std::string& value)
 {
 	std::string copy(value);
+
 	std::transform(copy.begin(), copy.end(), copy.begin(), toupper);
+
 	return copy;
 }
 
 std::string string_toLower(const std::string& value)
 {
 	std::string copy(value);
+
 	std::transform(copy.begin(), copy.end(), copy.begin(), tolower);
+
 	return copy;
 }
 
@@ -114,7 +123,3 @@ bool write_string_to_file(const std::string & file_name, const std::string & str
 }//namespace S4
 
 
-
-#if defined(_MSC_VER)
-#pragma warning( pop )
-#endif

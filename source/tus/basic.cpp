@@ -165,7 +165,7 @@ bool convCSVtoBasic(const std::string& csvStr, std::vector<tushare_basic_t>& bas
 				case 12: basic.esp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//每股收益
 				case 13: basic.bvps = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//每股净资
 				case 14: basic.pb = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//市净率
-				case 15: basic.timeToMarket = (time_date_t)IntConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//上市日期
+				case 15: basic.timeToMarket = (time_date_t)std::atoi(line.substr(lbgn, lend - lbgn).c_str()); break;			//上市日期	//tushare某几日此字段为浮点
 				case 16: basic.undp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//未分利润
 				case 17: basic.perundp = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;			//每股未分配
 				case 18: basic.rev = DoubleConvertor::convert(line.substr(lbgn, lend - lbgn)); break;				//收入同比(%)
@@ -181,8 +181,13 @@ bool convCSVtoBasic(const std::string& csvStr, std::vector<tushare_basic_t>& bas
 		}
 		catch (exception& e) {
 			LCL_ERR("field decode error:{:}", e.what());
-			continue;
+			return false;
 		}
+		if (basic.timeToMarket!=0 && !chk_stk_date_legal(basic.timeToMarket)) {
+			LCL_ERR("timeToMarket = {} illegal!", basic.timeToMarket);
+			return false;
+		}
+
 		if (lcnt != 23) continue;
 
 		basicOfDay.emplace_back(move(basic));

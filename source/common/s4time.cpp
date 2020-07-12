@@ -135,7 +135,25 @@ time_utcSec_t tm_to_utc(const struct tm *ltm, int utcdiff)
 	return (tdays * 86400) + (utc_hrs * 3600) + (ltm->tm_min * 60) + ltm->tm_sec;
 }
 
+bool chk_stk_date_legal(time_date_t date)
+{
+	const int mon_days_leap[] =
+	{ 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
+	int year = date / 10000;
+	int month = date % 10000;
+	int day = month % 100;
+	month = month / 100;
+
+	if (year >= 1990 && year < 2030) {
+		if (month >= 1 && month <= 12) {
+			if (day >= 1 && day <= mon_days_leap[month - 1]) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 
 

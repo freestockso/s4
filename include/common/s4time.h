@@ -31,7 +31,8 @@ void str_to_tm(char *mdate, char *mtime, struct tm* mtm);
 //utcdiff=-8 for Asia/Shanghai; but we set to 0 during whole program
 time_utcSec_t tm_to_utc(const struct tm *ltm, int utcdiff=0); 
 
-
+//YYYYmmDD [19901219~
+bool chk_stk_date_legal(time_date_t date);
 
 class rptTime {
 public:
