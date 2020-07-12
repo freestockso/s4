@@ -274,7 +274,7 @@ int stkInfo_t::getDay_max_close_fq(int bgn, int end)
 }
 
 
-int stkInfo_t::getDay_max_vol(int bgn, int end)
+vol_share_t stkInfo_t::getDay_max_vol(int bgn, int end)
 {
 	vol_share_t max_vol = 0;
 	for (int i = bgn; i <= end; ++i) {
@@ -284,7 +284,7 @@ int stkInfo_t::getDay_max_vol(int bgn, int end)
 	return max_vol;
 }
 
-int stkInfo_t::getDay_min_vol(int bgn, int end)
+vol_share_t stkInfo_t::getDay_min_vol(int bgn, int end)
 {
 	vol_share_t min_vol = 0;
 	for (int i = bgn; i <= end; ++i) {

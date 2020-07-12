@@ -2,6 +2,7 @@
 #include "s4info.h"
 #include "types/s4type.h"
 #include "common/s4time.h"
+#include "common/s4logger.h"
 
 namespace S4 {
 
@@ -31,6 +32,10 @@ public:
 		_date = pK.date;
 		_MinmuSec = 0;
 		_time = date_to_utc( pK.date );
+		if (pK.reserve >> 31) {
+			volume *= 100;
+			TRACE("{} volume ovf", pK.date);
+		}
 	};
 
 	infK_t(const minuK_t& pK) :

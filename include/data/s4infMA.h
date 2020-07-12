@@ -27,14 +27,14 @@ namespace S4 {
 		int C(void) const { return _c; }
 		int L(void) const { return _l; }
 		int H(void) const { return _h; }
-		int V(void) const { return _v; }
+		vol_share_t V(void) const { return _v; }
 		float A(void) const { 
 			return _a; 
 		}
 		float A_kw(void) const {
 			return _a / _KW;
 		}
-		void set(price_t o, price_t c, price_t l, price_t h, price_t v, amount_t a) {
+		void set(price_t o, price_t c, price_t l, price_t h, vol_share_t v, amount_t a) {
 			_o = o;
 			_c = c;
 			_h = h;
@@ -51,7 +51,7 @@ namespace S4 {
 		price_t _c = -1;
 		price_t _l = -1;
 		price_t _h = -1;
-		price_t _v = -1;
+		vol_share_t _v = -1;
 		amount_t _a = -1;
 
 	};

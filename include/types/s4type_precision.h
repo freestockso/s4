@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 //整数价格，精度=厘
-typedef int price_t;
+typedef int32_t price_t;
 typedef double fprice_t;
 #define iPrice_precision 1000
 
@@ -43,8 +43,8 @@ typedef float amount_t;
 #define _KW ((amount_t)1E7)
 
 //成交量，DayK/minuK/GBBQ中精度=股(share)，snap中精度=手(board)=100股
-typedef int32_t vol_share_t;
-typedef int32_t vol_board_t;
+typedef long long vol_share_t;
+typedef long long vol_board_t;
 #define vBoard_unit (100)
 // #define vShare_to_vBoard(x)  ((x)/vBoard_unit)
 #define vBoard_to_vShare(x)  ((x)*vBoard_unit)

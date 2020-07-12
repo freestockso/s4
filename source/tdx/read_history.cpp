@@ -283,7 +283,7 @@ void merge_history_order(const std::vector<S4::tdx_xyzq_history_order_t>& orders
 		data.deal_open = -1;
 		data.deal_close = -1;	//	-1
 		//not in use for now
-		data.deal_vol = -1;	//	-1
+		data.deal_vol = 0;	//	-1
 		data.deal_amt = -1.0;	//	
 		data.commission = 0.0;	//	0.0
 		data.stamp_duty = 0.0;	//	0.0
@@ -333,7 +333,7 @@ void merge_history_deal(const std::vector<S4::tdx_xyzq_history_deal_t>& deals_rd
 		data.order_take = -1;	//	-1
 		data.order_stop = -1;	//	-1
 		data.order_close = -1;	//	-1
-		data.order_vol = -1;	//	-1
+		data.order_vol = 0;	//	-1
 
 		//not in use for now
 		data.deal_vol = deal.deal_vol;	//	-1

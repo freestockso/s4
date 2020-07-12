@@ -155,8 +155,8 @@ public:
 	int getDay_max_close(int bgn, int end);
 	int getDay_max_close_fq(int bgn, int end);
 
-	int getDay_max_vol(int bgn, int end);
-	int getDay_min_vol(int bgn, int end);
+	vol_share_t getDay_max_vol(int bgn, int end);
+	vol_share_t getDay_min_vol(int bgn, int end);
 
 
 	// cyc_t* getCyc(int scope, int i);

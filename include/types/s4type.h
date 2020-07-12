@@ -23,25 +23,25 @@ typedef std::vector<struct minuK_t> vec_minuK_t;
 struct minuK_t
 {
 	time_utcSec_t time;	//utcSec
-	price_t open;
-	price_t high;
-	price_t low;
-	price_t close;
-	amount_t amount;	//yuan
-	vol_share_t volume;	//gu (1 share)
+	int32_t open;
+	int32_t high;
+	int32_t low;
+	int32_t close;
+	float amount;	//yuan
+	uint32_t volume;	//gu (1 share)
 };
 
 typedef std::vector<struct dayK_t> vec_dayK_t;
 struct dayK_t
 {
 	time_date_t date;			//YYYYMMDD
-	price_t open;
-	price_t high;
-	price_t low;
-	price_t close;
-	amount_t amount;		//yuan
-	vol_share_t volume;		//gu (1 share)
-	price_t preClose;		//nothing inside, but need here for tdx-file-reading
+	int32_t open;
+	int32_t high;
+	int32_t low;
+	int32_t close;
+	float amount;		//yuan
+	uint32_t volume;		//gu (1 share)
+	uint32_t reserve;		//300etf在20150706时成交量超出uint32最大值，此时此字段最高位为ff，表示volume需乘以100。
 };
 
 struct stk_tdx_quote_t
