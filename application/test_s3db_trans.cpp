@@ -23,9 +23,12 @@ int main(int argc, char** argv)
 	std::vector<s3_order_t> s3data;
 	std::vector<s4_history_trade_t> s4data;
 
-	std::string tbl_name = "REG_2020_07_01__18_55_04";
+	std::string tbl_name;
 	if (argc >= 2) {
 		tbl_name = argv[1];
+	}
+	else {
+		LCL_FATAL("usage: {:} <tbl_name>", argv[1]);
 	}
 
 	std::string comment = "";

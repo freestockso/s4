@@ -28,6 +28,39 @@ DB_t::DB_t(const std::string & name, const int Mode):
 	}
 }
 
+
+void DB_t::drop_table(const std::string& tbl_name)
+{
+	try {
+		std::string queryStr("DROP TABLE ");
+
+		SQLite::Statement   query(mDb, queryStr + tbl_name);
+
+		while (query.executeStep());
+	}
+	catch (std::exception& e) {
+		LCL_FATAL("sqlite::DB_t({:}) drop_table({:}) fail: {:}", m_name, tbl_name, e.what());
+	}
+	return;
+}
+
+void DB_t::drop_tables(const std::vector<std::string>& tbl_name)
+{
+	std::string queryStr("DROP TABLE ");
+	for (const auto& t : tbl_name)
+	{
+		try {
+			SQLite::Statement   query(mDb, queryStr + t);
+
+			while (query.executeStep());
+		}
+		catch (std::exception& e) {
+			LCL_FATAL("sqlite::DB_t({:}) drop_tables({:}) fail: {:}", m_name, t, e.what());
+		}
+	}
+	return;
+}
+
 std::vector<std::string> DB_t::get_table_list(void)
 {
 	std::vector<std::string> ret;

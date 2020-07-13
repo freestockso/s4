@@ -142,15 +142,15 @@ void Kinstrument_view::mouseMoveEvent(QMouseEvent* event)
 	if (_drag_to_move && dragMode() == QGraphicsView::DragMode::ScrollHandDrag) {
 
 		_mouse_press_end_pos = _scene_mouse;
-		//qDebug() << _mouse_press_end_pos - _mouse_press_bgn_pos;
 		QPointF movement = _mouse_press_end_pos - _mouse_press_bgn_pos;
+		//qDebug() << movement;
 		QPointF now_center = _mouse_press_bgn_center - movement;
 		
 		centerOn(now_center);
+		onViewChange();
 
 		_mouse_press_bgn_pos = _scene_mouse - movement;
-		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2 - movement;
-		onViewChange();
+		_mouse_press_bgn_center = (_scene_lu + _scene_rd) / 2;
 
 
 		std::shared_ptr<view_event_scene_center_change> e_center = std::make_shared<view_event_scene_center_change>(_mouse_press_bgn_center);

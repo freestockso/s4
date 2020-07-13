@@ -23,6 +23,9 @@ public:
 	// col_name : col_type
 	std::vector<std::string> get_colum_list(const std::string& table_name);
 
+	void drop_table(const std::string& tbl_name);
+	void drop_tables(const std::vector<std::string>& tbl_name);
+
     //drop_if_exist: drop table if exist
 	template <typename T>
 	void to_table(tableIO_t<T> * tableIO, const std::string& tbl_name, const std::vector<T>& data, bool drop_if_exist = true)

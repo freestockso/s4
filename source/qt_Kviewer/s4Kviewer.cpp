@@ -165,7 +165,7 @@ s4Kviewer::s4Kviewer(QWidget *parent) :
 
 void s4Kviewer::onOpen()
 {
-	QString path = QFileDialog::getOpenFileName(this, tr("Open S4 configure json"), "../json_template", tr("Json files (*.json)"));
+	QString path = QFileDialog::getOpenFileName(this, tr("Open S4 configure json"), "../worksapce", tr("Json files (*.json)"));
 
 	if (!Utils::fileCanBeOpened(path)) {
 		QMessageBox::warning(NULL, "warning", "file is not readable!", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
