@@ -3,6 +3,7 @@
 #include <QSplitter>
 #include <QScrollArea>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 s4console::s4console(QWidget *parent) :
     QDialog(parent),

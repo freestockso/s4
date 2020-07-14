@@ -21,8 +21,8 @@ int main(int argc, char** argv)
 	vec_dayK_t dayK;
 
 	int bgn = 0;
-	int end = 20200614;
-	tdxLocal.readDayK("sh510300", dayK, bgn, end);
+	int end = 21200614;
+	tdxLocal.readDayK("sz399006", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
@@ -151,6 +151,6 @@ int main(int argc, char** argv)
 	//}
 	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	LCL_INFO("--------------------------------- done --------------------------------")
+	//LCL_INFO("--------------------------------- done --------------------------------")
 
 }
