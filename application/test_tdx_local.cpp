@@ -9,7 +9,7 @@ using namespace std::filesystem;
 
 int main(int argc, char** argv)
 {
-	glb_conf::pInstance()->load("../worksapce/glb_conf_ctx_t_y.json");
+	glb_conf::pInstance()->load("../json_template/glb_conf_ctx_t.json");
 	s4logger::pInstance()->init((void*)glb_conf::pInstance()->pLogger());
 
 	path tdx_root(glb_conf::pInstance()->tdx().root);
@@ -20,137 +20,133 @@ int main(int argc, char** argv)
 
 	vec_dayK_t dayK;
 
-	int bgn = 0;
-	int end = 21200614;
-	tdxLocal.readDayK("sz399006", dayK, bgn, end);
+	int bgn = 20160000;
+	int end = 20200614;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
 	if (!dayK.size()) {
 		LCL_FATAL("nothing read from tdx-local!");
 	}
 	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
-	for (auto& i : dayK) {
-		LCL_INFO("{}\t{}\t{}\t{}\t{}", i.date, i.close, i.amount, i.volume, i.reserve);
+
+	bgn = 0;
+	end = 20200614;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
+
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
 	}
-	return 0;
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//bgn = 0;
-	//end = 20200614;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
+	bgn = 0;
+	end = 20200613;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//bgn = 0;
-	//end = 20200613;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
+	bgn = 20111010;
+	end = 20200612;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//bgn = 20111010;
-	//end = 20200612;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
+	bgn = 20200613;
+	end = 20200614;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
-
-	//bgn = 20200613;
-	//end = 20200614;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
-
-	//if (dayK.size()) {
-	//	LCL_FATAL("read {:} where is empty scope!");
-	//}
-	//else {
-	//	LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
-	//}
+	if (dayK.size()) {
+		LCL_FATAL("read {:} where is empty scope!");
+	}
+	else {
+		LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
+	}
 
 
-	//bgn = 20200612;
-	//end = 99999999;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
+	bgn = 20200612;
+	end = 99999999;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//bgn = 0;
-	//end = 20110101;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
+	bgn = 0;
+	end = 20110101;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
-	//if (dayK.size()) {
-	//	LCL_FATAL("read {:} where is empty scope!");
-	//}
-	//else {
-	//	LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
-	//}
+	if (dayK.size()) {
+		LCL_FATAL("read {:} where is empty scope!");
+	}
+	else {
+		LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
+	}
 
-	//bgn = 0;
-	//end = 20111010;
-	//tdxLocal.readDayK("sz000997", dayK, bgn, end);
+	bgn = 0;
+	end = 20111010;
+	tdxLocal.readDayK("sz000997", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
-	//LCL_INFO("---------------------------------")
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	LCL_INFO("---------------------------------")
 
-	//bgn = 0;
-	//end = 20200612;
-	//tdxLocal.readDayK("sh688004", dayK, bgn, end);
+	bgn = 0;
+	end = 20200612;
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//bgn = 20200612;
-	//end = 20200612;
-	//tdxLocal.readDayK("sh688004", dayK, bgn, end);
+	bgn = 20200612;
+	end = 20200612;
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//bgn = 0;
-	//end = 20200611;
-	//tdxLocal.readDayK("sh688004", dayK, bgn, end);
+	bgn = 0;
+	end = 20200611;
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
-	//if (dayK.size()) {
-	//	LCL_FATAL("read {:} where is empty scope!");
-	//}
-	//else {
-	//	LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
-	//}
+	if (dayK.size()) {
+		LCL_FATAL("read {:} where is empty scope!");
+	}
+	else {
+		LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
+	}
 
-	//bgn = 20200611;
-	//end = 20200611;
-	//tdxLocal.readDayK("sh688004", dayK, bgn, end);
+	bgn = 20200611;
+	end = 20200611;
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
-	//if (dayK.size()) {
-	//	LCL_FATAL("read {:} where is empty scope!");
-	//}
-	//else {
-	//	LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
-	//}
+	if (dayK.size()) {
+		LCL_FATAL("read {:} where is empty scope!");
+	}
+	else {
+		LCL_INFO("{:} - {:} : = {:}", bgn, end, dayK.size());
+	}
 
-	//bgn = 20200612;
-	//end = 99999999;
-	//tdxLocal.readDayK("sh688004", dayK, bgn, end);
+	bgn = 20200612;
+	end = 99999999;
+	tdxLocal.readDayK("sh688004", dayK, bgn, end);
 
-	//if (!dayK.size()) {
-	//	LCL_FATAL("nothing read from tdx-local!");
-	//}
-	//LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
+	if (!dayK.size()) {
+		LCL_FATAL("nothing read from tdx-local!");
+	}
+	LCL_INFO("{:} - {:} : {:} - {:} = {:}", bgn, end, dayK.begin()->date, dayK.rbegin()->date, dayK.size());
 
-	//LCL_INFO("--------------------------------- done --------------------------------")
+	LCL_INFO("--------------------------------- done --------------------------------")
 
 }
